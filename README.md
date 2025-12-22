@@ -1,2 +1,18 @@
 # figure-DB
 피규어 데이터 베이스 만들기 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Figure DB</title>
+</head>
+<body>
+  <h1>피규어 데이터베이스</h1>
+
+  <iframe 
+    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pubhtml"
+    style="width:100%; height:80vh; border:none;">
+  </iframe>
+
+</body>
+</html>
