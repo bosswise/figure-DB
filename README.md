@@ -1,6 +1,6 @@
 # figure-DB
 피규어 데이터 베이스 만들기 
-<!DOCTYPE html>
+
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
