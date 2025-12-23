@@ -1,29 +1,10 @@
-
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>Figure DB</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-
-  <h1>피규어 데이터베이스</h1>
-  <p>실시간 시세 및 정보 (Google Sheets 연동)</p>
-
-  <iframe 
-    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pubhtml"
-    style="width:100%; height:80vh; border:none;">
-  </iframe>
-
-</body
-</html>
-
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>Figure DB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,6 +19,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
+      margin-top: 20px;
     }
     .card {
       background: white;
@@ -57,9 +39,12 @@
     }
   </style>
 </head>
+
 <body>
 
 <h1>피규어 데이터베이스</h1>
+<p style="text-align:center;">Google Sheets 연동 · 이미지 카드 표시</p>
+
 <div class="grid" id="figureGrid"></div>
 
 <script>
@@ -81,10 +66,10 @@
         const cols = row.querySelectorAll("td");
         if (cols.length < 4) return;
 
-        const manufacturer = cols[0].innerText;
-        const series = cols[1].innerText;
-        const character = cols[2].innerText;
-        const imageFile = cols[3].innerText;
+        const manufacturer = cols[0].innerText.trim();
+        const series = cols[1].innerText.trim();
+        const character = cols[2].innerText.trim();
+        const imageFile = cols[3].innerText.trim();
 
         const card = document.createElement("div");
         card.className = "card";
