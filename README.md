@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Figure DB</title>
 
   <style>
@@ -44,27 +44,25 @@
 </head>
 
 <body>
-
   <h1>피규어 데이터베이스</h1>
 
-  <!-- 카드들이 들어갈 자리 -->
-  <div class="grid" id="figureGrid"></div>
+  <!-- ⭐ 이게 없어서 지금 아무 것도 안 뜬 거임 -->
+  <div id="figureGrid" class="grid"></div>
 
   <script>
     const sheetURL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pubhtml";
-
+      "https://docs.google.com/spreadsheets/d/19RQcE8gNlUU16PWmfJhOyCDIfFHFoGyCbVx7fPYaDNs/edit?gid=0#gid=0";
+  
     fetch(sheetURL)
       .then(res => res.text())
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
         const rows = doc.querySelectorAll("table tr");
-
         const grid = document.getElementById("figureGrid");
 
         rows.forEach((row, index) => {
-          if (index === 0) return;
+          if (index === 0) return; // 헤더 제외
 
           const cols = row.querySelectorAll("td");
           if (cols.length < 4) return;
@@ -78,8 +76,9 @@
           card.className = "card";
 
           card.innerHTML = `
-            <img src="images/${imageFile}.jpg" alt="${character}">
-            <div class="name">${series} - ${character}</div>
+            <img src="images/${imageFile}" alt="${character}">
+            <div class="name">${character}</div>
+            <div>${series}</div>
             <div class="manufacturer">${manufacturer}</div>
           `;
 
@@ -87,6 +86,5 @@
         });
       });
   </script>
-
 </body>
 </html>
