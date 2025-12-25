@@ -49,7 +49,7 @@
 
           // 이미지가 없을 때를 대비한 처리
           // 윈도우 파일 확장자 문제를 피하기 위해 여기서 .jpg를 붙임
-          const imgSrc = `images/${imageFile}.jpg`;
+          const imgSrc = `https://bosswise.github.io/figure-DB/images/${imageFile}.jpg`;
 
           const card = document.createElement("div");
           card.className = "card";
