@@ -60,31 +60,34 @@
         const response = await fetch(csvURL);
         const csvText = await response.text();
         
-        // CSV 파싱 (줄바꿈과 쉼표 처리)
+        // CSV 파싱
         const rows = csvText.split(/\r?\n/).map(row => row.split(','));
         
         status.style.display = "none";
         grid.innerHTML = ""; 
 
-        // i=1 (두 번째 줄)부터 시작
         for (let i = 1; i < rows.length; i++) {
           const cols = rows[i];
-          if (cols.length < 4) continue; 
+          
+          // 데이터가 적어도 I열(index 8)까지는 있어야 하므로 체크 강화
+          if (cols.length < 9) continue; 
 
-          // 시트 열 순서: A(0)=제조사, B(1)=시리즈, C(2)=캐릭터명, D(3)=파일명
+          // 열 순서: A(0)=제조사, B(1)=시리즈, C(2)=캐릭터명, ..., I(8)=파일명수식결과
           const manufacturer = cols[0]?.replace(/"/g, "").trim();
           const series       = cols[1]?.replace(/"/g, "").trim();
           const character    = cols[2]?.replace(/"/g, "").trim();
-          const fileName     = cols[3]?.replace(/"/g, "").trim();
+          
+          // 💡 파일명 수식이 있는 I열(8번 인덱스)을 가져옵니다.
+          const fileName     = cols[8]?.replace(/"/g, "").trim();
 
           if (!fileName) continue;
 
-          // 💡 핵심: 한글 파일명을 웹 주소용으로 변환 (인코딩)
+          // 한글 파일명 인코딩 및 주소 생성
           const encodedFileName = encodeURIComponent(fileName);
           const imgSrc = `${imageBaseURL}${encodedFileName}.jpg`;
 
-          // [디버깅용] 주소가 잘 만들어졌는지 콘솔에 출력
-          console.log(`[${i}] ${character} 이미지 주소: ${imgSrc}`);
+          // [디버깅] F12 콘솔에서 주소를 확인해보세요.
+          console.log(`[${i}] 캐릭터: ${character} | 파일명(I열): ${fileName} | 주소: ${imgSrc}`);
 
           const card = document.createElement("div");
           card.className = "card";
@@ -99,7 +102,7 @@
         }
       } catch (err) {
         console.error("데이터 로드 실패:", err);
-        status.innerHTML = "데이터를 불러오는 중 오류가 발생했습니다.";
+        status.innerHTML = "데이터 로딩 중 오류가 발생했습니다. (F12 콘솔 확인)";
       }
     }
 
