@@ -24,7 +24,7 @@
 
   <script>
     // ⚠️ 중요: 구글 시트에서 [파일] -> [공유] -> [웹에 게시] -> [쉼표로 구분된 값(.csv)] 선택 후 나온 URL을 여기에 넣으세요.
-    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-A3Uq98Wz65pCHoXjL7p89kO0zVvYnCshfF6I7_9MvNq13pI8wL8L8yU_K_tQyN6Z6V3bM_S8V_Vw/pub?output=csv";
+    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?output=csv";
 
     async function fetchSheetData() {
       try {
