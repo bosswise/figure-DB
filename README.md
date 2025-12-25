@@ -27,7 +27,7 @@
 
   <script>
     // 1. 실제 본인의 CSV 주소인지 다시 확인 (현재 주소는 이전 대화 기반)
-    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS-A3Uq98Wz65pCHoXjL7p89kO0zVvYnCshfF6I7_9MvNq13pI8wL8L8yU_K_tQyN6Z6V3bM_S8V_Vw/pub?output=csv";
+    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
     const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
 
     async function loadData() {
