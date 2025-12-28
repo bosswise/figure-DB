@@ -12,32 +12,35 @@
     :root { --primary-color: #fab005; --bg-color: #f4f4f2; }
     body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
 
-    /* 🖼️ 마스코트 영역 (크기 키움) */
-    .main-title-area { background: white; padding: 70px 0 50px; text-align: center; border-bottom: 1px solid #eee; }
+    /* 🖼️ 마스코트 가로 배치 영역 */
+    .main-title-area { background: white; padding: 40px 0; text-align: center; border-bottom: 1px solid #eee; }
     
     .title-wrapper { 
       display: flex; 
-      flex-direction: column; /* 캐릭터를 제목 위로 배치하여 더 크게 강조 */
+      flex-direction: row; /* 가로 배치 */
       align-items: center; 
       justify-content: center; 
-      gap: 15px;
+      gap: 30px; /* 캐릭터와 제목 사이 간격 */
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .header-mascot {
-      width: 180px; /* 80px에서 180px로 대폭 키웠습니다! */
-      height: 180px;
+      width: 150px; /* 가로 배치에 적당하도록 살짝 조정 (기존 180px에서 최적화) */
+      height: 150px;
       object-fit: contain;
       animation: mascotFloat 3s ease-in-out infinite;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); /* 캐릭터에 살짝 그림자 추가 */
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.1));
     }
 
     @keyframes mascotFloat {
       0%, 100% { transform: translateY(0) rotate(-2deg); }
-      50% { transform: translateY(-20px) rotate(2deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
     }
 
-    .main-title-area h1 { font-weight: 900; font-size: 3.5rem; margin: 0; color: #1a1a1a; letter-spacing: -1.5px; }
-    .main-title-area p { color: #888; margin-top: 10px; font-size: 1.1rem; font-weight: 300; }
+    .title-text-group { text-align: left; } /* 제목 글자들은 왼쪽 정렬해서 캐릭터와 대비 */
+    .main-title-area h1 { font-weight: 900; font-size: 3.5rem; margin: 0; color: #1a1a1a; letter-spacing: -1.5px; line-height: 1; }
+    .main-title-area p { color: #888; margin-top: 8px; font-size: 1.1rem; font-weight: 300; margin-bottom: 0; }
 
     /* 고정 헤더 */
     header { background: rgba(26,26,26,0.98); color: white; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
@@ -53,7 +56,11 @@
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; min-height: 500px; }
     
     @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 650px) { 
+        .grid { grid-template-columns: 1fr; }
+        .title-wrapper { flex-direction: column; gap: 10px; } /* 모바일에서는 다시 세로로 */
+        .title-text-group { text-align: center; }
+    }
 
     .card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; }
     .card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
@@ -85,9 +92,11 @@
   <div class="main-title-area">
     <div class="title-wrapper">
       <img src="https://bosswise.github.io/figure-DB/images/mascot.png" class="header-mascot" onerror="this.style.display='none'">
-      <h1>피규어 박물관</h1>
+      <div class="title-text-group">
+        <h1>피규어 박물관</h1>
+        <p>The Grand Archive of Masterpiece Figures</p>
+      </div>
     </div>
-    <p>The Grand Archive of Masterpiece Figures</p>
   </div>
 
   <header>
@@ -98,7 +107,7 @@
   </header>
 
   <div class="container">
-    <div id="status" style="text-align:center; padding:100px; color:#aaa;">데이터 로딩 중...</div>
+    <div id="status" style="text-align:center; padding:100px; color:#aaa;">전시물을 불러오고 있습니다...</div>
     <div id="figureGrid" class="grid"></div>
     <div id="pagination" class="pagination"></div>
   </div>
@@ -173,7 +182,7 @@
         grid.appendChild(card);
       });
       renderPagination();
-      window.scrollTo({top: 450, behavior: 'smooth'}); /* 페이지 넘기면 헤더 아래로 이동 */
+      window.scrollTo({top: 250, behavior: 'smooth'});
     }
 
     function renderPagination() {
