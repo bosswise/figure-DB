@@ -6,44 +6,45 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 1. 깃허브 기본 텍스트 차단 */
+    /* 1. 깃허브 기본 요소 숨기기 */
     header[class*="header"], .site-header, h1.title, b, p:first-of-type { display: none !important; }
 
     :root { --primary-color: #fab005; --bg-color: #f4f4f2; }
     body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
 
-    /* 🖼️ 마스코트가 포함된 타이틀 영역 */
-    .main-title-area { background: white; padding: 50px 0 40px; text-align: center; border-bottom: 1px solid #eee; }
+    /* 🖼️ 마스코트 영역 (크기 키움) */
+    .main-title-area { background: white; padding: 70px 0 50px; text-align: center; border-bottom: 1px solid #eee; }
     
     .title-wrapper { 
       display: flex; 
+      flex-direction: column; /* 캐릭터를 제목 위로 배치하여 더 크게 강조 */
       align-items: center; 
       justify-content: center; 
-      gap: 20px; 
-      margin-bottom: 10px;
+      gap: 15px;
     }
 
     .header-mascot {
-      width: 100px; /* 캐릭터 크기 */
-      height: 100px;
+      width: 180px; /* 80px에서 180px로 대폭 키웠습니다! */
+      height: 180px;
       object-fit: contain;
-      /* 둥둥 떠있는 애니메이션 */
       animation: mascotFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); /* 캐릭터에 살짝 그림자 추가 */
     }
 
     @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0) rotate(-3deg); }
-      50% { transform: translateY(-15px) rotate(3deg); }
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-20px) rotate(2deg); }
     }
 
-    .main-title-area h1 { font-weight: 900; font-size: 3.2rem; margin: 0; color: #1a1a1a; letter-spacing: -1.5px; }
+    .main-title-area h1 { font-weight: 900; font-size: 3.5rem; margin: 0; color: #1a1a1a; letter-spacing: -1.5px; }
+    .main-title-area p { color: #888; margin-top: 10px; font-size: 1.1rem; font-weight: 300; }
 
     /* 고정 헤더 */
     header { background: rgba(26,26,26,0.98); color: white; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
     .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
     .filter-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    .filter-btn { background: #333; color: #888; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+    .filter-btn { background: #333; color: #888; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
     .filter-btn.active { background: var(--primary-color); color: #1a1a1a; font-weight: 800; }
     #searchInput { width: 90%; max-width: 400px; padding: 10px 20px; border-radius: 25px; border: none; background: #222; color: white; text-align: center; outline: none; }
 
@@ -97,7 +98,7 @@
   </header>
 
   <div class="container">
-    <div id="status" style="text-align:center; padding:100px; color:#aaa;">전시물을 불러오고 있습니다...</div>
+    <div id="status" style="text-align:center; padding:100px; color:#aaa;">데이터 로딩 중...</div>
     <div id="figureGrid" class="grid"></div>
     <div id="pagination" class="pagination"></div>
   </div>
@@ -172,7 +173,7 @@
         grid.appendChild(card);
       });
       renderPagination();
-      window.scrollTo(0, 0);
+      window.scrollTo({top: 450, behavior: 'smooth'}); /* 페이지 넘기면 헤더 아래로 이동 */
     }
 
     function renderPagination() {
