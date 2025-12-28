@@ -6,76 +6,56 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 1. 깃허브 기본 텍스트 및 레이아웃 차단 */
     header[class*="header"], .site-header, h1.title, b, p:first-of-type { display: none !important; }
-
-    :root { 
-      --primary-color: #fab005; 
-      --bg-color: #f4f4f2; /* 고급스러운 미색 배경 */
-    }
-
+    :root { --primary-color: #fab005; --bg-color: #f4f4f2; }
     body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
 
-    /* 메인 타이틀 */
     .main-title-area { background: white; padding: 60px 0 40px; text-align: center; border-bottom: 1px solid #eee; }
     .main-title-area h1 { font-weight: 900; font-size: 3.2rem; margin: 0; color: #1a1a1a; letter-spacing: -1.5px; }
 
-    /* 고정 헤더 */
     header { background: rgba(26,26,26,0.98); color: white; padding: 15px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
     .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
-    /* 필터 & 검색 */
     .filter-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .filter-btn { background: #333; color: #888; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
     .filter-btn.active { background: var(--primary-color); color: #1a1a1a; font-weight: 800; }
     #searchInput { width: 90%; max-width: 400px; padding: 10px 20px; border-radius: 25px; border: none; background: #222; color: white; text-align: center; outline: none; }
 
-    /* 🏛️ 3열 그리드 레이아웃 */
-    .container { max-width: 1300px; margin: 40px auto; padding: 0 20px 100px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; }
+    .container { max-width: 1300px; margin: 40px auto; padding: 0 20px 50px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; min-height: 600px; }
     
     @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 650px) { .grid { grid-template-columns: 1fr; } }
 
-    .card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; }
+    .card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; height: fit-content; }
     .card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
-    .card.hidden { display: none; }
     
     .img-box { width: 100%; height: 320px; display: flex; align-items: center; justify-content: center; padding: 20px; background: #fff; box-sizing: border-box; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
     .content { padding: 25px; border-top: 1px solid #f8f9fa; text-align: center; }
     .category-tag { font-size: 0.75rem; color: var(--primary-color); font-weight: 800; display: block; margin-bottom: 5px; }
     .char-name { font-size: 1.25rem; font-weight: 800; color: #1a1a1a; line-height: 1.3; }
-    .manufac-name { font-size: 0.85rem; color: #adb5bd; margin-top: 5px; }
 
-    /* 🖼️ 초대형 팝업 모달 */
+    /* 🔢 페이지네이션 스타일 */
+    .pagination { display: flex; justify-content: center; gap: 10px; margin: 50px 0; }
+    .page-btn { background: white; color: #555; border: 1px solid #ddd; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: 500; }
+    .page-btn:hover { background: #eee; }
+    .page-btn.active { background: var(--primary-color); color: #1a1a1a; border-color: var(--primary-color); font-weight: 800; }
+
+    /* 모달 스타일 (동일) */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: white; max-width: 1250px; width: 95%; height: 85vh; border-radius: 35px; display: flex; overflow: hidden; position: relative; animation: modalPop 0.3s ease-out; }
-    @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-    /* 이미지 슬라이드 영역 */
+    .modal-content { background: white; max-width: 1250px; width: 95%; height: 85vh; border-radius: 35px; display: flex; overflow: hidden; position: relative; }
     .modal-img-area { flex: 1.4; background: #fff; padding: 40px; display: flex; align-items: center; justify-content: center; border-right: 1px solid #f0f0f0; position: relative; }
     .modal-img-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    
-    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.1); color: #ccc; border: none; font-size: 2.5rem; padding: 20px; cursor: pointer; transition: 0.3s; border-radius: 50%; z-index: 10; }
-    .nav-btn:hover { background: rgba(0,0,0,0.6); color: white; }
-    .prev-btn { left: 20px; }
-    .next-btn { right: 20px; }
-
-    /* 정보창 영역 */
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.1); color: #ccc; border: none; font-size: 2.5rem; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10; }
     .modal-info-area { flex: 0.8; padding: 60px; background: #fafafa; overflow-y: auto; text-align: left; }
-    .close-btn { position: absolute; top: 25px; right: 35px; font-size: 3rem; cursor: pointer; color: #ddd; z-index: 20; transition: 0.3s; }
-    .close-btn:hover { color: #333; }
-
-    .info-label { font-size: 0.8rem; color: var(--primary-color); font-weight: 800; margin-top: 30px; display: block; letter-spacing: 1px; }
+    .close-btn { position: absolute; top: 25px; right: 35px; font-size: 3rem; cursor: pointer; color: #ddd; z-index: 20; }
+    .info-label { font-size: 0.8rem; color: var(--primary-color); font-weight: 800; margin-top: 30px; display: block; }
     .info-value { font-size: 1.3rem; font-weight: 500; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; display: block; color: #111; }
-    
-    /* 광고 자리 */
     .ad-slot { margin-top: 50px; width: 100%; min-height: 180px; background: #f0f0f0; border-radius: 20px; display: flex; align-items: center; justify-content: center; border: 1px dashed #ccc; color: #999; font-size: 0.8rem; }
 
     @media (max-width: 1000px) {
-      .modal-content { flex-direction: column; height: 95vh; overflow-y: auto; }
+      .modal-content { flex-direction: column; height: 95vh; }
       .modal-img-area { flex: none; height: 50%; border-right: none; border-bottom: 1px solid #eee; }
       .modal-info-area { flex: none; padding: 40px; }
     }
@@ -84,27 +64,23 @@
 <body>
 
   <div class="main-title-area"><h1>피규어 박물관</h1></div>
-
   <header>
     <div class="header-content">
-      <div class="filter-container" id="categoryFilters">
-        <button class="filter-btn active" onclick="filterCategory('all', this)">전체보기</button>
-      </div>
-      <input type="text" id="searchInput" placeholder="찾으시는 캐릭터나 제조사를 입력하세요..." onkeyup="runFilter()">
+      <div class="filter-container" id="categoryFilters"><button class="filter-btn active" onclick="filterCategory('all', this)">전체보기</button></div>
+      <input type="text" id="searchInput" placeholder="찾으시는 피규어를 입력하세요..." onkeyup="onSearch()">
     </div>
   </header>
 
   <div class="container">
-    <div id="status" style="text-align:center; padding:100px; color:#aaa;">전시물을 배치하고 있습니다...</div>
+    <div id="status" style="text-align:center; padding:100px; color:#aaa;">데이터 로딩 중...</div>
     <div id="figureGrid" class="grid"></div>
+    <div id="pagination" class="pagination"></div>
   </div>
 
   <div id="detailModal" class="modal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <span class="close-btn" onclick="document.getElementById('detailModal').style.display='none'">&times;</span>
-      <div class="modal-img-area" id="modalImgContainer">
-        <img id="modalImg" src="">
-      </div>
+      <div class="modal-img-area" id="modalImgContainer"></div>
       <div class="modal-info-area" id="modalInfo"></div>
     </div>
   </div>
@@ -112,12 +88,17 @@
   <script>
     const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
     const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
-    let currentCategory = 'all';
+    
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const itemsPerPage = 12; // 한 페이지에 12개(3x4) 표시
+    
     let imagesArray = [];
     let currentImgIdx = 0;
+    let currentCategory = 'all';
 
     async function loadDatabase() {
-      const grid = document.getElementById("figureGrid");
       try {
         const response = await fetch(csvURL);
         const csvText = await response.text();
@@ -128,9 +109,13 @@
           while (m = regex.exec(row)) { parts.push(m[1] || m[2] || m[3] || ""); }
           return parts;
         });
+
+        allData = rows.slice(1).filter(cols => cols[8]?.trim());
+        filteredData = [...allData];
         document.getElementById("status").style.display = "none";
         
-        const categories = [...new Set(rows.slice(1).map(r => r[10]?.trim()).filter(c => c))];
+        // 카테고리 생성
+        const categories = [...new Set(allData.map(r => r[10]?.trim()).filter(c => c))];
         categories.forEach(cat => {
           const btn = document.createElement("button");
           btn.className = "filter-btn"; btn.innerText = cat;
@@ -138,75 +123,106 @@
           document.getElementById("categoryFilters").appendChild(btn);
         });
 
-        rows.slice(1).forEach(cols => {
-          const fileName = cols[8]?.trim();
-          if (!fileName) return;
-          const card = document.createElement("div");
-          card.className = "card";
-          card.setAttribute("data-category", cols[10]?.trim() || "");
-          card.setAttribute("data-search", `${cols[3]} ${cols[1]}`.toLowerCase());
-          card.onclick = () => openModal(fileName, cols[3], cols[1], cols[4], cols[5], cols[9]);
-          card.innerHTML = `
-            <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(fileName.split(',')[0].trim())}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'"></div>
-            <div class="content">
-              <span class="category-tag">${cols[10] || 'ETC'}</span>
-              <div class="char-name">${cols[3]}</div>
-              <div class="manufac-name">${cols[1]}</div>
-            </div>`;
-          grid.appendChild(card);
-        });
+        displayPage(1);
       } catch (err) { console.error(err); }
+    }
+
+    function displayPage(page) {
+      currentPage = page;
+      const grid = document.getElementById("figureGrid");
+      grid.innerHTML = "";
+      
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageData = filteredData.slice(start, end);
+
+      pageData.forEach(cols => {
+        const fileName = cols[8]?.trim();
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => openModal(fileName, cols[3], cols[1], cols[4], cols[5], cols[9]);
+        card.innerHTML = `
+          <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(fileName.split(',')[0].trim())}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'"></div>
+          <div class="content">
+            <span class="category-tag">${cols[10] || 'ETC'}</span>
+            <div class="char-name">${cols[3]}</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+
+      renderPagination();
+      window.scrollTo(0, 0); // 페이지 이동 시 상단으로 스크롤
+    }
+
+    function renderPagination() {
+      const pagination = document.getElementById("pagination");
+      pagination.innerHTML = "";
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+        btn.innerText = i;
+        btn.onclick = () => displayPage(i);
+        pagination.appendChild(btn);
+      }
+    }
+
+    function onSearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      applyFilters(currentCategory, query);
+    }
+
+    function filterCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      applyFilters(cat, query);
+    }
+
+    function applyFilters(cat, query) {
+      filteredData = allData.filter(cols => {
+        const matchesCat = (cat === 'all' || cols[10]?.trim() === cat);
+        const matchesSearch = `${cols[3]} ${cols[1]}`.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
+      });
+      displayPage(1);
     }
 
     function openModal(imgString, name, manu, scale, price, desc) {
       imagesArray = imgString.split(',').map(s => s.trim());
       currentImgIdx = 0;
-
       const imgArea = document.getElementById("modalImgContainer");
       imgArea.innerHTML = `
         <img id="modalImg" src="${imageBaseURL}${encodeURIComponent(imagesArray[0])}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'">
         ${imagesArray.length > 1 ? `
-          <button class="nav-btn prev-btn" onclick="changeImg(-1)">&lt;</button>
-          <button class="nav-btn next-btn" onclick="changeImg(1)">&gt;</button>
+          <button class="nav-btn prev-btn" onclick="changeImg(-1, event)">&lt;</button>
+          <button class="nav-btn next-btn" onclick="changeImg(1, event)">&gt;</button>
         ` : ''}
       `;
-
       document.getElementById("modalInfo").innerHTML = `
-        <h2 style="font-weight:900; font-size:2.8rem; margin:0 0 15px 0; line-height:1.2;">${name}</h2>
+        <h2 style="font-weight:900; font-size:2.8rem; margin:0 0 15px 0;">${name}</h2>
         <span class="info-label">제조사</span><span class="info-value">${manu}</span>
         <span class="info-label">스케일</span><span class="info-value">${scale}</span>
         <span class="info-label">출시 가격</span><span class="info-value">${isNaN(price) ? price : Number(price).toLocaleString() + ' KRW'}</span>
-        <span class="info-label">수집가 노트</span><p style="line-height:1.8; color:#444; font-size:1.05rem; margin-bottom:40px;">${desc || '정보가 없습니다.'}</p>
-        <div class="ad-slot">ADVERTISEMENT (애드센스 광고 삽입 구역)</div>
+        <span class="info-label">수집가 노트</span><p style="line-height:1.8; color:#444; font-size:1.05rem;">${desc || '정보가 없습니다.'}</p>
+        <div class="ad-slot">ADVERTISEMENT</div>
       `;
       document.getElementById("detailModal").style.display = "flex";
       document.body.style.overflow = "hidden";
     }
 
-    function changeImg(dir) {
+    function changeImg(dir, e) {
+      e.stopPropagation();
       currentImgIdx += dir;
       if (currentImgIdx < 0) currentImgIdx = imagesArray.length - 1;
       if (currentImgIdx >= imagesArray.length) currentImgIdx = 0;
       document.getElementById("modalImg").src = `${imageBaseURL}${encodeURIComponent(imagesArray[currentImgIdx])}.jpg`;
     }
 
-    function closeModal(e) { document.getElementById("detailModal").style.display = "none"; document.body.style.overflow = "auto"; }
+    function closeModal() { document.getElementById("detailModal").style.display = "none"; document.body.style.overflow = "auto"; }
 
-    function filterCategory(cat, btn) {
-      currentCategory = cat;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      runFilter();
-    }
-
-    function runFilter() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      document.querySelectorAll(".card").forEach(card => {
-        const matchesCat = (currentCategory === 'all' || card.getAttribute("data-category") === currentCategory);
-        const matchesSearch = card.getAttribute("data-search").includes(query);
-        card.classList.toggle("hidden", !(matchesCat && matchesSearch));
-      });
-    }
     loadDatabase();
   </script>
 </body>
