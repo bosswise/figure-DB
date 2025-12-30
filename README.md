@@ -6,106 +6,68 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 1. 깃허브 기본 요소(figure-DB 텍스트 등) 완벽 차단 */
+    /* 1. 기본 설정 및 초기화 */
     header[class*="header"], .site-header, .site-footer, h1.title, b, p:first-of-type { display: none !important; }
-
-    :root { 
-      --primary-color: #fab005; 
-      --bg-color: #f7f3f0; /* 마스코트 배경과 일치하는 따뜻한 베이지 */
-      --text-dark: #2d2926; /* 캐릭터 톤에 맞춘 고급스러운 회갈색 */
-    }
-
+    :root { --primary-color: #fab005; --bg-color: #f7f3f0; --text-dark: #2d2926; }
     body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); margin: 0; overflow-x: hidden; }
 
-    /* 🖼️ 헤더 디자인: 캐릭터와 제목의 조화 */
-    .main-title-area { padding: 80px 0 60px; text-align: center; }
-    
-    .title-wrapper { 
-      display: flex; 
-      flex-direction: row; 
-      align-items: center; 
-      justify-content: center; 
-      gap: 50px; 
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .header-mascot {
-      width: 220px;
-      height: 220px;
-      object-fit: cover;
-      /* 하얀 사각형 테두리를 동그랗게 깎고 부드러운 그림자 부여 */
-      border-radius: 50%; 
-      background: white; 
-      padding: 10px;
-      box-shadow: 0 15px 45px rgba(0,0,0,0.08);
-      animation: mascotFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0) rotate(-2deg); }
-      50% { transform: translateY(-20px) rotate(2deg); }
-    }
-
+    /* 🖼️ 헤더 & 마스코트 */
+    .main-title-area { padding: 60px 0; text-align: center; }
+    .title-wrapper { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 40px; max-width: 1200px; margin: 0 auto; }
+    .header-mascot { width: 180px; height: 180px; object-fit: cover; border-radius: 50%; background: white; padding: 10px; box-shadow: 0 15px 45px rgba(0,0,0,0.08); animation: mascotFloat 3s ease-in-out infinite; }
+    @keyframes mascotFloat { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
     .title-text-group { text-align: left; }
-    /* 제목 폰트 크기 및 색상 최적화 */
-    .main-title-area h1 { 
-      font-weight: 900; 
-      font-size: 5rem; 
-      margin: 0; 
-      color: var(--text-dark); 
-      letter-spacing: -4px; 
-      line-height: 1;
-      text-shadow: 3px 3px 0px rgba(255,255,255,0.5);
-    }
-    .main-title-area p { color: #8c847d; margin-top: 15px; font-size: 1.4rem; font-weight: 300; letter-spacing: 1px; }
+    .main-title-area h1 { font-weight: 900; font-size: 4rem; margin: 0; color: var(--text-dark); letter-spacing: -3px; line-height: 1; }
+    .main-title-area p { color: #8c847d; margin-top: 10px; font-size: 1.2rem; font-weight: 300; }
 
-    /* 🔍 고정 검색바 디자인: 캐릭터 톤에 맞춰 다듬기 */
-    header { background: rgba(45, 41, 38, 0.98); padding: 18px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 30px rgba(0,0,0,0.1); }
-    .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-
-    .filter-container { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-    .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.95rem; transition: 0.3s; }
+    /* 🔍 고정 검색바 */
+    header { background: rgba(45, 41, 38, 0.98); padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 6px 18px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
     .filter-btn.active { background: var(--primary-color); color: #1a1a1a; font-weight: 800; }
-    
-    #searchInput { 
-      width: 90%; max-width: 500px; padding: 14px 30px; border-radius: 35px; border: 2px solid #555; 
-      background: #1a1a1a; color: white; text-align: center; outline: none; font-size: 1.1rem; transition: 0.3s;
-    }
-    #searchInput:focus { border-color: var(--primary-color); width: 100%; max-width: 550px; }
+    #searchInput { width: 90%; max-width: 450px; padding: 12px 25px; border-radius: 30px; border: none; background: #1a1a1a; color: white; text-align: center; outline: none; }
 
-    /* 🏛️ 그리드 및 카드 디자인: 박물관 전시품 느낌 */
-    .container { max-width: 1300px; margin: 50px auto; padding: 0 20px 100px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 45px; }
-    
-    .card { background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); cursor: pointer; transition: 0.4s; }
-    .card:hover { transform: translateY(-15px); box-shadow: 0 30px 70px rgba(0,0,0,0.1); }
-    
-    .img-box { width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; padding: 30px; background: #fff; box-sizing: border-box; }
+    /* 🏛️ 그리드 및 카드 */
+    .container { max-width: 1300px; margin: 40px auto; padding: 0 20px 80px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 35px; }
+    .card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); cursor: pointer; transition: 0.4s; }
+    .card:hover { transform: translateY(-10px); }
+    .img-box { width: 100%; height: 350px; display: flex; align-items: center; justify-content: center; padding: 20px; background: #fff; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .content { padding: 35px; border-top: 1px solid #f8f9fa; text-align: center; }
-    .char-name { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); }
+    .content { padding: 25px; border-top: 1px solid #f8f9fa; text-align: center; }
+
+    /* 📝 [수정 1] 이름 길이에 따른 동적 크기 조절 */
+    .char-name { font-weight: 800; color: var(--text-dark); word-break: keep-all; line-height: 1.2; transition: font-size 0.2s; }
+    .name-long { font-size: 1.1rem !important; } /* 8글자 이상일 때 */
+    .name-short { font-size: 1.4rem !important; } /* 7글자 이하일 때 */
 
     /* 🔢 페이지네이션 */
-    .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 70px; }
-    .page-btn { background: white; color: #666; border: 1.5px solid #eee; padding: 12px 22px; border-radius: 15px; cursor: pointer; transition: 0.3s; font-weight: 700; }
-    .page-btn.active { background: var(--primary-color); color: #1a1a1a; border-color: var(--primary-color); }
+    .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 50px; }
+    .page-btn { background: white; color: #666; border: 1px solid #eee; padding: 8px 18px; border-radius: 12px; cursor: pointer; }
+    .page-btn.active { background: var(--primary-color); color: #1a1a1a; font-weight: 800; }
 
-    /* 🖼️ 팝업 모달 */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); backdrop-filter: blur(15px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: white; max-width: 1300px; width: 95%; height: 88vh; border-radius: 45px; display: flex; overflow: hidden; position: relative; }
-    .modal-img-area { flex: 1.4; background: #fff; padding: 50px; display: flex; align-items: center; justify-content: center; border-right: 1px solid #f0f0f0; position: relative; }
-    .modal-info-area { flex: 0.9; padding: 70px; background: #fafafa; overflow-y: auto; }
-    .close-btn { position: absolute; top: 35px; right: 45px; font-size: 4rem; cursor: pointer; color: #ddd; z-index: 20; }
-    .info-label { font-size: 0.95rem; color: var(--primary-color); font-weight: 900; margin-top: 40px; display: block; letter-spacing: 1.5px; }
-    .info-value { font-size: 1.5rem; font-weight: 500; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; display: block; color: var(--text-dark); }
-    
-    @media (max-width: 1000px) {
-      .title-wrapper { flex-direction: column; gap: 20px; }
-      .title-text-group { text-align: center; }
-      .main-title-area h1 { font-size: 3.5rem; }
-      .grid { grid-template-columns: repeat(2, 1fr); }
+    /* 🖼️ [수정 2] 세련된 모달 & 내비게이션 버튼 */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: white; max-width: 1200px; width: 95%; height: 85vh; border-radius: 40px; display: flex; overflow: hidden; position: relative; }
+    .modal-img-area { flex: 1.3; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px; }
+    .modal-img-area img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+    /* ✨ 버튼 디자인 변경 */
+    .nav-btn { 
+      position: absolute; top: 50%; transform: translateY(-50%); 
+      background: rgba(255, 255, 255, 0.8); color: #333; 
+      border: none; width: 60px; height: 60px; border-radius: 50%; 
+      font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+      transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10;
     }
+    .nav-btn:hover { background: var(--primary-color); color: white; transform: translateY(-50%) scale(1.1); }
+    .prev-btn { left: 20px; }
+    .next-btn { right: 20px; }
+
+    .modal-info-area { flex: 0.9; padding: 50px; background: #fafafa; overflow-y: auto; }
+    .close-btn { position: absolute; top: 25px; right: 35px; font-size: 3rem; cursor: pointer; color: #ccc; z-index: 100; }
+    .info-label { font-size: 0.85rem; color: var(--primary-color); font-weight: 800; margin-top: 30px; display: block; }
+    .info-value { font-size: 1.3rem; font-weight: 500; border-bottom: 2px solid #eee; padding-bottom: 8px; display: block; color: var(--text-dark); }
   </style>
 </head>
 <body>
@@ -123,12 +85,12 @@
   <header>
     <div class="header-content">
       <div class="filter-container" id="categoryFilters"><button class="filter-btn active" onclick="filterCategory('all', this)">전체보기</button></div>
-      <input type="text" id="searchInput" placeholder="무엇을 찾으시나요?" onkeyup="onSearch()">
+      <input type="text" id="searchInput" placeholder="검색어를 입력하세요..." onkeyup="onSearch()">
     </div>
   </header>
 
   <div class="container">
-    <div id="status" style="text-align:center; padding:100px; color:#999; font-size: 1.2rem;">컬렉션을 배치하는 중...</div>
+    <div id="status" style="text-align:center; padding:100px; color:#aaa;">데이터 로딩 중...</div>
     <div id="figureGrid" class="grid"></div>
     <div id="pagination" class="pagination"></div>
   </div>
@@ -164,11 +126,9 @@
           while (m = regex.exec(row)) { parts.push(m[1] || m[2] || m[3] || ""); }
           return parts;
         });
-
         allData = rows.slice(1).filter(cols => cols[8]?.trim());
         filteredData = [...allData];
         document.getElementById("status").style.display = "none";
-        
         const categories = [...new Set(allData.map(r => r[10]?.trim()).filter(c => c))];
         categories.forEach(cat => {
           const btn = document.createElement("button");
@@ -176,7 +136,6 @@
           btn.onclick = (e) => filterCategory(cat, e.target);
           document.getElementById("categoryFilters").appendChild(btn);
         });
-
         displayPage(1);
       } catch (err) { console.error(err); }
     }
@@ -190,15 +149,19 @@
       const pageData = filteredData.slice(start, end);
 
       pageData.forEach(cols => {
+        const name = cols[3] || "";
         const fileName = cols[8]?.trim();
+        /* 글자 수에 따른 클래스 부여 */
+        const nameClass = name.length >= 8 ? "name-long" : "name-short";
+        
         const card = document.createElement("div");
         card.className = "card";
-        card.onclick = () => openModal(fileName, cols[3], cols[1], cols[4], cols[5], cols[9]);
+        card.onclick = () => openModal(fileName, name, cols[1], cols[4], cols[5], cols[9]);
         card.innerHTML = `
           <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(fileName.split(',')[0].trim())}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'"></div>
           <div class="content">
-            <span style="color:#fab005; font-weight:900; font-size:0.85rem; margin-bottom:8px; display:block;">${cols[10] || 'ETC'}</span>
-            <div class="char-name">${cols[3]}</div>
+            <span style="color:var(--primary-color); font-weight:800; font-size:0.8rem; display:block; margin-bottom:5px;">${cols[10] || 'ETC'}</span>
+            <div class="char-name ${nameClass}">${name}</div>
           </div>`;
         grid.appendChild(card);
       });
@@ -228,8 +191,7 @@
       currentCategory = cat;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      applyFilters(cat, query);
+      onSearch();
     }
 
     function applyFilters(cat, query) {
@@ -244,24 +206,27 @@
     function openModal(imgString, name, manu, scale, price, desc) {
       imagesArray = imgString.split(',').map(s => s.trim());
       currentImgIdx = 0;
-      const imgArea = document.getElementById("modalImgContainer");
-      imgArea.innerHTML = `
-        <img id="modalImg" src="${imageBaseURL}${encodeURIComponent(imagesArray[0])}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'">
-        ${imagesArray.length > 1 ? `
-          <button class="nav-btn prev-btn" onclick="changeImg(-1, event)">&lt;</button>
-          <button class="nav-btn next-btn" onclick="changeImg(1, event)">&gt;</button>
-        ` : ''}
-      `;
+      updateModalImage();
       document.getElementById("modalInfo").innerHTML = `
-        <h2 style="font-weight:900; font-size:3.2rem; margin:0 0 15px 0; color:#2d2926;">${name}</h2>
+        <h2 style="font-weight:900; font-size:2.8rem; margin:0 0 15px 0; color:var(--text-dark);">${name}</h2>
         <span class="info-label">제조사</span><span class="info-value">${manu}</span>
         <span class="info-label">스케일</span><span class="info-value">${scale}</span>
         <span class="info-label">가격</span><span class="info-value">${isNaN(price) ? price : Number(price).toLocaleString() + ' KRW'}</span>
-        <span class="info-label">수집가 노트</span><p style="line-height:2; color:#555; font-size:1.15rem;">${desc || '정보가 없습니다.'}</p>
-        <div class="ad-slot" style="margin-top:50px; padding:30px; background:#f0f0f0; border-radius:20px; text-align:center; color:#999;">광고 및 협업 문의는 환영입니다.</div>
+        <span class="info-label">노트</span><p style="line-height:1.8; color:#555;">${desc || '정보가 없습니다.'}</p>
       `;
       document.getElementById("detailModal").style.display = "flex";
       document.body.style.overflow = "hidden";
+    }
+
+    function updateModalImage() {
+      const imgArea = document.getElementById("modalImgContainer");
+      imgArea.innerHTML = `
+        <img id="modalImg" src="${imageBaseURL}${encodeURIComponent(imagesArray[currentImgIdx])}.jpg" onerror="this.src='https://placehold.co/400x400/fff/ccc?text=No+Image'">
+        ${imagesArray.length > 1 ? `
+          <button class="nav-btn prev-btn" onclick="changeImg(-1, event)">&#10094;</button>
+          <button class="nav-btn next-btn" onclick="changeImg(1, event)">&#10095;</button>
+        ` : ''}
+      `;
     }
 
     function changeImg(dir, e) {
