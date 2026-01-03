@@ -61,7 +61,7 @@
 
   <script>
     // ★★★ 중요: JSON 배포 주소를 여기에 넣으세요! ★★★
-    const SHEET_URL = "여기에_JSON_배포_주소_입력"; 
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv"; 
     const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
 
     let allData = [];
