@@ -17,13 +17,12 @@
       --modal-bg: rgba(0,0,0,0.95);
     }
 
-    /* 🛡️ 화면 전체 차폐막 */
     .museum-full-layer {
-      position: fixed; inset: 0; background-color: var(--bg); z-index: 999999;
-      overflow-y: auto; font-family: 'Noto Sans KR', sans-serif;
+      position: relative; width: 100%; min-height: 100vh; background-color: var(--bg); z-index: 999999;
+      font-family: 'Noto Sans KR', sans-serif;
     }
 
-    body { margin: 0; padding: 0; background-color: var(--bg); }
+    body { margin: 0; padding: 0; background-color: var(--bg); overflow-x: hidden; }
 
     /* 🖼️ 헤드 제목 섹션 */
     .main-title-area { padding: 60px 0 30px; text-align: center; }
@@ -35,15 +34,29 @@
       font-weight: 900; font-size: 4rem; color: var(--dark); 
       margin: 15px 0 5px; cursor: pointer; display: inline-block; letter-spacing: -3px;
     }
-    .museum-title:hover { color: var(--primary); }
     .stats-text { color: #8c847d; font-size: 1.1rem; font-weight: 300; }
 
-    /* 📌 [슬림화] 책갈피 필터 디자인 */
+    /* 📌 [NEW] 최소화 기능이 추가된 책갈피 필터 */
     .sticky-header { 
-      background: #2d2926; padding: 12px 0; position: sticky; top: 0; 
-      z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.3); 
+      background: #2d2926; position: sticky; top: 0; z-index: 1000; 
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.4s ease;
     }
-    .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; padding: 0 25px; }
+    .toggle-bar {
+      max-width: 1200px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 5px 25px;
+    }
+    .toggle-btn {
+      background: none; border: 1px solid #555; color: #aaa; font-size: 0.7rem; 
+      padding: 3px 10px; border-radius: 5px; cursor: pointer; transition: 0.3s;
+    }
+    .toggle-btn:hover { color: var(--primary); border-color: var(--primary); }
+
+    .bookmark-container { 
+      max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; 
+      gap: 8px; padding: 0 25px 15px; overflow: hidden; transition: max-height 0.4s ease;
+      max-height: 500px; /* 열렸을 때 높이 */
+    }
+    .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
+
     .category-row { 
       display: flex; align-items: center; gap: 12px; 
       background: rgba(255,255,255,0.06); padding: 8px 15px; border-radius: 12px; 
@@ -58,7 +71,7 @@
     }
     .filter-btn.active { background: var(--primary); color: #1a1a1a; font-weight: 800; }
 
-    /* 🏛️ 전시 그리드 (가로 3개) */
+    /* 🏛️ 전시 그리드 (가로 3개 고정) */
     .container { max-width: 1400px; margin: 40px auto; padding: 0 30px 150px; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
     
@@ -69,7 +82,6 @@
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f8f9fa; }
     .char-name { font-size: 1.45rem; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
-    
     .tag-wrap { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
     .tag { font-size: 0.75rem; background: var(--tag-gold); color: #d35400; padding: 4px 12px; border-radius: 10px; font-weight: 700; }
     .tag.sec { background: var(--tag-grey); color: #777; }
@@ -77,19 +89,15 @@
     /* 🖼️ 모달 (슬라이드 & 줌) */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 9999999; justify-content: center; align-items: center; padding: 30px; backdrop-filter: blur(15px); }
     .modal-content { background: white; max-width: 1200px; width: 98%; height: 85vh; border-radius: 50px; display: flex; overflow: hidden; position: relative; }
-    
     .modal-img-area { flex: 1.3; background: #fff; padding: 40px; display: flex; align-items: center; justify-content: center; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; }
     .modal-img-area img { max-width: 100%; max-height: 100%; object-fit: contain; transition: 0.4s ease; cursor: zoom-in; }
     .modal-img-area img.zoomed { transform: scale(2.2); cursor: zoom-out; }
-
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 55px; height: 55px; background: rgba(255,255,255,0.95); border: none; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 10; }
     .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
     .prev-btn { left: 30px; }
     .next-btn { right: 30px; }
-
     .modal-info-area { flex: 0.7; padding: 60px; background: #fafafa; overflow-y: auto; }
     .close-btn { position: absolute; top: 35px; right: 45px; font-size: 3.5rem; cursor: pointer; color: #ccc; z-index: 100; line-height: 0.7; }
-
     .info-label { font-size: 0.85rem; color: var(--primary); font-weight: 900; margin-top: 30px; display: block; letter-spacing: 1px; }
     .info-value { font-size: 1.35rem; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 10px; display: block; color: var(--dark); }
 
@@ -107,6 +115,9 @@
   </div>
 
   <div class="sticky-header">
+    <div class="toggle-bar">
+      <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 책갈피 접기 ]</button>
+    </div>
     <div class="bookmark-container" id="filterMenu"></div>
   </div>
 
@@ -160,17 +171,15 @@
       for (const [cat, seriesSet] of Object.entries(menuMap)) {
         const row = document.createElement('div');
         row.className = 'category-row';
-        // 사장님 지시: 라벨 옆에 대단원 명칭 추가
         let icon = cat.toUpperCase().includes('GAME') ? '🎮 ' : cat.toUpperCase().includes('VOCAL') ? '🎤 ' : '📦 ';
         let html = `<span class="main-label">${icon}${cat.toUpperCase()}</span><div class="sub-btns-scroll">`;
         seriesSet.forEach(s => { html += `<button class="filter-btn" onclick="filterBy('${s}', this)">${s}</button>`; });
         row.innerHTML = html + `</div></div>`;
         filterMenu.appendChild(row);
       }
-
       renderGrid(allData);
 
-      // 🚨 찌꺼기 제거 루틴 재실행
+      // 🚨 유령 문구 삭제 루틴
       setTimeout(() => {
         document.querySelectorAll('header, footer, b, p:first-of-type').forEach(el => {
           if(!el.closest('#museumLayer')) el.remove();
@@ -198,6 +207,13 @@
           </div>
         </div>`;
     }).join('');
+  }
+
+  function toggleFilters() {
+    const menu = document.getElementById('filterMenu');
+    const btn = document.getElementById('toggleBtn');
+    menu.classList.toggle('collapsed');
+    btn.innerText = menu.classList.contains('collapsed') ? '[ 카테고리 열기 ]' : '[ 책갈피 접기 ]';
   }
 
   function openModal(idx) {
