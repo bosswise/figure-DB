@@ -6,14 +6,14 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 방해 요소 시각적 차단 (안전한 CSS 처리) */
+    /* 🚨 방해 요소 시각적 차단 (CSS로만 안전하게 처리) */
     header, footer, .site-header, .site-footer, .title, b, span:first-of-type, .gh-header { 
       display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
     }
     
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     
-    /* 🛡️ 화면 전체를 덮는 절대 무적 레이어 (유령 문구 차단용) */
+    /* 🛡️ 화면 전체를 덮는 절대 무적 레이어 */
     #museum-wrapper {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background-color: var(--bg); 
@@ -44,20 +44,16 @@
     .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; }
     .filter-btn.active { background: var(--primary); color: #1a1a1a; font-weight: 800; }
 
-    /* 그리드 및 태그 복구 */
+    /* 그리드 */
     .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
-    .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
-    
-    /* 💎 [복구 완료] 태그 스타일 (끊김 방지 적용) */
-    .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
-    .tag.sec { background: #eee; color: #777; }
+    .content { padding: 45px; text-align: center; border-top: 1px solid #f9f9f9; }
+    .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 20px; }
+    .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 18px; border-radius: 15px; font-weight: 800; margin-right: 8px; }
 
     /* 상세 모달 (마우스 추적 줌 & 라벨링) */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 2147483648; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
@@ -72,7 +68,7 @@
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
     .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
     
-    /* 💎 상세 라벨링 스타일 */
+    /* 💎 사장님 지시: 라벨링 강제 출력 스타일 */
     .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
     .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
@@ -122,7 +118,7 @@
 
   async function init() {
     try {
-      // 🚨 안전 장치: 박물관 래퍼를 body 바로 아래로 강제 이동 (유령 문구 덮기)
+      // 🚨 안전 장치: 박물관 래퍼를 body 바로 아래로 강제 이동 (숨김 방지)
       const wrapper = document.getElementById('museum-wrapper');
       if(document.body && wrapper) document.body.appendChild(wrapper);
 
@@ -135,7 +131,6 @@
       allData = rows.slice(1).filter(r => r[8]);
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
       startFameSlide(); renderFilters(); renderGrid(allData);
-      // 🚨 위험한 청소 스크립트 제거됨 (클릭 버그 해결)
     } catch (e) { console.error("데이터 로딩 실패:", e); }
   }
 
@@ -174,17 +169,7 @@
     grid.innerHTML = data.map((item, idx) => {
       const name = (item[12] && item[12].trim() !== "") ? item[12] : item[3];
       const img = item[8].split(',')[0].trim();
-      // 💎 [복구 완료] 태그 출력 코드 삽입
-      return `<div class="card" data-series="${item[2]}" onclick="openModal(${allData.indexOf(item)})">
-        <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>
-        <div class="content">
-          <div class="char-name">${name}</div>
-          <div class="tag-wrap">
-            <span class="tag">#${item[10]}</span>
-            <span class="tag sec">#${item[2]}</span>
-          </div>
-        </div>
-      </div>`;
+      return `<div class="card" data-series="${item[2]}" onclick="openModal(${allData.indexOf(item)})"><div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div><div class="content"><div class="char-name">${name}</div><div class="tag-wrap"><span class="tag">#${item[10]}</span><span class="tag" style="background:#eee;color:#777;">#${item[2]}</span></div></div></div>`;
     }).join('');
   }
 
@@ -192,7 +177,7 @@
     const item = allData[idx]; currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = (item[12] && item[12].trim() !== "") ? item[12] : item[3];
     
-    // 💎 상세 라벨링 완벽 반영
+    // 💎 사장님 지시: 라벨링 100% 강제 노출
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1]}</span></div>
