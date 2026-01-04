@@ -6,8 +6,8 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 방해 요소 시각적 차단 */
-    header, footer, .site-header, .site-footer, .title, b, span:first-of-type, .gh-header { 
+    /* 🚨 [수정됨] span:first-of-type 삭제! 라벨 숨김 원인 제거 */
+    header, footer, .site-header, .site-footer, .title, b, .gh-header { 
       display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
     }
     
@@ -54,7 +54,7 @@
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
     
-    /* 💎 태그 스타일 (끊김 방지 유지) */
+    /* 태그 스타일 */
     .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
     .tag.sec { background: #eee; color: #777; }
@@ -75,7 +75,7 @@
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
     .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
     
-    /* 💎 [복구 완료] 상세 라벨링 강제 출력 */
+    /* 상세 라벨링 */
     .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
     .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
@@ -125,6 +125,7 @@
 
   async function init() {
     try {
+      // 래퍼와 모달 둘 다 body 끝으로 이동
       const wrapper = document.getElementById('museum-wrapper');
       const modal = document.getElementById('detailModal');
       if(document.body && wrapper) document.body.appendChild(wrapper);
@@ -194,7 +195,7 @@
     const item = allData[idx]; currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = (item[12] && item[12].trim() !== "") ? item[12] : item[3];
     
-    // 💎 [복구 완료] 라벨 텍스트가 무조건 보이도록 하드코딩 적용
+    // 💎 라벨 텍스트 하드코딩 + 데이터 매핑
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1]}</span></div>
