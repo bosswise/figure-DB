@@ -17,7 +17,7 @@
     #museum-wrapper {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background-color: var(--bg); 
-      z-index: 99990; /* 상세창보다 낮게 설정 */
+      z-index: 99990; 
       overflow-y: auto;
       font-family: 'Noto Sans KR', sans-serif;
     }
@@ -47,21 +47,21 @@
     /* 그리드 */
     .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
-    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; pointer-events: auto; /* 클릭 강제 활성화 */ }
+    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; pointer-events: auto; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
     
-    /* 💎 태그 스타일 (끊김 방지) */
+    /* 💎 태그 스타일 (끊김 방지 유지) */
     .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
     .tag.sec { background: #eee; color: #777; }
 
     /* 상세 모달 (최상위 노출) */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); 
-      z-index: 99999; /* 덮개(99990)보다 높게 설정 */
+      z-index: 99999; 
       justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); 
     }
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
@@ -75,7 +75,7 @@
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
     .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
     
-    /* 상세 라벨링 */
+    /* 💎 [복구 완료] 상세 라벨링 강제 출력 */
     .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
     .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
@@ -125,7 +125,6 @@
 
   async function init() {
     try {
-      // 🚨 [핵심 수정] 래퍼와 모달 둘 다 body 끝으로 이동시켜 계층 탈출
       const wrapper = document.getElementById('museum-wrapper');
       const modal = document.getElementById('detailModal');
       if(document.body && wrapper) document.body.appendChild(wrapper);
@@ -178,7 +177,6 @@
     grid.innerHTML = data.map((item, idx) => {
       const name = (item[12] && item[12].trim() !== "") ? item[12] : item[3];
       const img = item[8].split(',')[0].trim();
-      // 💎 태그(#) 부활 및 클릭 함수 window 명시
       return `<div class="card" data-series="${item[2]}" onclick="window.openModal(${allData.indexOf(item)})">
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>
         <div class="content">
@@ -192,11 +190,11 @@
     }).join('');
   }
 
-  // 💎 함수를 window에 강제 등록하여 참조 오류 방지
   window.openModal = function(idx) {
     const item = allData[idx]; currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = (item[12] && item[12].trim() !== "") ? item[12] : item[3];
     
+    // 💎 [복구 완료] 라벨 텍스트가 무조건 보이도록 하드코딩 적용
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1]}</span></div>
