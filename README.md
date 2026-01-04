@@ -6,68 +6,47 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 사장님 지시: 모든 찌꺼기 및 유령 문구 박멸 */
     header, footer, .site-header, .site-footer, .title, b, span:first-of-type, .gh-header { 
-      display: none !important; opacity: 0 !important; visibility: hidden !important; height: 0 !important; 
+      display: none !important; opacity: 0 !important; visibility: hidden !important; 
     }
-
-    :root { 
-      --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98);
-    }
-
+    :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     .museum-full-layer { position: relative; width: 100%; min-height: 100vh; background-color: var(--bg); z-index: 999999; font-family: 'Noto Sans KR', sans-serif; }
     body { margin: 0; padding: 0; background-color: var(--bg); overflow-x: hidden; }
 
-    /* 🖼️ 상단 황금비율 레이아웃 (복구 완료) */
+    /* 상단 영역 */
     .main-title-area { padding: 60px 0; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
-    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; flex-shrink: 0; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; }
-    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease-in-out; }
+    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; }
+    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; }
     .fame-slide.active { opacity: 1; z-index: 2; }
     .fame-slide img { width: 100%; height: 100%; object-fit: cover; }
-    .center-group { text-align: center; flex: 0 0 420px; }
     .header-mascot { width: 180px; height: 180px; border-radius: 50%; background: white; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); margin-bottom: 20px; }
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
-    .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
 
-    /* 📌 스마트 책갈피 */
-    .sticky-header { background: #2d2926; padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-    .toggle-bar { max-width: 1200px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 0 25px 5px; }
-    .toggle-btn { background: none; border: 1px solid #555; color: #888; font-size: 0.75rem; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
-    .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
-    .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
-    .category-row { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.08); padding: 12px 25px; border-radius: 18px; }
-    .main-label { color: var(--primary); font-weight: 900; min-width: 110px; font-size: 0.9rem; border-right: 2px solid #555; }
-    .sub-btns-scroll { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-    .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 22px; border-radius: 25px; cursor: pointer; font-size: 0.9rem; }
-    .filter-btn.active { background: var(--primary); color: #1a1a1a; font-weight: 800; box-shadow: 0 0 15px rgba(250,176,5,0.4); }
-
-    /* 🏛️ 그리드 */
+    /* 필터 및 그리드 */
+    .sticky-header { background: #2d2926; padding: 15px 0; position: sticky; top: 0; z-index: 1000; }
     .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
-    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; }
-    .card:hover { transform: translateY(-20px); }
-    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
+    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; }
+    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .content { padding: 45px; text-align: center; border-top: 1px solid #f9f9f9; }
+    .content { padding: 45px; text-align: center; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 20px; }
-    .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 18px; border-radius: 15px; font-weight: 800; margin-right: 10px; }
+    .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 18px; border-radius: 15px; font-weight: 800; margin-right: 8px; }
 
-    /* 🖼️ 사장님 지시: 상세창 라벨링 및 마우스 추적 줌 */
+    /* 💎 사장님이 원하신 '설명 라벨링' 상세창 디자인 */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 9999999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
-    .modal-content { background: white; max-width: 1350px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
-    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; }
-    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center; }
+    .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
+    .modal-img-area { flex: 1.4; background: #fff; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; border-right: 1px solid #f0f0f0; }
+    .modal-img-wrapper { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center; cursor: zoom-in; }
     #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
     
-    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; color: #333; }
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
-    .close-btn { position: absolute; top: 45px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
-
-    /* 💎 사장님 지시: 가독성 극대화 상세 정보 라벨 */
     .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; }
-    .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; display: block; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; display: block; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
     .info-value { font-size: 1.7rem; font-weight: 600; display: block; color: var(--dark); }
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.95); border-radius: 50%; border: none; font-size: 2.5rem; cursor: pointer; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
   </style>
 </head>
 <body>
@@ -77,16 +56,16 @@
     <div class="center-group">
       <img src="https://bosswise.github.io/figure-DB/images/mascot.png" class="header-mascot">
       <h1 class="museum-title" onclick="window.location.reload()">피규어 박물관</h1>
-      <div class="total-stats-badge" id="totalStats">박물관 개장 중...</div>
+      <div id="totalStats" style="margin-top:15px; font-weight:800; color:var(--primary); background:var(--dark); padding:8px 20px; border-radius:20px; display:inline-block;">총 0점의 명작 전시 중</div>
     </div>
     <div class="hall-of-fame" id="fameRight"></div>
   </div>
   <div class="sticky-header">
-    <div class="toggle-bar"><button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 책갈피 접기 ]</button></div>
-    <div class="bookmark-container" id="filterMenu"></div>
+    <div style="max-width:1200px; margin:0 auto; padding: 0 25px;"><div id="filterMenu" style="display:flex; flex-direction:column; gap:10px;"></div></div>
   </div>
   <div class="container"><div id="figureGrid" class="grid"></div></div>
 </div>
+
 <div id="detailModal" class="modal" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -98,6 +77,7 @@
     <div class="modal-info-area" id="modalInfo"></div>
   </div>
 </div>
+
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
@@ -141,13 +121,17 @@
       if (!menuMap[cat]) menuMap[cat] = new Set(); menuMap[cat].add(series);
     });
     const filterMenu = document.getElementById('filterMenu');
-    filterMenu.innerHTML = `<div class="category-row"><button class="filter-btn active" onclick="filterBy('all', this)">전체보기</button></div>`;
+    filterMenu.innerHTML = `<div style="display:flex; gap:10px; flex-wrap:wrap; padding:15px 0;"><button onclick="filterBy('all', this)" style="background:var(--primary); color:#1a1a1a; padding:8px 20px; border-radius:20px; border:none; font-weight:800; cursor:pointer;">전체보기</button></div>`;
     for (const [cat, seriesSet] of Object.entries(menuMap)) {
-      const row = document.createElement('div'); row.className = 'category-row';
-      let icon = cat.includes('GAME') ? '🎮 ' : cat.includes('VOCAL') ? '🎤 ' : '📦 ';
-      let html = `<span class="main-label">${icon}${cat.toUpperCase()}</span><div class="sub-btns-scroll">`;
-      seriesSet.forEach(s => { html += `<button class="filter-btn" onclick="filterBy('${s}', this)">${s}</button>`; });
-      row.innerHTML = html + `</div></div>`;
+      const row = document.createElement('div');
+      row.innerHTML = `<span style="color:var(--primary); font-weight:900; margin-right:15px;">${cat}</span>`;
+      seriesSet.forEach(s => {
+        const btn = document.createElement('button');
+        btn.innerText = s;
+        btn.style = "background:#45403c; color:#a5a09c; border:none; padding:6px 15px; border-radius:15px; cursor:pointer; margin-right:8px;";
+        btn.onclick = (e) => filterBy(s, e.target);
+        row.appendChild(btn);
+      });
       filterMenu.appendChild(row);
     }
   }
@@ -157,7 +141,7 @@
     grid.innerHTML = data.map((item, idx) => {
       const name = (item[12] && item[12] !== "") ? item[12] : item[3];
       const img = item[8].split(',')[0].trim();
-      return `<div class="card" data-series="${item[2]}" onclick="openModal(${allData.indexOf(item)})"><div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div><div class="content"><div class="char-name">${name}</div><div class="tag-wrap"><span class="tag">#${item[10]}</span><span class="tag" style="background:#eee;color:#777;">#${item[2]}</span></div></div></div>`;
+      return `<div class="card" data-series="${item[2]}" onclick="openModal(${allData.indexOf(item)})"><div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div><div class="content"><div class="char-name">${name}</div><div style="display:flex; justify-content:center; gap:8px;"><span class="tag">#${item[10]}</span><span class="tag" style="background:#eee;color:#777;">#${item[2]}</span></div></div></div>`;
     }).join('');
   }
 
@@ -165,7 +149,7 @@
     const item = allData[idx]; currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = (item[12] && item[12] !== "") ? item[12] : item[3];
     
-    // 💎 사장님 지시: 가독성 극대화 상세 라벨링 반영
+    // 💎 사장님 지시: 상세 라벨링 완벽 반영
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0;">${name}</h2></div>
       <div class="info-item"><span class="info-label">제조사</span><span class="info-value">${item[1]}</span></div>
@@ -184,8 +168,7 @@
   function updateModalImg() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
   function changeImg(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   function closeModal() { document.getElementById('detailModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-  function toggleFilters() { const menu = document.getElementById('filterMenu'); menu.classList.toggle('collapsed'); document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 카테고리 열기 ]' : '[ 책갈피 접기 ]'; }
-  function filterBy(s, btn) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.card').forEach(c => c.style.display = (s === 'all' || c.dataset.series === s) ? 'block' : 'none'); }
+  function filterBy(s, btn) { document.querySelectorAll('.card').forEach(c => c.style.display = (s === 'all' || c.dataset.series === s) ? 'block' : 'none'); }
   init();
 </script>
 </body>
