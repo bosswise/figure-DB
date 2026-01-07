@@ -38,7 +38,7 @@
     /* 그리드 */
     .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
-    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; pointer-events: auto; }
+    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; pointer-events: auto; position: relative; /* 배지 위치 기준 */ }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -63,14 +63,14 @@
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
     .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
 
-    /* 🆕 [신규 기능] 우측 사이드 퀵 메뉴 (최근 본 상품) */
+    /* 퀵 메뉴 */
     #quick-menu {
       position: fixed; right: 30px; top: 150px; width: 110px;
       background: white; border: 1px solid #ddd; z-index: 9900;
       text-align: center; border-radius: 12px; overflow: hidden;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
       font-family: 'Noto Sans KR', sans-serif;
-      display: none; /* 내용 없으면 숨김 */
+      display: none; 
     }
     .quick-header { background: #2d2926; color: white; padding: 10px 0; font-size: 0.8rem; font-weight: 700; }
     .quick-list { display: flex; flex-direction: column; }
@@ -79,9 +79,61 @@
     .quick-item img { max-width: 90%; max-height: 90%; object-fit: contain; }
     .top-btn { width: 100%; border: none; background: var(--primary); color: #2d2926; font-weight: 900; padding: 10px 0; cursor: pointer; font-size: 0.9rem; }
     .top-btn:hover { background: #e09e05; }
+
+    /* ==========================================================================
+       🆕 [추가된 1, 2, 3번 기능 스타일]
+       ========================================================================== */
+
+    /* 2. ⏳ 로딩 화면 */
+    #loading-screen {
+      position: fixed; inset: 0; background: var(--bg); z-index: 999999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.5s;
+    }
+    .loader {
+      width: 60px; height: 60px; border: 5px solid var(--primary);
+      border-bottom-color: transparent; border-radius: 50%;
+      animation: spin 1s linear infinite; margin-bottom: 20px;
+    }
+    .loading-text { font-weight: 800; color: var(--dark); font-size: 1.2rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 3. 🏷️ 한정판 배지 */
+    .card-badge {
+      position: absolute; top: 25px; left: 25px;
+      background: var(--primary); color: #2d2926;
+      padding: 6px 14px; border-radius: 20px;
+      font-weight: 900; font-size: 0.85rem;
+      box-shadow: 0 5px 15px rgba(250, 176, 5, 0.4);
+      z-index: 5; letter-spacing: 0.5px;
+    }
+
+    /* 1. 📱 모바일 반응형 (화면이 좁아지면 레이아웃 변경) */
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } 
+      .main-title-area { flex-direction: column; gap: 30px; padding-top: 30px; }
+      .hall-of-fame { display: none; } 
+      .museum-title { font-size: 2.5rem; }
+      #quick-menu { display: none !important; }
+      .modal-content { height: 80vh; width: 95%; }
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(1, 1fr); }
+      .modal-content { flex-direction: column; height: 100vh; border-radius: 0; width: 100%; }
+      .modal-img-area { flex: 1; height: 45%; }
+      .modal-info-area { flex: 1; padding: 30px; }
+      .close-btn { top: 15px; right: 15px; color: #333; z-index: 200; }
+      .container { padding: 0 20px 100px; margin: 30px auto; }
+      .card-badge { top: 15px; left: 15px; }
+    }
   </style>
 </head>
 <body>
+
+<div id="loading-screen">
+  <div class="loader"></div>
+  <div class="loading-text">명작들을 진열하고 있습니다...</div>
+</div>
 
 <div id="museum-wrapper">
   
@@ -138,7 +190,6 @@
       const response = await fetch(csvURL);
       const text = await response.text();
       
-      // 💡 쉼표 문제 해결 파서
       const rows = text.split(/\r?\n/).map(row => {
         const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
@@ -148,9 +199,17 @@
       
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
       startFameSlide(); renderFilters(); renderGrid(allData);
-      
-      // 🆕 초기화 시 최근 본 상품 로드
       renderRecentView();
+
+      // 🆕 [로딩 화면 종료]
+      setTimeout(() => {
+        const loader = document.getElementById('loading-screen');
+        if(loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
+      }, 800);
+
     } catch (e) { console.error("에러 발생:", e); }
   }
 
@@ -201,7 +260,14 @@
       const name = getProductName(item); 
       if (!item[8]) return '';
       const img = item[8].split(',')[0].trim();
+      
+      // 🆕 3. [한정판 배지 로직] TRUE면 배지 생성
+      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') 
+        ? `<div class="card-badge">LIMITED</div>` 
+        : '';
+
       return `<div class="card" data-series="${item[2]}" onclick="window.openModal(${allData.indexOf(item)})">
+        ${badgeHtml}
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>
         <div class="content">
           <div class="char-name">${name}</div>
@@ -214,27 +280,20 @@
     }).join('');
   }
 
-  // 🆕 최근 본 상품 저장 함수
   function saveRecentView(idx) {
     let recent = JSON.parse(localStorage.getItem('recentFigures') || '[]');
-    // 이미 있으면 삭제(맨 위로 올리기 위해)
     recent = recent.filter(id => id !== idx);
-    // 맨 앞에 추가
     recent.unshift(idx);
-    // 최대 5개까지만 유지
     if (recent.length > 5) recent.pop();
-    
     localStorage.setItem('recentFigures', JSON.stringify(recent));
     renderRecentView();
   }
 
-  // 🆕 최근 본 상품 렌더링 함수
   function renderRecentView() {
     const recent = JSON.parse(localStorage.getItem('recentFigures') || '[]');
     const container = document.getElementById('quick-items-container');
     const menu = document.getElementById('quick-menu');
     
-    // 데이터가 없으면 숨김
     if (recent.length === 0) {
       menu.style.display = 'none';
       return;
@@ -251,15 +310,12 @@
     }).join('');
   }
 
-  // 🆕 TOP 버튼 기능
   function scrollToTop() {
     document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   window.openModal = function(idx) {
-    // 🆕 모달 열 때 최근 본 상품 저장
     saveRecentView(idx);
-
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
