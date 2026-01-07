@@ -51,13 +51,32 @@
     .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
     .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
     .category-row { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.08); padding: 12px 25px; border-radius: 18px; }
-    .sub-btns-scroll { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+    
+    /* 🛠️ 가로 짤림 해결: 버튼 스크롤 영역 수정 */
+    .sub-btns-scroll { 
+      display: flex; 
+      gap: 10px; 
+      overflow-x: auto; 
+      white-space: nowrap; 
+      scrollbar-width: none; /* 파이어폭스용 */
+      -ms-overflow-style: none; /* 인터넷 익스플로러용 */
+      flex-wrap: wrap; /* 💡 일정 길이가 넘으면 자동으로 다음 줄로 넘김 */
+    }
+    .sub-btns-scroll::-webkit-scrollbar { display: none; } /* 크롬용 스크롤바 숨기기 */
+
     .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
 
-    /* 🆕 제조사 필터 행 스타일 */
-    .maker-row { display: flex; align-items: center; gap: 15px; padding: 5px 25px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px; }
-    .maker-label { color: #888; font-size: 0.75rem; font-weight: 800; white-space: nowrap; }
+    /* 🆕 제조사 필터 행 스타일 - 짤림 방지 보강 */
+    .maker-row { 
+      display: flex; 
+      align-items: flex-start; /* 높이가 변해도 정렬 유지 */
+      gap: 15px; 
+      padding: 15px 25px; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+      margin-top: 5px; 
+    }
+    .maker-label { color: #888; font-size: 0.75rem; font-weight: 800; white-space: nowrap; margin-top: 8px; }
     .filter-count { font-size: 0.7rem; background: rgba(0,0,0,0.3); color: #ccc; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
     
     /* 그리드 */
