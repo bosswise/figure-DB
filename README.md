@@ -30,7 +30,6 @@
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
     .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
     
-    /* 컨트롤 바 */
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     
@@ -48,8 +47,8 @@
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
     
     /* 그리드 */
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 50px; min-height: 50vh; }
-    #grid-top { height: 1px; } /* 페이지 이동 시 포커스용 */
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 100px; min-height: 60vh; }
+    #grid-top { height: 1px; } 
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
@@ -105,6 +104,7 @@
     #loading-screen {
       position: fixed; inset: 0; background: var(--bg); z-index: 999999;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.5s;
     }
     .loader { width: 60px; height: 60px; border: 5px solid var(--primary); border-bottom-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -113,7 +113,6 @@
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .museum-footer { text-align: center; padding: 50px 0; color: #999; font-size: 0.9rem; border-top: 1px solid #e0e0e0; margin-top: 50px; }
 
-    /* 모바일 반응형 */
     @media (max-width: 1024px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } 
       .main-title-area { flex-direction: column; gap: 30px; }
@@ -168,13 +167,13 @@
   </div>
 
   <div class="container">
-    <div id="grid-top"></div> <div id="figureGrid" class="grid"></div>
-    
+    <div id="grid-top"></div> 
+    <div id="figureGrid" class="grid"></div>
     <div id="pagination" class="pagination"></div>
 
     <div class="museum-footer">
       <p>© 2026 Figure Museum Archive. All rights reserved.</p>
-      <p>모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
+      <p>Data curated from various figure databases & official manufacturers.</p>
     </div>
   </div>
 </div>
@@ -196,13 +195,13 @@
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
-  let allData = [], currentDisplayData = []; // 필터링된 현재 데이터
+  let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all';
 
   // 🆕 페이지네이션 설정
   let currentPage = 1;
-  const rowsPerPage = 12; // 한 페이지에 12개씩
+  const rowsPerPage = 12;
 
   async function init() {
     try {
@@ -213,11 +212,11 @@
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
       allData = rows.slice(1).filter(r => r[8]);
-      currentDisplayData = [...allData]; // 초기값은 전체 데이터
+      currentDisplayData = [...allData]; 
 
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
       startFameSlide(); renderFilters(); 
-      updateDisplay(); // 그리드와 페이지네이션 동시 업데이트
+      updateDisplay(); // 초기 화면 렌더링
       renderRecentView();
 
       setTimeout(() => {
@@ -227,11 +226,9 @@
     } catch (e) { console.error(e); }
   }
 
-  // 🆕 그리드와 페이지네이션을 갱신하는 핵심 함수
+  // 🆕 [핵심 기능] 그리드와 페이지네이션 업데이트
   function updateDisplay() {
     const totalPages = Math.ceil(currentDisplayData.length / rowsPerPage);
-    
-    // 현재 페이지에 해당하는 데이터만 추출
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     const pagedData = currentDisplayData.slice(start, end);
@@ -261,7 +258,7 @@
     }).join('');
   }
 
-  // 🆕 페이지 버튼 렌더링
+  // 🆕 페이지네이션 버튼 생성
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     if (totalPages <= 1) {
@@ -270,48 +267,55 @@
     }
 
     let html = `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
+    
+    // 페이지 번호 생성
     for (let i = 1; i <= totalPages; i++) {
       html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     }
+
     html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
     
     pagination.innerHTML = html;
   }
 
-  // 🆕 페이지 변경 함수
+  // 🆕 페이지 클릭 이벤트
   window.changePage = function(page) {
     currentPage = page;
     updateDisplay();
-    // 페이지 이동 시 상단으로 스크롤 (목록 시작점으로)
+    // 목록 상단으로 스크롤 이동
     document.getElementById('museum-wrapper').scrollTo({
       top: document.getElementById('grid-top').offsetTop - 100,
       behavior: 'smooth'
     });
   }
 
-  // 검색/필터 시 currentPage를 1로 초기화해야 함
+  // 🆕 검색 기능 연동
   window.filterSearch = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     currentDisplayData = allData.filter(item => {
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
-      const nameMatch = (item[3] || "").toLowerCase().includes(query) || (item[1] || "").toLowerCase().includes(query);
-      return seriesMatch && nameMatch;
+      const name = (item[3] || "").toLowerCase();
+      const maker = (item[1] || "").toLowerCase();
+      const series = (item[2] || "").toLowerCase();
+      const textMatch = name.includes(query) || maker.includes(query) || series.includes(query);
+      return seriesMatch && textMatch;
     });
-    currentPage = 1;
+    currentPage = 1; // 검색 시 1페이지로 리셋
     updateDisplay();
   }
 
+  // 🆕 필터 기능 연동
   window.filterBy = function(s, btn) { 
     activeFilter = s;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
     btn.classList.add('active'); 
     document.getElementById('searchInput').value = '';
     currentDisplayData = allData.filter(item => s === 'all' || item[2] === s);
-    currentPage = 1;
+    currentPage = 1; // 필터 시 1페이지로 리셋
     updateDisplay();
   }
 
-  // (기존 나머지 함수들: FameSlide, Filters, Modal 등은 그대로 유지)
+  // 명예의 전당 슬라이드
   function startFameSlide() {
     const portraits = allData.filter(item => {
         const img = item[8] ? item[8].split(',')[0].trim() : "";
