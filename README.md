@@ -190,8 +190,8 @@
     <div id="figureGrid" class="grid"></div>
     
     <div class="museum-footer">
-      <p>© 2024 Figure Museum Archive. All rights reserved.</p>
-      <p>Data collected from ManiaHouse & Personal Collection.</p>
+      <p>© 2026 Figure Museum Archive. All rights reserved.</p>
+      <p>Data curated from various figure databases & official manufacturers.</p>
     </div>
   </div>
 </div>
