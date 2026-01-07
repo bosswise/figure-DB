@@ -40,6 +40,13 @@
     .search-input:focus { background: white; color: var(--dark); border-color: var(--primary); outline: none; }
     .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-size: 14px; }
     
+    /* 🆕 정렬 선택창 스타일 */
+    .sort-select {
+      background: #45403c; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 20px;
+      font-family: inherit; font-size: 0.85rem; cursor: pointer; outline: none;
+    }
+    .sort-select:focus { border-color: var(--primary); }
+
     .toggle-btn { background: none; border: 1px solid #666; color: #999; font-size: 0.75rem; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
     .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
     .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
@@ -47,9 +54,14 @@
     .sub-btns-scroll { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
+
+    /* 🆕 제조사 필터 행 스타일 */
+    .maker-row { display: flex; align-items: center; gap: 15px; padding: 5px 25px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px; }
+    .maker-label { color: #888; font-size: 0.75rem; font-weight: 800; white-space: nowrap; }
+    .filter-count { font-size: 0.7rem; background: rgba(0,0,0,0.3); color: #ccc; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
     
     /* 그리드 */
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 50px; min-height: 60vh; }
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
@@ -188,23 +200,38 @@
     <div class="control-bar">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="이름, 제조사 검색..." onkeyup="filterSearch()">
+        <input type="text" id="searchInput" class="search-input" placeholder="이름, 제조사 검색..." onkeyup="applyFilters()">
       </div>
-      <div class="toggle-bar" style="margin:0; padding:0;">
-        <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 책갈피 접기 ]</button>
+      
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <select id="sortOrder" class="sort-select" onchange="applyFilters()">
+          <option value="default">기본 순서</option>
+          <option value="priceHigh">높은 가격순</option>
+          <option value="priceLow">낮은 가격순</option>
+          <option value="nameAsc">이름 (가나다)</option>
+        </select>
+        <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 필터 열기 ]</button>
       </div>
     </div>
-    <div class="bookmark-container" id="filterMenu"></div>
+
+    <div class="bookmark-container collapsed" id="filterMenu">
+      <div id="seriesButtons"></div>
+      <div class="maker-row" id="makerButtons">
+        <span class="maker-label">MAKER</span>
+        <div class="sub-btns-scroll" id="makerList"></div>
+      </div>
+    </div>
   </div>
 
   <div class="container">
+    <div id="grid-top"></div> 
     <div id="figureGrid" class="grid"></div>
     
     <div id="pagination" class="pagination"></div>
     
     <div class="museum-footer">
       <p>© 2026 Figure Museum Archive. All rights reserved.</p>
-      <p>Data curated from various figure databases & official manufacturers.</p>
+      <p>모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
     </div>
   </div>
 </div>
@@ -229,10 +256,11 @@
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
+  let activeMaker = 'all';
 
   // 페이지네이션 설정
   let currentPage = 1;
-  const rowsPerPage = 12; // 페이지당 상품 수
+  const rowsPerPage = 12;
 
   async function init() {
     try {
@@ -255,17 +283,13 @@
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
       startFameSlide(); 
       renderFilters(); 
-      updateDisplay(); // 페이지네이션 포함 렌더링
+      updateDisplay(); 
       renderRecentView();
 
       setTimeout(() => {
         const loader = document.getElementById('loading-screen');
-        if(loader) {
-          loader.style.opacity = '0';
-          setTimeout(() => { loader.style.display = 'none'; }, 500);
-        }
+        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
       }, 800);
-
     } catch (e) { console.error("에러 발생:", e); }
   }
 
@@ -273,11 +297,79 @@
     return item[3] ? item[3].trim() : ""; 
   }
 
-  // 🆕 페이지네이션 포함 그리드 업데이트 로직
+  // 🆕 필터 렌더링 (시리즈 + 제조사 자동 추출 및 카운팅)
+  function renderFilters() {
+    const seriesSet = new Set();
+    const makerSet = new Set();
+    const seriesCount = {};
+    const makerCount = {};
+
+    allData.forEach(item => {
+      const series = item[2] || "ETC";
+      const maker = item[1] || "정보없음";
+      seriesSet.add(series);
+      makerSet.add(maker);
+      seriesCount[series] = (seriesCount[series] || 0) + 1;
+      makerCount[maker] = (makerCount[maker] || 0) + 1;
+    });
+
+    // 1. 시리즈 버튼 생성
+    const seriesContainer = document.getElementById('seriesButtons');
+    let seriesHtml = `<div class="category-row"><button class="filter-btn active" data-type="series" onclick="filterBy('series', 'all', this)">전체보기 <span class="filter-count">${allData.length}</span></button><div class="sub-btns-scroll">`;
+    Array.from(seriesSet).sort().forEach(s => {
+      seriesHtml += `<button class="filter-btn" data-type="series" onclick="filterBy('series', '${s}', this)">${s} <span class="filter-count">${seriesCount[s]}</span></button>`;
+    });
+    seriesContainer.innerHTML = seriesHtml + `</div></div>`;
+
+    // 2. 제조사 버튼 생성
+    const makerList = document.getElementById('makerList');
+    let makerHtml = `<button class="filter-btn active" data-type="maker" onclick="filterBy('maker', 'all', this)">ALL</button>`;
+    Array.from(makerSet).sort().forEach(m => {
+      makerHtml += `<button class="filter-btn" data-type="maker" onclick="filterBy('maker', '${m}', this)">${m} <span class="filter-count">${makerCount[m]}</span></button>`;
+    });
+    makerList.innerHTML = makerHtml;
+  }
+
+  // 🆕 필터 및 정렬 통합 적용 함수
+  window.applyFilters = function() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const sortVal = document.getElementById('sortOrder').value;
+
+    let filtered = allData.filter(item => {
+      const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
+      const makerMatch = (activeMaker === 'all' || item[1] === activeMaker);
+      const name = getProductName(item).toLowerCase();
+      const maker = (item[1] || "").toLowerCase();
+      const series = (item[2] || "").toLowerCase();
+      const textMatch = name.includes(query) || maker.includes(query) || series.includes(query);
+      return seriesMatch && makerMatch && textMatch;
+    });
+
+    // 정렬 로직 적용
+    if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[5]) || 0) - (parseInt(a[5]) || 0));
+    else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[5]) || 0) - (parseInt(b[5]) || 0));
+    else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
+
+    currentDisplayData = filtered;
+    currentPage = 1;
+    updateDisplay();
+  }
+
+  // 🆕 필터 클릭 이벤트
+  window.filterBy = function(type, value, btn) {
+    if (type === 'series') {
+      activeFilter = value;
+      document.querySelectorAll('[data-type="series"]').forEach(b => b.classList.remove('active'));
+    } else {
+      activeMaker = value;
+      document.querySelectorAll('[data-type="maker"]').forEach(b => b.classList.remove('active'));
+    }
+    btn.classList.add('active');
+    applyFilters();
+  }
+
   function updateDisplay() {
     const totalPages = Math.ceil(currentDisplayData.length / rowsPerPage);
-    
-    // 현재 페이지에 해당하는 데이터 슬라이스
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     const pagedData = currentDisplayData.slice(start, end);
@@ -288,20 +380,15 @@
 
   function renderGrid(data) {
     const grid = document.getElementById('figureGrid');
-    
     if (data.length === 0) {
-      grid.innerHTML = `<div class="no-result"><h3>😢 전시된 피규어가 없습니다.</h3><p>다른 검색어로 찾아보세요.</p></div>`;
+      grid.innerHTML = `<div class="no-result"><h3>😢 전시된 피규어가 없습니다.</h3><p>다른 필터나 검색어를 사용해 보세요.</p></div>`;
       return;
     }
 
-    grid.innerHTML = data.map((item, idx) => {
+    grid.innerHTML = data.map((item) => {
       const name = getProductName(item); 
-      if (!item[8]) return '';
       const img = item[8].split(',')[0].trim();
-      
-      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') 
-        ? `<div class="card-badge">LIMITED</div>` 
-        : '';
+      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
 
       return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
         ${badgeHtml}
@@ -317,83 +404,38 @@
     }).join('');
   }
 
-  // 🆕 [지능형 페이지네이션] 버튼 렌더링 로직
+  // 🆕 [지능형 페이지네이션]
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
-    if (totalPages <= 1) {
-      pagination.innerHTML = '';
-      return;
-    }
+    if (totalPages <= 1) { pagination.innerHTML = ''; return; }
 
     let html = '';
-    
-    // 1. 처음으로 (<<)
-    html += `<button class="page-btn" onclick="changePage(1)" title="처음으로" ${currentPage === 1 ? 'disabled' : ''}>&lt;&lt;</button>`;
-    
-    // 2. 이전 (<)
+    html += `<button class="page-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&lt;&lt;</button>`;
     html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
 
-    // 지능형 범위 계산 (현재 페이지 기준 앞뒤 2개씩 노출)
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + 4);
-
-    if (endPage - startPage < 4) {
-      startPage = Math.max(1, endPage - 4);
-    }
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
     for (let i = startPage; i <= endPage; i++) {
-      if(i > 0) {
-        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-      }
+      if(i > 0) html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     }
 
-    // 3. 다음 (>)
     html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
-
-    // 4. 끝으로 (>>)
-    html += `<button class="page-btn" onclick="changePage(${totalPages})" title="끝으로" ${currentPage === totalPages ? 'disabled' : ''}>&gt;&gt;</button>`;
-    
+    html += `<button class="page-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;&gt;</button>`;
     pagination.innerHTML = html;
   }
 
   window.changePage = function(page) {
     currentPage = page;
     updateDisplay();
-    // 페이지 이동 시 그리드 상단으로 부드럽게 스크롤
     document.getElementById('museum-wrapper').scrollTo({
-      top: document.querySelector('.main-title-area').offsetHeight + document.querySelector('.sticky-header').offsetHeight,
+      top: document.querySelector('.main-title-area').offsetHeight + document.querySelector('.sticky-header').offsetHeight - 50,
       behavior: 'smooth'
     });
   }
 
-  window.filterSearch = function() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    
-    currentDisplayData = allData.filter(item => {
-      const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
-      const name = getProductName(item).toLowerCase();
-      const maker = (item[1] || "").toLowerCase();
-      const series = (item[2] || "").toLowerCase();
-      const textMatch = name.includes(query) || maker.includes(query) || series.includes(query);
-      return seriesMatch && textMatch;
-    });
-    
-    currentPage = 1; // 검색 시 1페이지로 리셋
-    updateDisplay();
-  }
-
-  window.filterBy = function(s, btn) { 
-    activeFilter = s;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
-    btn.classList.add('active'); 
-    document.getElementById('searchInput').value = '';
-    
-    currentDisplayData = allData.filter(item => s === 'all' || item[2] === s);
-    currentPage = 1; // 필터 시 1페이지로 리셋
-    updateDisplay();
-  }
-
-  // 명예의 전당 슬라이드 로직
+  // 명예의 전당 슬라이드
   function startFameSlide() {
     const portraits = allData.filter(item => {
         const img = item[8] ? item[8].split(',')[0].trim() : "";
@@ -404,31 +446,10 @@
       const target = document.getElementById(id);
       const items = shuffle.slice(startIdx, startIdx + 3);
       if(items.length === 0) return;
-      target.innerHTML = items.map((it, idx) => {
-          const img = it[8].split(',')[0].trim();
-          return `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>`;
-      }).join('');
+      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
       let cur = 0; setInterval(() => { const slides = target.querySelectorAll('.fame-slide'); if(slides.length > 0) { slides[cur].classList.remove('active'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active'); } }, 4000);
     }
     build('fameLeft', 0); build('fameRight', 3);
-  }
-
-  function renderFilters() {
-    const menuMap = {};
-    allData.forEach(item => {
-      const cat = item[10] || "ETC"; const series = item[2] || "ETC";
-      if (!menuMap[cat]) menuMap[cat] = new Set(); menuMap[cat].add(series);
-    });
-    const filterMenu = document.getElementById('filterMenu');
-    filterMenu.innerHTML = `<div class="category-row"><button class="filter-btn active" onclick="filterBy('all', this)">전체보기</button></div>`;
-    for (const [cat, seriesSet] of Object.entries(menuMap)) {
-      const row = document.createElement('div'); row.className = 'category-row';
-      let icon = cat.includes('GAME') ? '🎮 ' : cat.includes('VOCAL') ? '🎤 ' : '📦 ';
-      let html = `<span class="main-label">${icon}${cat.toUpperCase()}</span><div class="sub-btns-scroll">`;
-      seriesSet.forEach(s => { html += `<button class="filter-btn" onclick="filterBy('${s}', this)">${s}</button>`; });
-      row.innerHTML = html + `</div></div>`;
-      filterMenu.appendChild(row);
-    }
   }
 
   function saveRecentView(idx) {
@@ -444,26 +465,16 @@
     const recent = JSON.parse(localStorage.getItem('recentFigures') || '[]');
     const container = document.getElementById('quick-items-container');
     const menu = document.getElementById('quick-menu');
-    
-    if (recent.length === 0) {
-      menu.style.display = 'none';
-      return;
-    }
+    if (recent.length === 0) { menu.style.display = 'none'; return; }
     menu.style.display = 'block';
-
     container.innerHTML = recent.map(idx => {
       const item = allData[idx];
       if (!item) return '';
-      const img = item[8].split(',')[0].trim();
-      return `<div class="quick-item" onclick="window.openModal(${idx})">
-        <img src="${imageBaseURL}${encodeURIComponent(img)}.jpg">
-      </div>`;
+      return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg"></div>`;
     }).join('');
   }
 
-  function scrollToTop() {
-    document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
   window.openModal = function(idx) {
     saveRecentView(idx);
@@ -471,7 +482,6 @@
     if(!item || !item[8]) return;
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = getProductName(item);
-    
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
@@ -490,7 +500,11 @@
   window.updateModalImg = function() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
   window.changeImg = function(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   window.closeModal = function() { document.getElementById('detailModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-  window.toggleFilters = function() { const menu = document.getElementById('filterMenu'); menu.classList.toggle('collapsed'); document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 카테고리 열기 ]' : '[ 책갈피 접기 ]'; }
+  window.toggleFilters = function() { 
+    const menu = document.getElementById('filterMenu'); 
+    menu.classList.toggle('collapsed'); 
+    document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
+  }
   
   init();
 </script>
