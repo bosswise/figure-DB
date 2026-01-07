@@ -1,3 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피규어 박물관</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* 🚨 사장님 원본 스타일 그대로 유지 */
+    header, footer, .site-header, .site-footer, .title, b, .gh-header { 
+      display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+    }
+    
+    :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
+    
+    /* 🛡️ 화면 전체를 덮는 레이어 */
+    #museum-wrapper {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background-color: var(--bg); z-index: 99990; overflow-y: auto;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    /* 상단 레이아웃 */
+    .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
+    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; flex-shrink: 0; }
+    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; }
+    .fame-slide.active { opacity: 1; z-index: 2; }
+    .fame-slide img { width: 100%; height: 100%; object-fit: cover; }
+    .center-group { text-align: center; flex: 0 0 450px; }
+    .header-mascot { width: 180px; height: 180px; border-radius: 50%; background: white; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); margin-bottom: 20px; }
+    .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
+    .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
+
+    /* 책갈피 */
+    .sticky-header { background: #2d2926; padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+    .toggle-bar { max-width: 1200px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 0 25px 8px; }
+    .toggle-btn { background: none; border: 1px solid #666; color: #999; font-size: 0.75rem; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
+    .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
+    .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
+    .category-row { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.08); padding: 12px 25px; border-radius: 18px; }
+    .sub-btns-scroll { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+    .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; }
+    .filter-btn.active { background: var(--primary); color: #1a1a1a; font-weight: 800; }
+
+    /* 그리드 */
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
+    .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; pointer-events: auto; }
+    .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
+    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
+    .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
+    
+    /* 태그 스타일 */
+    .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
+    .tag.sec { background: #eee; color: #777; }
+
+    /* 상세 모달 */
+    .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 99999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
+    .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
+    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; }
+    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center; }
+    #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
+    .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
+    
+    .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
+    .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
+    
+    /* 상세 라벨링 */
+    .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
+    .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
+    .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+<div id="museum-wrapper">
+  
+  <div class="main-title-area">
+    <div class="hall-of-fame" id="fameLeft"></div>
+    <div class="center-group">
+      <img src="https://bosswise.github.io/figure-DB/images/mascot.png" class="header-mascot">
+      <h1 class="museum-title" onclick="window.location.reload()">피규어 박물관</h1>
+      <div id="totalStats" class="total-stats-badge">총 0점의 명작 전시 중</div>
+    </div>
+    <div class="hall-of-fame" id="fameRight"></div>
+  </div>
+
+  <div class="sticky-header">
+    <div class="toggle-bar"><button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 책갈피 접기 ]</button></div>
+    <div class="bookmark-container" id="filterMenu"></div>
+  </div>
+
+  <div class="container"><div id="figureGrid" class="grid"></div></div>
+
+</div>
+
+<div id="detailModal" class="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <div class="modal-img-area">
+      <button class="nav-btn" style="left:35px" onclick="changeImg(-1)">‹</button>
+      <div class="modal-img-wrapper" onmousemove="handleZoomMove(event)">
+        <img id="modalImg" src="" onclick="toggleZoom(event)">
+      </div>
+      <button class="nav-btn" style="right:35px" onclick="changeImg(1)">›</button>
+    </div>
+    <div class="modal-info-area" id="modalInfo"></div>
+  </div>
+</div>
+
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
@@ -13,33 +128,29 @@
       const response = await fetch(csvURL);
       const text = await response.text();
       
-      // 🚨 [수정됨] 쉼표 문제 해결을 위해 더 똑똑한 파서(parseCSV) 사용
+      // 🚨 [핵심 수정] 쉼표 문제를 해결하는 파서 사용
       const rows = parseCSV(text);
       
-      // 헤더 제외하고 이미지(I열, Index 8)가 있는 것만 필터링
       allData = rows.slice(1).filter(r => r[8]);
-      
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
       startFameSlide(); renderFilters(); renderGrid(allData);
     } catch (e) { console.error(e); }
   }
 
-  // 💡 [새로 추가된 기능] 이름 중간에 쉼표가 있어도 쪼개지지 않게 막아주는 함수
+  // 💡 [새로 추가] 이름 중간에 쉼표가 있어도 깨지지 않게 읽어오는 함수
   function parseCSV(str) {
     const arr = [];
-    let quote = false;  // 따옴표 안에 있는지 체크
+    let quote = false; 
     let row = 0, col = 0;
-
     for (let c = 0; c < str.length; c++) {
       let cc = str[c], nc = str[c+1];
       arr[row] = arr[row] || [];
       arr[row][col] = arr[row][col] || "";
-
-      if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; } // 따옴표 안의 따옴표 처리
-      else if (cc == '"') { quote = !quote; } // 따옴표 시작/끝
-      else if (cc == ',' && !quote) { ++col; } // 따옴표 밖의 쉼표만 칸 나누기
-      else if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; } // 줄바꿈
-      else if (cc == '\n' && !quote) { ++row; col = 0; } // 줄바꿈
+      if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; }
+      else if (cc == '"') { quote = !quote; }
+      else if (cc == ',' && !quote) { ++col; }
+      else if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; }
+      else if (cc == '\n' && !quote) { ++row; col = 0; }
       else { arr[row][col] += cc; }
     }
     return arr;
@@ -47,41 +158,25 @@
 
   // 💡 D열(Index 3)을 캐릭터 이름으로 반환
   function getProductName(item) {
-    // 혹시 데이터가 비어있을 경우를 대비해 안전장치 추가
-    return item[3] ? item[3].trim() : "이름 없음"; 
+    // 값이 없으면 빈 문자열 반환 (에러 방지)
+    return item[3] ? item[3].trim() : ""; 
   }
 
   function startFameSlide() {
-    // 숫자만 있는 파일명 제외 (인물 사진만 골라내기 위함)
     const portraits = allData.filter(item => {
         const img = item[8] ? item[8].split(',')[0].trim() : "";
         return img && !(/\d/.test(img));
     });
-    
-    // 섞기
     const shuffle = portraits.sort(() => 0.5 - Math.random());
-    
     function build(id, startIdx) {
       const target = document.getElementById(id);
-      // 데이터가 부족할 경우를 대비해 slice 범위 조정
       const items = shuffle.slice(startIdx, startIdx + 3);
-      
-      if(items.length === 0) return; // 표시할 이미지가 없으면 중단
-
+      if (items.length === 0) return;
       target.innerHTML = items.map((it, idx) => {
           const img = it[8].split(',')[0].trim();
           return `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>`;
       }).join('');
-
-      let cur = 0; 
-      setInterval(() => { 
-          const slides = target.querySelectorAll('.fame-slide'); 
-          if(slides.length > 0) { 
-              slides[cur].classList.remove('active'); 
-              cur = (cur + 1) % slides.length; 
-              slides[cur].classList.add('active'); 
-          } 
-      }, 4000);
+      let cur = 0; setInterval(() => { const slides = target.querySelectorAll('.fame-slide'); if(slides.length > 0) { slides[cur].classList.remove('active'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active'); } }, 4000);
     }
     build('fameLeft', 0); build('fameRight', 3);
   }
@@ -89,10 +184,8 @@
   function renderFilters() {
     const menuMap = {};
     allData.forEach(item => {
-      const cat = item[10] || "ETC"; 
-      const series = item[2] || "ETC";
-      if (!menuMap[cat]) menuMap[cat] = new Set(); 
-      menuMap[cat].add(series);
+      const cat = item[10] || "ETC"; const series = item[2] || "ETC";
+      if (!menuMap[cat]) menuMap[cat] = new Set(); menuMap[cat].add(series);
     });
     const filterMenu = document.getElementById('filterMenu');
     filterMenu.innerHTML = `<div class="category-row"><button class="filter-btn active" onclick="filterBy('all', this)">전체보기</button></div>`;
@@ -109,11 +202,10 @@
   function renderGrid(data) {
     const grid = document.getElementById('figureGrid');
     grid.innerHTML = data.map((item, idx) => {
+      // 💡 D열 이름 가져오기 (쉼표 있어도 잘 가져옴)
       const name = getProductName(item); 
-      // 이미지가 없는 경우 처리
       if (!item[8]) return '';
       const img = item[8].split(',')[0].trim();
-      
       return `<div class="card" data-series="${item[2]}" onclick="window.openModal(${allData.indexOf(item)})">
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>
         <div class="content">
@@ -130,12 +222,12 @@
   window.openModal = function(idx) {
     const item = allData[idx]; 
     if(!item || !item[8]) return;
-
-    currentImages = item[8].split(',').map(s => s.trim()); 
-    currentImgIdx = 0; isZoomed = false; updateModalImg();
+    currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
+    // 💡 모달 이름 D열
     const name = getProductName(item);
     
+    // 🚨 사장님 원본 모달 디자인 + [제조사: B열(item[1])] 적용
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
@@ -156,6 +248,7 @@
   window.closeModal = function() { document.getElementById('detailModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
   window.toggleFilters = function() { const menu = document.getElementById('filterMenu'); menu.classList.toggle('collapsed'); document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 카테고리 열기 ]' : '[ 책갈피 접기 ]'; }
   window.filterBy = function(s, btn) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.card').forEach(c => c.style.display = (s === 'all' || c.dataset.series === s) ? 'block' : 'none'); }
-  
   init();
 </script>
+</body>
+</html>
