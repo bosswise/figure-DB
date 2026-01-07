@@ -30,9 +30,11 @@
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
     .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
     
+    /* 🆕 검색창 및 필터 바 */
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     
+    /* 🆕 검색창 디자인 */
     .search-box { position: relative; width: 300px; }
     .search-input { width: 100%; padding: 10px 20px 10px 40px; border-radius: 25px; border: 1px solid #555; background: #45403c; color: white; font-family: inherit; transition: 0.3s; }
     .search-input:focus { background: white; color: var(--dark); border-color: var(--primary); outline: none; }
@@ -47,8 +49,7 @@
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
     
     /* 그리드 */
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 100px; min-height: 60vh; }
-    #grid-top { height: 1px; } 
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 50px; min-height: 60vh; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
@@ -60,14 +61,14 @@
     .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
     .tag.sec { background: #eee; color: #777; }
     
-    /* 🆕 페이지네이션 스타일 */
-    .pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 80px; }
+    /* 🆕 페이지네이션 스타일 최적화 */
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 60px; padding-bottom: 40px; }
     .page-btn { 
-      width: 45px; height: 45px; border-radius: 50%; border: 1px solid #ddd; 
+      min-width: 45px; height: 45px; border-radius: 22.5px; border: 1px solid #ddd; 
       background: white; color: var(--dark); font-weight: 700; cursor: pointer; 
-      transition: 0.3s; display: flex; align-items: center; justify-content: center;
+      transition: 0.3s; display: flex; align-items: center; justify-content: center; padding: 0 15px;
     }
-    .page-btn:hover { background: #f0f0f0; }
+    .page-btn:hover { background: #f0f0f0; border-color: #bbb; }
     .page-btn.active { background: var(--dark); color: var(--primary); border-color: var(--dark); }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
@@ -92,13 +93,16 @@
       background: white; border: 1px solid #ddd; z-index: 9900;
       text-align: center; border-radius: 12px; overflow: hidden;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      font-family: 'Noto Sans KR', sans-serif;
       display: none; 
     }
     .quick-header { background: #2d2926; color: white; padding: 10px 0; font-size: 0.8rem; font-weight: 700; }
     .quick-list { display: flex; flex-direction: column; }
-    .quick-item { width: 100%; height: 110px; padding: 5px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .quick-item { width: 100%; height: 110px; padding: 5px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .quick-item:hover { background: #f9f9f9; }
     .quick-item img { max-width: 90%; max-height: 90%; object-fit: contain; }
     .top-btn { width: 100%; border: none; background: var(--primary); color: #2d2926; font-weight: 900; padding: 10px 0; cursor: pointer; font-size: 0.9rem; }
+    .top-btn:hover { background: #e09e05; }
 
     /* 로딩 화면 */
     #loading-screen {
@@ -106,25 +110,52 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity 0.5s;
     }
-    .loader { width: 60px; height: 60px; border: 5px solid var(--primary); border-bottom-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+    .loader {
+      width: 60px; height: 60px; border: 5px solid var(--primary);
+      border-bottom-color: transparent; border-radius: 50%;
+      animation: spin 1s linear infinite; margin-bottom: 20px;
+    }
+    .loading-text { font-weight: 800; color: var(--dark); font-size: 1.2rem; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .card-badge { position: absolute; top: 25px; left: 25px; background: var(--primary); color: #2d2926; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; z-index: 5; }
+    /* 한정판 배지 */
+    .card-badge {
+      position: absolute; top: 25px; left: 25px;
+      background: var(--primary); color: #2d2926;
+      padding: 6px 14px; border-radius: 20px;
+      font-weight: 900; font-size: 0.85rem;
+      box-shadow: 0 5px 15px rgba(250, 176, 5, 0.4);
+      z-index: 5; letter-spacing: 0.5px;
+    }
+
+    /* 🆕 [신규] 검색 결과 없음 메시지 */
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
+    .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
+    
+    /* 🆕 [신규] 푸터 (사이트 하단 마무리) */
     .museum-footer { text-align: center; padding: 50px 0; color: #999; font-size: 0.9rem; border-top: 1px solid #e0e0e0; margin-top: 50px; }
 
+    /* 모바일 반응형 */
     @media (max-width: 1024px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } 
-      .main-title-area { flex-direction: column; gap: 30px; }
+      .main-title-area { flex-direction: column; gap: 30px; padding-top: 30px; }
       .hall-of-fame { display: none; } 
+      .museum-title { font-size: 2.5rem; }
       #quick-menu { display: none !important; }
+      .modal-content { height: 80vh; width: 95%; }
+      .search-box { width: 200px; }
     }
     @media (max-width: 600px) {
       .grid { grid-template-columns: repeat(1, 1fr); }
       .modal-content { flex-direction: column; height: 100vh; border-radius: 0; width: 100%; }
       .modal-img-area { flex: 1; height: 45%; }
       .modal-info-area { flex: 1; padding: 30px; }
-      .close-btn { top: 15px; right: 15px; }
+      .close-btn { top: 15px; right: 15px; color: #333; z-index: 200; }
+      .container { padding: 0 20px 100px; margin: 30px auto; }
+      .card-badge { top: 15px; left: 15px; }
+      .control-bar { flex-direction: column; gap: 15px; align-items: stretch; }
+      .search-box { width: 100%; }
+      .toggle-bar { justify-content: center; }
     }
   </style>
 </head>
@@ -159,7 +190,7 @@
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" class="search-input" placeholder="이름, 제조사 검색..." onkeyup="filterSearch()">
       </div>
-      <div class="toggle-bar">
+      <div class="toggle-bar" style="margin:0; padding:0;">
         <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 책갈피 접기 ]</button>
       </div>
     </div>
@@ -167,10 +198,10 @@
   </div>
 
   <div class="container">
-    <div id="grid-top"></div> 
     <div id="figureGrid" class="grid"></div>
+    
     <div id="pagination" class="pagination"></div>
-
+    
     <div class="museum-footer">
       <p>© 2026 Figure Museum Archive. All rights reserved.</p>
       <p>Data curated from various figure databases & official manufacturers.</p>
@@ -197,38 +228,56 @@
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
-  let activeFilter = 'all';
+  let activeFilter = 'all'; 
 
-  // 🆕 페이지네이션 설정
+  // 페이지네이션 설정
   let currentPage = 1;
-  const rowsPerPage = 12;
+  const rowsPerPage = 12; // 페이지당 상품 수
 
   async function init() {
     try {
+      const wrapper = document.getElementById('museum-wrapper');
+      const modal = document.getElementById('detailModal');
+      if(document.body && wrapper) document.body.appendChild(wrapper);
+      if(document.body && modal) document.body.appendChild(modal);
+
       const response = await fetch(csvURL);
       const text = await response.text();
+      
       const rows = text.split(/\r?\n/).map(row => {
         const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
+      
       allData = rows.slice(1).filter(r => r[8]);
-      currentDisplayData = [...allData]; 
-
+      currentDisplayData = [...allData];
+      
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
-      startFameSlide(); renderFilters(); 
-      updateDisplay(); // 초기 화면 렌더링
+      startFameSlide(); 
+      renderFilters(); 
+      updateDisplay(); // 페이지네이션 포함 렌더링
       renderRecentView();
 
       setTimeout(() => {
         const loader = document.getElementById('loading-screen');
-        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+        if(loader) {
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
       }, 800);
-    } catch (e) { console.error(e); }
+
+    } catch (e) { console.error("에러 발생:", e); }
   }
 
-  // 🆕 [핵심 기능] 그리드와 페이지네이션 업데이트
+  function getProductName(item) {
+    return item[3] ? item[3].trim() : ""; 
+  }
+
+  // 🆕 페이지네이션 포함 그리드 업데이트 로직
   function updateDisplay() {
     const totalPages = Math.ceil(currentDisplayData.length / rowsPerPage);
+    
+    // 현재 페이지에 해당하는 데이터 슬라이스
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     const pagedData = currentDisplayData.slice(start, end);
@@ -239,26 +288,36 @@
 
   function renderGrid(data) {
     const grid = document.getElementById('figureGrid');
+    
     if (data.length === 0) {
       grid.innerHTML = `<div class="no-result"><h3>😢 전시된 피규어가 없습니다.</h3><p>다른 검색어로 찾아보세요.</p></div>`;
       return;
     }
-    grid.innerHTML = data.map((item) => {
-      const name = item[3] || ""; 
+
+    grid.innerHTML = data.map((item, idx) => {
+      const name = getProductName(item); 
+      if (!item[8]) return '';
       const img = item[8].split(',')[0].trim();
-      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
+      
+      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') 
+        ? `<div class="card-badge">LIMITED</div>` 
+        : '';
+
       return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
         ${badgeHtml}
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg" loading="lazy"></div>
         <div class="content">
           <div class="char-name">${name}</div>
-          <div class="tag-wrap"><span class="tag">#${item[10] || ''}</span><span class="tag sec">#${item[2] || ''}</span></div>
+          <div class="tag-wrap">
+            <span class="tag">#${item[10] || ''}</span>
+            <span class="tag sec">#${item[2] || ''}</span>
+          </div>
         </div>
       </div>`;
     }).join('');
   }
 
-  // 🆕 페이지네이션 버튼 생성
+  // 🆕 [지능형 페이지네이션] 버튼 렌더링 로직
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     if (totalPages <= 1) {
@@ -266,56 +325,75 @@
       return;
     }
 
-    let html = `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
+    let html = '';
     
-    // 페이지 번호 생성
-    for (let i = 1; i <= totalPages; i++) {
-      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+    // 1. 처음으로 (<<)
+    html += `<button class="page-btn" onclick="changePage(1)" title="처음으로" ${currentPage === 1 ? 'disabled' : ''}>&lt;&lt;</button>`;
+    
+    // 2. 이전 (<)
+    html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
+
+    // 지능형 범위 계산 (현재 페이지 기준 앞뒤 2개씩 노출)
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+
+    if (endPage - startPage < 4) {
+      startPage = Math.max(1, endPage - 4);
     }
 
+    for (let i = startPage; i <= endPage; i++) {
+      if(i > 0) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+      }
+    }
+
+    // 3. 다음 (>)
     html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
+
+    // 4. 끝으로 (>>)
+    html += `<button class="page-btn" onclick="changePage(${totalPages})" title="끝으로" ${currentPage === totalPages ? 'disabled' : ''}>&gt;&gt;</button>`;
     
     pagination.innerHTML = html;
   }
 
-  // 🆕 페이지 클릭 이벤트
   window.changePage = function(page) {
     currentPage = page;
     updateDisplay();
-    // 목록 상단으로 스크롤 이동
+    // 페이지 이동 시 그리드 상단으로 부드럽게 스크롤
     document.getElementById('museum-wrapper').scrollTo({
-      top: document.getElementById('grid-top').offsetTop - 100,
+      top: document.querySelector('.main-title-area').offsetHeight + document.querySelector('.sticky-header').offsetHeight,
       behavior: 'smooth'
     });
   }
 
-  // 🆕 검색 기능 연동
   window.filterSearch = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
+    
     currentDisplayData = allData.filter(item => {
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
-      const name = (item[3] || "").toLowerCase();
+      const name = getProductName(item).toLowerCase();
       const maker = (item[1] || "").toLowerCase();
       const series = (item[2] || "").toLowerCase();
       const textMatch = name.includes(query) || maker.includes(query) || series.includes(query);
       return seriesMatch && textMatch;
     });
+    
     currentPage = 1; // 검색 시 1페이지로 리셋
     updateDisplay();
   }
 
-  // 🆕 필터 기능 연동
   window.filterBy = function(s, btn) { 
     activeFilter = s;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
     btn.classList.add('active'); 
     document.getElementById('searchInput').value = '';
+    
     currentDisplayData = allData.filter(item => s === 'all' || item[2] === s);
     currentPage = 1; // 필터 시 1페이지로 리셋
     updateDisplay();
   }
 
-  // 명예의 전당 슬라이드
+  // 명예의 전당 슬라이드 로직
   function startFameSlide() {
     const portraits = allData.filter(item => {
         const img = item[8] ? item[8].split(',')[0].trim() : "";
@@ -326,7 +404,10 @@
       const target = document.getElementById(id);
       const items = shuffle.slice(startIdx, startIdx + 3);
       if(items.length === 0) return;
-      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
+      target.innerHTML = items.map((it, idx) => {
+          const img = it[8].split(',')[0].trim();
+          return `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg"></div>`;
+      }).join('');
       let cur = 0; setInterval(() => { const slides = target.querySelectorAll('.fame-slide'); if(slides.length > 0) { slides[cur].classList.remove('active'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active'); } }, 4000);
     }
     build('fameLeft', 0); build('fameRight', 3);
@@ -363,24 +444,36 @@
     const recent = JSON.parse(localStorage.getItem('recentFigures') || '[]');
     const container = document.getElementById('quick-items-container');
     const menu = document.getElementById('quick-menu');
-    if (recent.length === 0) { menu.style.display = 'none'; return; }
+    
+    if (recent.length === 0) {
+      menu.style.display = 'none';
+      return;
+    }
     menu.style.display = 'block';
+
     container.innerHTML = recent.map(idx => {
       const item = allData[idx];
       if (!item) return '';
-      return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg"></div>`;
+      const img = item[8].split(',')[0].trim();
+      return `<div class="quick-item" onclick="window.openModal(${idx})">
+        <img src="${imageBaseURL}${encodeURIComponent(img)}.jpg">
+      </div>`;
     }).join('');
   }
 
-  function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
+  function scrollToTop() {
+    document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   window.openModal = function(idx) {
     saveRecentView(idx);
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
+    const name = getProductName(item);
+    
     document.getElementById('modalInfo').innerHTML = `
-      <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${item[3]}</h2></div>
+      <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
       <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
       <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
