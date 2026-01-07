@@ -137,12 +137,9 @@
     } catch (e) { console.error(e); }
   }
 
-  // 💡 [핵심] M열이 없으면 B열(item[1])을 가져오는 함수 (이거 하나만 딱 추가!)
+  // 💡 [수정] D열(Index 3)을 캐릭터 이름으로 반환
   function getProductName(item) {
-    // 원본 코드에서는 item[3]이었지만, B열은 item[1]이 정확합니다.
-    const mCol = item[12];
-    const bCol = item[1]; 
-    return (mCol && mCol.trim() !== "") ? mCol : bCol;
+    return item[3]; 
   }
 
   function startFameSlide() {
@@ -178,7 +175,7 @@
   function renderGrid(data) {
     const grid = document.getElementById('figureGrid');
     grid.innerHTML = data.map((item, idx) => {
-      // 💡 여기서 getProductName 사용
+      // 💡 D열 이름 가져오기
       const name = getProductName(item); 
       const img = item[8].split(',')[0].trim();
       return `<div class="card" data-series="${item[2]}" onclick="window.openModal(${allData.indexOf(item)})">
@@ -196,10 +193,10 @@
 
   window.openModal = function(idx) {
     const item = allData[idx]; currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
-    // 💡 모달 이름에도 getProductName 적용
+    // 💡 모달 이름 D열
     const name = getProductName(item);
     
-    // 🚨 사장님 원본 모달 디자인 (유형, 한정판, 특이사항까지) 100% 복구 완료
+    // 🚨 사장님 원본 모달 디자인 + [제조사: B열(item[1])] 적용
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1]}</span></div>
