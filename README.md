@@ -118,6 +118,14 @@
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
     .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
 
+    /* 🆕 [추가] 모달 내 하단 버튼 스타일 */
+    .official-btn {
+      display: block; text-align: center; background: var(--dark); color: var(--primary); 
+      padding: 18px; border-radius: 20px; text-decoration: none; font-weight: 900; 
+      font-size: 1.1rem; transition: 0.3s; margin-top: 20px; border: 2px solid var(--dark);
+    }
+    .official-btn:hover { background: white; color: var(--dark); }
+
     /* 퀵 메뉴 */
     #quick-menu {
       position: fixed; right: 30px; top: 150px; width: 110px;
@@ -163,8 +171,9 @@
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
     
-    /* 🆕 [신규] 푸터 (사이트 하단 마무리) */
-    .museum-footer { text-align: center; padding: 50px 0; color: #999; font-size: 0.9rem; border-top: 1px solid #e0e0e0; margin-top: 50px; }
+    /* 🆕 [신규] 푸터 (사이트 하단 마무리 - 1인 개발자 멘트 보강) */
+    .museum-footer { text-align: center; padding: 80px 0; color: #777; font-size: 0.95rem; border-top: 1px solid #e0e0e0; margin-top: 80px; line-height: 1.8; }
+    .footer-dev-text { color: var(--dark); font-weight: 800; margin-bottom: 10px; font-size: 1.1rem; }
 
     /* 모바일 반응형 */
     @media (max-width: 1024px) {
@@ -249,8 +258,12 @@
     <div id="pagination" class="pagination"></div>
     
     <div class="museum-footer">
-      <p>© 2026 Figure Museum Archive. All rights reserved.</p>
-      <p>모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
+      <div class="footer-dev-text">피규어를 너무 좋아하는 1인 개발자입니다 ㅎㅎ</div>
+      <p>본 사이트는 개인적인 팬심으로 운영되는 아카이브 공간이며, 수익형 광고가 포함되어 있습니다.</p>
+      <p>이미지의 모든 저작권은 ⓒ SHIFT UP, 제조사 및 공식 판매처에 있으며, 인용의 목적으로 사용되었습니다.</p>
+      <p>저작권 관련 조치나 삭제 요청은 아래 메일로 연락 주시면 즉시 반영하겠습니다.</p>
+      <p style="color:var(--dark); font-weight:900; margin-top:10px;">Contact: [사장님 메일 주소]</p>
+      <p style="margin-top:30px; font-size:0.8rem;">© 2026 Figure Museum Archive. All rights reserved.</p>
     </div>
   </div>
 </div>
@@ -270,8 +283,11 @@
 </div>
 
 <script>
+  // 사장님의 구글 시트 게시 URL
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
+  // 깃허브 이미지 저장 경로
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
+  
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
@@ -296,7 +312,8 @@
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
       
-      allData = rows.slice(1).filter(r => r[8]);
+      // 인덱스 조정: 사장님 엑셀의 이미지파일명이 들어있는 열(7번 또는 8번)을 체크하여 필터링
+      allData = rows.slice(1).filter(r => r[7]); 
       currentDisplayData = [...allData];
       
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
@@ -312,11 +329,12 @@
     } catch (e) { console.error("에러 발생:", e); }
   }
 
+  // 상품 이름 추출 (인덱스 3번)
   function getProductName(item) {
-    return item[3] ? item[3].trim() : ""; 
+    return item[3] ? item[3].trim() : "이름 정보 없음"; 
   }
 
-  // 🆕 필터 렌더링 (시리즈 + 제조사 자동 추출 및 카운팅)
+  // 🆕 필터 렌더링 (인덱스 수정: 제조사 1번, 검색어/시리즈 2번)
   function renderFilters() {
     const seriesSet = new Set();
     const makerSet = new Set();
@@ -332,7 +350,6 @@
       makerCount[maker] = (makerCount[maker] || 0) + 1;
     });
 
-    // 1. 시리즈 버튼 생성
     const seriesContainer = document.getElementById('seriesButtons');
     let seriesHtml = `<div class="category-row"><button class="filter-btn active" data-type="series" onclick="filterBy('series', 'all', this)">전체보기 <span class="filter-count">${allData.length}</span></button><div class="sub-btns-scroll">`;
     Array.from(seriesSet).sort().forEach(s => {
@@ -340,7 +357,6 @@
     });
     seriesContainer.innerHTML = seriesHtml + `</div></div>`;
 
-    // 2. 제조사 버튼 생성
     const makerList = document.getElementById('makerList');
     let makerHtml = `<button class="filter-btn active" data-type="maker" onclick="filterBy('maker', 'all', this)">ALL</button>`;
     Array.from(makerSet).sort().forEach(m => {
@@ -349,7 +365,6 @@
     makerList.innerHTML = makerHtml;
   }
 
-  // 🆕 필터 및 정렬 통합 적용 함수
   window.applyFilters = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const sortVal = document.getElementById('sortOrder').value;
@@ -364,9 +379,9 @@
       return seriesMatch && makerMatch && textMatch;
     });
 
-    // 정렬 로직 적용
-    if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[5]) || 0) - (parseInt(a[5]) || 0));
-    else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[5]) || 0) - (parseInt(b[5]) || 0));
+    // 가격 정렬 (인덱스 4번)
+    if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[4].replace(/,/g, '')) || 0) - (parseInt(a[4].replace(/,/g, '')) || 0));
+    else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[4].replace(/,/g, '')) || 0) - (parseInt(b[4].replace(/,/g, '')) || 0));
     else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
 
     currentDisplayData = filtered;
@@ -374,7 +389,6 @@
     updateDisplay();
   }
 
-  // 🆕 필터 클릭 이벤트
   window.filterBy = function(type, value, btn) {
     if (type === 'series') {
       activeFilter = value;
@@ -406,24 +420,23 @@
 
     grid.innerHTML = data.map((item) => {
       const name = getProductName(item); 
-      const img = item[8].split(',')[0].trim();
-      const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
-
+      // 이미지파일명 인덱스 7번 사용
+      const imgList = item[7] ? item[7].split(',') : ["default"];
+      const img = imgList[0].trim();
+      
       return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
-        ${badgeHtml}
-        <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg" loading="lazy"></div>
+        <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}" loading="lazy" onerror="this.src='https://via.placeholder.com/300?text=No+Image'"></div>
         <div class="content">
           <div class="char-name">${name}</div>
           <div class="tag-wrap">
-            <span class="tag">#${item[10] || ''}</span>
-            <span class="tag sec">#${item[2] || ''}</span>
+            <span class="tag">#${item[1] || '제조사'}</span>
+            <span class="tag sec">#${item[2] || '시리즈'}</span>
           </div>
         </div>
       </div>`;
     }).join('');
   }
 
-  // 🆕 [지능형 페이지네이션]
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     if (totalPages <= 1) { pagination.innerHTML = ''; return; }
@@ -449,23 +462,22 @@
     currentPage = page;
     updateDisplay();
     document.getElementById('museum-wrapper').scrollTo({
-      top: document.querySelector('.main-title-area').offsetHeight + document.querySelector('.sticky-header').offsetHeight - 50,
+      top: 500,
       behavior: 'smooth'
     });
   }
 
-  // 명예의 전당 슬라이드
   function startFameSlide() {
-    const portraits = allData.filter(item => {
-        const img = item[8] ? item[8].split(',')[0].trim() : "";
-        return img && !(/\d/.test(img));
-    });
+    const portraits = allData.slice(0, 10); // 상위 10개로 슬라이드 구성
     const shuffle = portraits.sort(() => 0.5 - Math.random());
     function build(id, startIdx) {
       const target = document.getElementById(id);
       const items = shuffle.slice(startIdx, startIdx + 3);
       if(items.length === 0) return;
-      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
+      target.innerHTML = items.map((it, idx) => {
+        const imgName = it[7] ? it[7].split(',')[0].trim() : "";
+        return `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(imgName)}"></div>`
+      }).join('');
       let cur = 0; setInterval(() => { const slides = target.querySelectorAll('.fame-slide'); if(slides.length > 0) { slides[cur].classList.remove('active'); cur = (cur + 1) % slides.length; slides[cur].classList.add('active'); } }, 4000);
     }
     build('fameLeft', 0); build('fameRight', 3);
@@ -488,27 +500,45 @@
     menu.style.display = 'block';
     container.innerHTML = recent.map(idx => {
       const item = allData[idx];
-      if (!item) return '';
-      return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg"></div>`;
+      if (!item || !item[7]) return '';
+      return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[7].split(',')[0].trim())}"></div>`;
     }).join('');
   }
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
+  // 🖱️ 사장님의 새로운 데이터 인덱스에 맞춘 모달 업데이트
   window.openModal = function(idx) {
     saveRecentView(idx);
     const item = allData[idx]; 
-    if(!item || !item[8]) return;
-    currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
-    const name = getProductName(item);
+    if(!item || !item[7]) return;
+
+    // 인덱스 정의
+    const name = item[3];
+    const brand = item[1];
+    const series = item[2];
+    const price = item[4];
+    const size = item[5];
+    const releaseDate = item[6]; // 발매일 (6번)
+    const imgStr = item[7]; // 이미지파일명 (7번)
+    const officialLink = item[8]; // 링크 (8번)
+
+    currentImages = imgStr.split(',').map(s => s.trim()); 
+    currentImgIdx = 0; isZoomed = false; updateModalImg();
+
     document.getElementById('modalInfo').innerHTML = `
-      <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
-      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
-      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
-      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 가격 ]</span><span class="info-value">${isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + ' KRW'}</span></div>
-      <div class="info-item" style="border:none;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
+      <div class="info-item"><h2 style="font-size:3.2rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
+      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${brand || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${series || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 발매일 ]</span><span class="info-value" style="color:#d35400;">${releaseDate || '정보없음'}</span></div>
+      <div class="info-item"><span class="info-label">[ 크기 ]</span><span class="info-value">${size || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 가격 ]</span><span class="info-value">${price} KRW</span></div>
+      
+      <a href="${officialLink}" target="_blank" class="official-btn">🌐 공식 판매처 / 상세정보 보기</a>
+      
+      <div style="margin-top:30px; text-align:center; color:#999; font-size:0.85rem;">
+        본 저작권은 제조사 및 판매처에 있으며,<br>문제가 될 시 즉시 조치하겠습니다. 메일로 연락주세요!
+      </div>
     `;
     document.getElementById('detailModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -516,7 +546,13 @@
 
   window.toggleZoom = function(e) { isZoomed = !isZoomed; document.getElementById('modalImg').classList.toggle('zoomed'); if (!isZoomed) document.getElementById('modalImg').style.transform = 'scale(1)'; }
   window.handleZoomMove = function(e) { if (!isZoomed) return; const img = document.getElementById('modalImg'); const wrapper = e.currentTarget; const { left, top, width, height } = wrapper.getBoundingClientRect(); const x = ((e.pageX - left - window.scrollX) / width) * 100; const y = ((e.pageY - top - window.scrollY) / height) * 100; img.style.transformOrigin = `${x}% ${y}%`; img.style.transform = 'scale(3.5)'; }
-  window.updateModalImg = function() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
+  window.updateModalImg = function() { 
+    const img = document.getElementById('modalImg'); 
+    img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}`; 
+    isZoomed = false; 
+    img.classList.remove('zoomed'); 
+    img.style.transform = 'scale(1)'; 
+  }
   window.changeImg = function(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   window.closeModal = function() { document.getElementById('detailModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
   window.toggleFilters = function() { 
