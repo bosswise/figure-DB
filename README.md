@@ -6,7 +6,7 @@
   <title>피규어 박물관</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 기본 설정 (기존 유지) */
+    /* 🚨 사장님의 원본 스타일 (절대 유지) */
     header, footer, .site-header, .site-footer-old, .title, b, .gh-header { 
       display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
     }
@@ -19,7 +19,6 @@
       font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; 
     }
     
-    /* 레이아웃 */
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
     .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; flex-shrink: 0; }
     .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; }
@@ -39,6 +38,8 @@
     .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-size: 14px; }
     
     .sort-select { background: #45403c; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 20px; font-family: inherit; font-size: 0.85rem; cursor: pointer; outline: none; }
+    .sort-select:focus { border-color: var(--primary); }
+
     .toggle-btn { background: none; border: 1px solid #666; color: #999; font-size: 0.75rem; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
     .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
     .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
@@ -46,6 +47,7 @@
     
     .sub-btns-scroll { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -ms-overflow-style: none; flex-wrap: wrap; }
     .sub-btns-scroll::-webkit-scrollbar { display: none; }
+
     .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
 
@@ -61,13 +63,15 @@
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
-    .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .tag-wrap { display: flex; justify(center); gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .tag { font-size: 0.85rem; background: var(--tag-gold); color: #d35400; padding: 6px 14px; border-radius: 12px; font-weight: 800; white-space: nowrap; display: inline-block; }
     .tag.sec { background: #eee; color: #777; }
     
     .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 60px; padding-bottom: 40px; }
     .page-btn { min-width: 45px; height: 45px; border-radius: 22.5px; border: 1px solid #ddd; background: white; color: var(--dark); font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; padding: 0 15px; }
+    .page-btn:hover { background: #f0f0f0; border-color: #bbb; }
     .page-btn.active { background: var(--dark); color: var(--primary); border-color: var(--dark); }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 99999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
@@ -78,11 +82,11 @@
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
     .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
-    .info-item { margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
+    .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
     .info-label { font-size: 1rem; color: var(--primary); font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
-    .info-value { font-size: 1.6rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
+    .info-value { font-size: 1.7rem; font-weight: 700; color: var(--dark); line-height: 1.4; }
 
-    /* 🆕 공식몰 버튼 */
+    /* 🆕 공식몰 버튼 스타일 추가 */
     .official-btn {
       display: block; text-align: center; background: var(--dark); color: var(--primary); 
       padding: 18px; border-radius: 20px; text-decoration: none; font-weight: 900; 
@@ -92,6 +96,7 @@
 
     #quick-menu { position: fixed; right: 30px; top: 150px; width: 110px; background: white; border: 1px solid #ddd; z-index: 9900; text-align: center; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; }
     .quick-header { background: #2d2926; color: white; padding: 10px 0; font-size: 0.8rem; font-weight: 700; }
+    .quick-list { display: flex; flex-direction: column; }
     .quick-item { width: 100%; height: 110px; padding: 5px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .quick-item img { max-width: 90%; max-height: 90%; object-fit: contain; }
     .top-btn { width: 100%; border: none; background: var(--primary); color: #2d2926; font-weight: 900; padding: 10px 0; cursor: pointer; }
@@ -100,8 +105,14 @@
     .loader { width: 60px; height: 60px; border: 5px solid var(--primary); border-bottom-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .museum-footer { text-align: center; padding: 80px 0; color: #888; font-size: 0.95rem; border-top: 1px solid #e0e0e0; margin-top: 80px; line-height: 1.8; }
+    .card-badge { position: absolute; top: 25px; left: 25px; background: var(--primary); color: #2d2926; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; box-shadow: 0 5px 15px rgba(250, 176, 5, 0.4); z-index: 5; }
+
+    /* 🆕 푸터 보강 */
+    .museum-footer { text-align: center; padding: 80px 0; color: #777; font-size: 0.95rem; border-top: 1px solid #e0e0e0; margin-top: 80px; line-height: 1.8; }
     .footer-dev-text { color: var(--dark); font-weight: 800; margin-bottom: 5px; font-size: 1.1rem; }
+
+    @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } .museum-title { font-size: 2.5rem; } }
+    @media (max-width: 600px) { .grid { grid-template-columns: repeat(1, 1fr); } .modal-content { flex-direction: column; height: 100vh; border-radius: 0; } }
   </style>
 </head>
 <body>
@@ -178,7 +189,7 @@
 </div>
 
 <script>
-  // 🔗 [설정] 구글시트 및 이미지 경로
+  /* 🚨 스크립트 로직 완벽 복구 */
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
   const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
   
@@ -196,7 +207,7 @@
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
       
-      // 7번 인덱스(이미지파일명)가 있는 데이터만 수집
+      // 7번 인덱스(이미지파일명) 필터링
       allData = rows.slice(1).filter(r => r[7]); 
       currentDisplayData = [...allData];
       
@@ -256,8 +267,8 @@
   function updateDisplay() {
     const total = Math.ceil(currentDisplayData.length / rowsPerPage);
     const start = (currentPage - 1) * rowsPerPage;
-    const paged = currentDisplayData.slice(start, start + rowsPerPage);
-    renderGrid(paged); renderPagination(total);
+    renderGrid(currentDisplayData.slice(start, start + rowsPerPage)); 
+    renderPagination(total);
   }
 
   function renderGrid(data) {
@@ -265,7 +276,6 @@
     if (data.length === 0) { grid.innerHTML = `<div class="no-result"><h3>😢 결과가 없습니다.</h3></div>`; return; }
     grid.innerHTML = data.map(item => {
       const img = (item[7]||"").split(',')[0].trim();
-      // ⚠️ 확장자가 이미 있으면 그대로, 없으면 붙임 (사장님 파일명 대응)
       const imgSrc = img.includes('.') ? img : img + ".jpg";
       return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(imgSrc)}" loading="lazy"></div>
@@ -332,6 +342,7 @@
     r = r.filter(id => id !== idx); r.unshift(idx); if (r.length > 5) r.pop();
     localStorage.setItem('recentFigures', JSON.stringify(r)); renderRecentView();
   }
+
   function renderRecentView() {
     const r = JSON.parse(localStorage.getItem('recentFigures') || '[]');
     const m = document.getElementById('quick-menu');
