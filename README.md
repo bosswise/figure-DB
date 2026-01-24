@@ -462,7 +462,7 @@
         <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
         <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
         <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
-        <p class="contact-email">문의: bosswise@example.com</p>
+        <p class="contact-email">문의: iiopasd2003@gmail.com</p>
       </div>
     </div>
   </div>
