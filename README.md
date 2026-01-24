@@ -444,7 +444,10 @@
 
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
-  const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
+  
+  // 🚨 [유지됨] 도메인 연결 시에도 이미지 깨짐을 방지하는 코드입니다.
+  const imageBaseURL = window.location.origin + window.location.pathname.replace('index.html', '') + "images/";
+  
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
@@ -785,5 +788,6 @@
   
   init();
 </script>
+
 </body>
 </html>
