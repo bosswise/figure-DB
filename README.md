@@ -349,7 +349,7 @@
       font-weight: bold;
     }
 
-    /* 🎁 기증 시스템 전용 스타일 */
+    /* 🎁 기증 시스템 전용 스타일 - 🚨 museum-wrapper 안에서 보이게 수정됨 */
     #donation-btn {
       position: fixed;
       bottom: 20px;
@@ -360,7 +360,7 @@
       border-radius: 50px;
       font-weight: 900;
       cursor: pointer;
-      z-index: 9900;
+      z-index: 99995; /* 🚨 최상위 wrapper보다 높게 설정 */
       box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
       display: flex;
       align-items: center;
@@ -368,7 +368,6 @@
       border: none;
       transition: 0.3s;
       font-size: 1rem;
-      font-family: 'Noto Sans KR', sans-serif;
     }
     #donation-btn:hover { transform: scale(1.1) translateY(-5px); background: #ff6b81; }
 
@@ -467,7 +466,9 @@
     </div>
   </div>
 
-</div> <div id="detailModal" class="modal" onclick="closeModal()">
+</div> 
+
+<div id="detailModal" class="modal" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <span class="close-btn" onclick="closeModal()">&times;</span>
     <div class="modal-img-area">
@@ -482,10 +483,9 @@
 </div>
 
 <div id="donateModal" class="modal" onclick="closeDonateModal()">
-  <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 600px; height: auto; flex-direction: column; padding: 40px; border-radius: 40px;">
+  <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 600px; height: auto; flex-direction: column; padding: 40px; border-radius: 40px; z-index: 100000;">
     <span class="close-btn" onclick="closeDonateModal()">&times;</span>
     <h2 style="font-weight: 900; font-size: 2.5rem; color: #2d2926; margin-bottom: 30px;">🎁 명작 기증 시스템</h2>
-    
     <div class="donate-modal-body">
       <div class="donate-step">
         <h4>1. 기증 대상</h4>
@@ -493,9 +493,8 @@
       </div>
       <div class="donate-step">
         <h4>2. 기증 보상</h4>
-        <p>기증해주신 정보는 사장님 검수 후 DB에 등록되며, 상세 페이지에 기증자님의 닉네임이 기록됩니다.</p>
+        <p>기증해주신 정보는 사장님 검수 후 DB에 등록되며, 기증자님의 닉네임이 기록됩니다.</p>
       </div>
-      
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfyj75_8hnUXpRxQAeeDqFuDLhg_3WHNJYXz26VJR1in7aDQ/viewform?usp=header" target="_blank" class="donate-link-btn">명작 기증 폼 작성하러 가기 🚀</a>
     </div>
   </div>
@@ -503,10 +502,7 @@
 
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
-  
-  // 🚨 도메인 연결 대응용 스마트 경로 유지
   const imageBaseURL = window.location.origin + window.location.pathname.replace('index.html', '') + "images/";
-
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
@@ -523,8 +519,10 @@
     try {
       const wrapper = document.getElementById('museum-wrapper');
       const modal = document.getElementById('detailModal');
+      const dModal = document.getElementById('donateModal');
       if(document.body && wrapper) document.body.appendChild(wrapper);
       if(document.body && modal) document.body.appendChild(modal);
+      if(document.body && dModal) document.body.appendChild(dModal);
 
       const response = await fetch(csvURL);
       const text = await response.text();
@@ -844,8 +842,8 @@
       prompt("이 링크를 복사하세요:", url);
     });
   }
-
-  // 🎁 기증 시스템용 함수 (완벽 복구)
+  
+  // 🎁 기증 시스템용 함수 복구
   window.openDonateModal = function() {
     document.getElementById('donateModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
