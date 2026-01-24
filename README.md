@@ -785,5 +785,71 @@
   
   init();
 </script>
+
+<style>
+  /* 라디오 위젯 스타일 (최상위 배치) */
+  #radio-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background: #004494; /* 라신반 블루 */
+    border: 3px solid #ffea00; /* 라신반 옐로우 */
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 99995; /* 🚨 중요: 사이트(99990)보다 높고, 모달(99999)보다 낮게 설정 */
+    overflow: hidden;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .radio-header {
+    background: #ffea00;
+    padding: 10px;
+    font-weight: 800;
+    color: #004494;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .radio-body {
+    padding: 0;
+    height: 180px;
+    background: #000;
+  }
+  .toggle-btn-radio {
+    cursor: pointer;
+    background: #004494;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+</style>
+
+<div id="radio-widget">
+  <div class="radio-header">
+    <span>📻 LASHINBANG RADIO</span>
+    <button class="toggle-btn-radio" onclick="toggleRadio()">ON/OFF</button>
+  </div>
+  <div id="radio-player" class="radio-body">
+    <iframe id="yt-iframe" width="100%" height="100%" 
+      src="https://www.youtube.com/embed/videoseries?list=PLDAm4NIn57X_vD0qY_0_Wf_t_C6yR3U_M&autoplay=0" 
+      frameborder="0" allow="autoplay; encrypted-media">
+    </iframe>
+  </div>
+</div>
+
+<script>
+  function toggleRadio() {
+    var x = document.getElementById("radio-player");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+</script>
+
 </body>
 </html>
