@@ -219,6 +219,16 @@
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
     
+    /* 🚨 [추가] 가격 비교 엔진용 스타일 (다나와 스타일) */
+    .price-compare-box { background: #f1f3f5; border-radius: 20px; padding: 25px; margin-top: 20px; margin-bottom: 20px; border: 1px solid #e9ecef; }
+    .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 1.1rem; }
+    .price-label { color: #868e96; font-weight: 700; font-size: 0.95rem; }
+    .price-val-old { text-decoration: line-through; color: #adb5bd; font-size: 1.1rem; }
+    .price-val-new { font-weight: 900; font-size: 1.6rem; color: #2d2926; }
+    .price-status { font-size: 0.9rem; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-left: 5px; }
+    .mania-btn { display: block; width: 100%; padding: 18px; background: #008BCC; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 15px; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,139,204,0.3); }
+    .mania-btn:hover { background: #0077b3; transform: translateY(-3px); }
+
     /* 모바일 반응형 */
     @media (max-width: 1024px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } 
@@ -789,20 +799,75 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
+  // 🚨 [핵심 업데이트] 다나와 시세 엔진 연동 openModal 함수
   window.openModal = function(idx) {
     saveRecentView(idx);
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = getProductName(item);
+    
+    // 🏷️ P, Q, R, S열 데이터 읽기 (인덱스 주의: 0부터 시작하므로 P는 15번째)
+    const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
+    const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
+    const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
+    const maniaLink = item[17] || "#"; // R열: 링크
+
+    // 🎨 상태 라벨 색상 결정
+    let statusClass = "";
+    if(diffStatus.includes("▲")) statusClass = "price-status up"; // 빨강
+    else if(diffStatus.includes("▼")) statusClass = "price-status down"; // 초록
+
+    // 💰 가격 비교표 HTML 생성 logic
+    let priceHtml = "";
+    if (maniaPrice) {
+      // P열에 가격이 있을 때 (비교 모드)
+      priceHtml = `
+        <div class="price-compare-box">
+          <div class="price-row">
+            <span class="price-label">박물관 기록가</span>
+            <span class="price-val-old">${originalPrice}</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">현재 실시간 시세</span>
+            <div style="display:flex; align-items:center;">
+              <span class="price-val-new">${maniaPrice}</span>
+              <span class="${statusClass}" style="${statusClass.includes('up') ? 'color:#e03131' : 'color:#2f9e44'}">${diffStatus}</span>
+            </div>
+          </div>
+          <a href="${maniaLink}" target="_blank" class="mania-btn">
+            🛒 매니아하우스 실시간 최저가 확인
+          </a>
+        </div>
+      `;
+    } else {
+      // P열이 비었을 때 (조회 유도 모드)
+      priceHtml = `
+        <div class="price-compare-box">
+          <div class="price-row">
+            <span class="price-label">박물관 기록가</span>
+            <span class="price-val-old" style="text-decoration:none; color:#2d2926; font-weight:bold;">${originalPrice}</span>
+          </div>
+          <div class="price-row" style="justify-content:center; margin-top:10px;">
+            <span style="color:#888; font-size:0.9rem;">현재 실시간 시세 정보를 확인해보세요!</span>
+          </div>
+          <a href="${maniaLink}" target="_blank" class="mania-btn">
+            🔍 매니아하우스 실시간 시세 조회하기
+          </a>
+        </div>
+      `;
+    }
+
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
       <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
       <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
       <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 가격 ]</span><span class="info-value">${isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + ' KRW'}</span></div>
-      <div class="info-item" style="border:none;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
+      
+      ${priceHtml}
+
+      <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
         🔗 이 피규어 링크 복사하기
