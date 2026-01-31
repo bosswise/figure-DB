@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>피규어 박물관</title>
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2624340884962829"
+     crossorigin="anonymous"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
     /* 🚨 기본 설정 */
@@ -30,9 +34,9 @@
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
     .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
     
-    /* 🆕 검색창 및 필터 바 */
+    /* 🆕 검색창 및 필터 바 (헤더) */
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-    .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; }
     
     /* 🆕 검색창 디자인 */
     .search-box { position: relative; width: 300px; }
@@ -48,39 +52,91 @@
     .sort-select:focus { border-color: var(--primary); }
 
     .toggle-btn { background: none; border: 1px solid #666; color: #999; font-size: 0.75rem; padding: 5px 15px; border-radius: 8px; cursor: pointer; }
-    .bookmark-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding: 0 25px 15px; transition: 0.6s ease; overflow: hidden; max-height: 1000px; }
-    .bookmark-container.collapsed { max-height: 0; padding-bottom: 0; }
-    .category-row { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.08); padding: 12px 25px; border-radius: 18px; }
     
-    /* 🛠️ 가로 짤림 해결: 버튼 스크롤 영역 수정 */
+    /* 🚀 [업그레이드] 필터 메뉴를 사이드바 형태로 변경 */
+    #filterMenu {
+      position: fixed;
+      top: 83px; /* 헤더 높이만큼 띄움 */
+      left: 0;
+      width: 320px; /* 사이드바 너비 */
+      height: calc(100vh - 83px); /* 화면 전체 높이 사용 */
+      background: rgba(30, 30, 30, 0.98); /* 배경 */
+      backdrop-filter: blur(10px);
+      z-index: 9990;
+      border-right: 1px solid #444;
+      box-shadow: 5px 0 25px rgba(0,0,0,0.3);
+      
+      /* 애니메이션 */
+      transform: translateX(0);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      
+      /* 내부 스크롤 및 배치 */
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column; /* 세로 정렬 */
+      gap: 20px;
+    }
+
+    /* 닫혔을 때 (왼쪽으로 숨김) */
+    #filterMenu.collapsed {
+      transform: translateX(-120%);
+    }
+
+    /* 사이드바 내부: 인덱스 탭 (ㄱ, ㄴ, ㄷ...) */
+    .index-tab-bar { 
+      display: flex; flex-wrap: wrap; gap: 5px; 
+      padding-bottom: 15px; border-bottom: 1px solid #555;
+      justify-content: center;
+      position: sticky; top: -20px; background: rgba(30,30,30,0.98); z-index: 10;
+      margin-top: -10px; padding-top: 10px;
+    }
+    .index-tab { 
+      background: transparent; color: #aaa; border: 1px solid #555; 
+      width: 32px; height: 32px; padding: 0;
+      border-radius: 8px; cursor: pointer; 
+      font-size: 0.8rem; transition: 0.2s; 
+      display: flex; align-items: center; justify-content: center;
+    }
+    .index-tab:hover, .index-tab.active { 
+      background: var(--primary); color: var(--dark); border-color: var(--primary); font-weight: bold; 
+    }
+
+    /* 사이드바 내부: 시리즈 버튼 목록 */
     .sub-btns-scroll { 
       display: flex; 
-      gap: 10px; 
-      overflow-x: auto; 
-      white-space: nowrap; 
-      scrollbar-width: none; /* 파이어폭스용 */
-      -ms-overflow-style: none; /* 인터넷 익스플로러용 */
-      flex-wrap: wrap; /* 💡 일정 길이가 넘으면 자동으로 다음 줄로 넘김 */
+      flex-direction: column; /* 세로로 쌓이게 변경 */
+      gap: 8px; 
+      width: 100%;
     }
-    .sub-btns-scroll::-webkit-scrollbar { display: none; } /* 크롬용 스크롤바 숨기기 */
 
-    .filter-btn { background: #45403c; color: #a5a09c; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
-    .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; transform: scale(1.05); }
+    .filter-btn { 
+      background: rgba(255,255,255,0.05); color: #a5a09c; 
+      border: 1px solid rgba(255,255,255,0.1); 
+      padding: 10px 15px; border-radius: 12px; 
+      cursor: pointer; font-size: 0.85rem; transition: 0.2s; 
+      text-align: left; display: flex; justify-content: space-between;
+      width: 100%;
+    }
+    .filter-btn.active, .filter-btn:hover { 
+      background: var(--primary); color: #1a1a1a; font-weight: 800; border-color: var(--primary); 
+    }
 
-    /* 🆕 제조사 필터 행 스타일 - 짤림 방지 보강 */
+    /* 사이드바 내부: 제조사 섹션 */
     .maker-row { 
-      display: flex; 
-      align-items: flex-start; /* 높이가 변해도 정렬 유지 */
-      gap: 15px; 
-      padding: 15px 25px; 
-      border-top: 1px solid rgba(255,255,255,0.1); 
-      margin-top: 5px; 
+      display: flex; flex-direction: column; gap: 10px;
+      padding-top: 20px; border-top: 1px solid #555; margin-top: 10px;
     }
-    .maker-label { color: #888; font-size: 0.75rem; font-weight: 800; white-space: nowrap; margin-top: 8px; }
-    .filter-count { font-size: 0.7rem; background: rgba(0,0,0,0.3); color: #ccc; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
+    .maker-label { color: var(--primary); font-size: 0.9rem; font-weight: 800; }
+    .filter-count { font-size: 0.7rem; background: rgba(0,0,0,0.3); color: #ccc; padding: 2px 6px; border-radius: 10px; }
+    
+    /* 스크롤바 디자인 */
+    #filterMenu::-webkit-scrollbar { width: 6px; }
+    #filterMenu::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
     
     /* 그리드 */
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; }
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s; }
+    
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
@@ -163,8 +219,15 @@
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
     
-    /* 🆕 [신규] 푸터 (사이트 하단 마무리) */
-    .museum-footer { text-align: center; padding: 50px 0; color: #999; font-size: 0.9rem; border-top: 1px solid #e0e0e0; margin-top: 50px; }
+    /* 🚨 [추가] 가격 비교 엔진용 스타일 (다나와 스타일) */
+    .price-compare-box { background: #f1f3f5; border-radius: 20px; padding: 25px; margin-top: 20px; margin-bottom: 20px; border: 1px solid #e9ecef; }
+    .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 1.1rem; }
+    .price-label { color: #868e96; font-weight: 700; font-size: 0.95rem; }
+    .price-val-old { text-decoration: line-through; color: #adb5bd; font-size: 1.1rem; }
+    .price-val-new { font-weight: 900; font-size: 1.6rem; color: #2d2926; }
+    .price-status { font-size: 0.9rem; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-left: 5px; }
+    .mania-btn { display: block; width: 100%; padding: 18px; background: #008BCC; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 15px; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,139,204,0.3); }
+    .mania-btn:hover { background: #0077b3; transform: translateY(-3px); }
 
     /* 모바일 반응형 */
     @media (max-width: 1024px) {
@@ -177,6 +240,7 @@
       .search-box { width: 200px; }
     }
     @media (max-width: 600px) {
+      #filterMenu { width: 85%; top: 130px; height: calc(100vh - 130px); }
       .grid { grid-template-columns: repeat(1, 1fr); }
       .modal-content { flex-direction: column; height: 100vh; border-radius: 0; width: 100%; }
       .modal-img-area { flex: 1; height: 45%; }
@@ -188,6 +252,150 @@
       .search-box { width: 100%; }
       .toggle-bar { justify-content: center; }
     }
+
+    /* =========================================================================
+       🎨 [인테리어 추가] 배경 패턴 및 장식 효과
+       ========================================================================= */
+
+    /* 1. 배경 도트 패턴 (심심함 제거) */
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
+      background-size: 24px 24px; /* 점 간격 */
+    }
+
+    /* 2. 타이틀 뒤 후광 효과 */
+    .center-group {
+      position: relative;
+      z-index: 2; /* 배경보다 앞에 나오게 */
+    }
+    .center-group::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(250, 176, 5, 0.2) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      z-index: -1; /* 글자 뒤로 보내기 */
+      filter: blur(20px);
+    }
+
+    /* 3. 둥둥 떠다니는 배경 오브젝트 (생동감) */
+    .floating-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1; /* 제일 뒤로 */
+      overflow: hidden;
+      pointer-events: none; /* 클릭 방해 금지 */
+    }
+
+    .float-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), #fff);
+      opacity: 0.15; /* 아주 은은하게 */
+      animation: floatMove 20s infinite ease-in-out;
+      filter: blur(5px);
+    }
+
+    /* 모양과 위치 랜덤 설정 */
+    .shape-1 { width: 150px; height: 150px; top: 10%; left: 5%; animation-duration: 25s; }
+    .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-duration: 30s; animation-delay: -5s; background: #6c5ce7; }
+    .shape-3 { width: 80px; height: 80px; top: 30%; right: 20%; animation-duration: 18s; animation-delay: -10s; background: #ff7675; }
+    .shape-4 { width: 120px; height: 120px; bottom: 10%; left: 15%; animation-duration: 22s; animation-delay: -2s; }
+
+    /* 둥둥 떠다니는 애니메이션 */
+    @keyframes floatMove {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-40px) rotate(10deg); }
+    }
+
+    /* 명예의 전당 카드에 그림자 강화 */
+    .hall-of-fame {
+      box-shadow: 0 30px 60px rgba(0,0,0,0.15); /* 그림자 더 진하게 */
+      border: 4px solid white; /* 흰색 테두리로 액자 느낌 */
+    }
+
+    /* =========================================================================
+       🛡️ [NEW] 푸터 디자인 업그레이드 (꽉 찬 디자인)
+       ========================================================================= */
+    .museum-footer {
+      background: #2d2926; /* 배경을 어둡게 */
+      color: #888;
+      padding: 60px 20px;
+      margin-top: 80px;
+      border-top: 4px solid var(--primary); /* 노란색 포인트 */
+      text-align: center;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      width: 100%; /* 화면 꽉 차게 */
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .copyright {
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .disclaimer-box {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #444;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .disclaimer-box strong {
+      color: #aaa;
+    }
+
+    .contact-email {
+      margin-top: 15px;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* 🎁 기증 시스템 전용 스타일 - 🚨 museum-wrapper 안에서 보이게 수정됨 */
+    #donation-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 30px;
+      background: #ff4757;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 50px;
+      font-weight: 900;
+      cursor: pointer;
+      z-index: 99995; /* 🚨 최상위 wrapper보다 높게 설정 */
+      box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+    #donation-btn:hover { transform: scale(1.1) translateY(-5px); background: #ff6b81; }
+
+    .donate-modal-body { text-align: left; padding: 20px; font-family: 'Noto Sans KR', sans-serif; }
+    .donate-step { margin-bottom: 20px; padding: 15px; background: #fff5f6; border-radius: 15px; border-left: 5px solid #ff4757; }
+    .donate-step h4 { margin: 0 0 10px; color: #ff4757; font-weight: 800; }
+    .donate-step p { margin: 0; color: #555; font-size: 0.95rem; line-height: 1.6; }
+    .donate-link-btn { 
+      display: block; width: 100%; padding: 18px; background: #ff4757; color: white; 
+      text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; 
+      margin-top: 25px; transition: 0.3s; font-size: 1.1rem;
+      box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+    }
+    .donate-link-btn:hover { background: #2d2926; transform: translateY(-3px); }
   </style>
 </head>
 <body>
@@ -196,6 +404,17 @@
   <div class="loader"></div>
   <div class="loading-text">명작들을 진열하고 있습니다...</div>
 </div>
+
+<div class="floating-bg">
+  <div class="float-shape shape-1"></div>
+  <div class="float-shape shape-2"></div>
+  <div class="float-shape shape-3"></div>
+  <div class="float-shape shape-4"></div>
+</div>
+
+<button id="donation-btn" onclick="openDonateModal()">
+  <span>🎁</span> 명작 기증하기
+</button>
 
 <div id="museum-wrapper">
   
@@ -247,13 +466,21 @@
     <div id="figureGrid" class="grid"></div>
     
     <div id="pagination" class="pagination"></div>
-    
-    <div class="museum-footer">
-      <p>© 2026 Figure Museum Archive. All rights reserved.</p>
-      <p>모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
+  </div> <div class="museum-footer">
+    <div class="footer-content">
+      <p class="copyright">© 2026 Figure Museum Archive. All rights reserved.</p>
+      <p class="source-info">모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
+      
+      <div class="disclaimer-box">
+        <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
+        <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
+        <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
+        <p class="contact-email">문의: iiopasd2003@gmail.com</p>
+      </div>
     </div>
   </div>
-</div>
+
+</div> 
 
 <div id="detailModal" class="modal" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
@@ -269,13 +496,34 @@
   </div>
 </div>
 
+<div id="donateModal" class="modal" onclick="closeDonateModal()">
+  <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 600px; height: auto; flex-direction: column; padding: 40px; border-radius: 40px; z-index: 100000;">
+    <span class="close-btn" onclick="closeDonateModal()">&times;</span>
+    <h2 style="font-weight: 900; font-size: 2.5rem; color: #2d2926; margin-bottom: 30px;">🎁 명작 기증 시스템</h2>
+    <div class="donate-modal-body">
+      <div class="donate-step">
+        <h4>1. 기증 대상</h4>
+        <p>박물관에 아직 등록되지 않은 소장용 피규어 정보를 제보해 주세요.</p>
+      </div>
+      <div class="donate-step">
+        <h4>2. 기증 보상</h4>
+        <p>기증해주신 정보는 사장님 검수 후 DB에 등록되며, 기증자님의 닉네임이 기록됩니다.</p>
+      </div>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfyj75_8hnUXpRxQAeeDqFuDLhg_3WHNJYXz26VJR1in7aDQ/viewform?usp=header" target="_blank" class="donate-link-btn">명작 기증 폼 작성하러 가기 🚀</a>
+    </div>
+  </div>
+</div>
+
 <script>
   const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEdK-zeaaFdfpd-3KmkuvWvjfJ836zpU6iXd-Duapx8ZXjewYF80U88jICtyzhOGpkS1JozinX2f3w/pub?gid=477168885&single=true&output=csv";
-  const imageBaseURL = "https://bosswise.github.io/figure-DB/images/";
+  const imageBaseURL = window.location.origin + window.location.pathname.replace('index.html', '') + "images/";
   let allData = [], currentDisplayData = []; 
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
   let activeMaker = 'all';
+
+  // 🆕 인덱스 필터용 변수
+  let seriesGrouped = {}; 
 
   // 페이지네이션 설정
   let currentPage = 1;
@@ -285,8 +533,10 @@
     try {
       const wrapper = document.getElementById('museum-wrapper');
       const modal = document.getElementById('detailModal');
+      const dModal = document.getElementById('donateModal');
       if(document.body && wrapper) document.body.appendChild(wrapper);
       if(document.body && modal) document.body.appendChild(modal);
+      if(document.body && dModal) document.body.appendChild(dModal);
 
       const response = await fetch(csvURL);
       const text = await response.text();
@@ -305,6 +555,9 @@
       updateDisplay(); 
       renderRecentView();
 
+      // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기
+      checkUrlParam();
+
       setTimeout(() => {
         const loader = document.getElementById('loading-screen');
         if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
@@ -316,7 +569,20 @@
     return item[3] ? item[3].trim() : ""; 
   }
 
-  // 🆕 필터 렌더링 (시리즈 + 제조사 자동 추출 및 카운팅)
+  // 🆕 한글 초성 추출 함수
+  function getHangulInitial(str) {
+    const initialChars = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+    const charCode = str.charCodeAt(0);
+    if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
+      const initialIdx = Math.floor((charCode - 0xAC00) / 588); 
+      return initialChars[initialIdx];
+    }
+    if (/^[A-Za-z]/.test(str)) return str.charAt(0).toUpperCase();
+    if (/^[0-9]/.test(str)) return "0-9";
+    return "ETC";
+  }
+
+  // 🆕 필터 렌더링 (사이드바 버전)
   function renderFilters() {
     const seriesSet = new Set();
     const makerSet = new Set();
@@ -332,13 +598,30 @@
       makerCount[maker] = (makerCount[maker] || 0) + 1;
     });
 
-    // 1. 시리즈 버튼 생성
-    const seriesContainer = document.getElementById('seriesButtons');
-    let seriesHtml = `<div class="category-row"><button class="filter-btn active" data-type="series" onclick="filterBy('series', 'all', this)">전체보기 <span class="filter-count">${allData.length}</span></button><div class="sub-btns-scroll">`;
+    // 1. 시리즈 버튼 그룹화
+    seriesGrouped = {};
     Array.from(seriesSet).sort().forEach(s => {
-      seriesHtml += `<button class="filter-btn" data-type="series" onclick="filterBy('series', '${s}', this)">${s} <span class="filter-count">${seriesCount[s]}</span></button>`;
+      const initial = getHangulInitial(s);
+      if (!seriesGrouped[initial]) seriesGrouped[initial] = [];
+      seriesGrouped[initial].push({ name: s, count: seriesCount[s] });
     });
-    seriesContainer.innerHTML = seriesHtml + `</div></div>`;
+
+    // 인덱스 탭바 생성
+    const seriesContainer = document.getElementById('seriesButtons');
+    let tabHtml = `<div class="index-tab-bar">`;
+    tabHtml += `<button class="index-tab active" onclick="renderSeriesButtons('ALL', this)">ALL</button>`;
+    
+    const sortedKeys = Object.keys(seriesGrouped).sort();
+    sortedKeys.forEach(key => {
+      tabHtml += `<button class="index-tab" onclick="renderSeriesButtons('${key}', this)">${key}</button>`;
+    });
+    tabHtml += `</div>`;
+    
+    // 시리즈 버튼 들어갈 영역
+    tabHtml += `<div class="sub-btns-scroll" id="seriesList"></div>`;
+    
+    seriesContainer.innerHTML = tabHtml;
+    renderSeriesButtons('ALL'); 
 
     // 2. 제조사 버튼 생성
     const makerList = document.getElementById('makerList');
@@ -349,7 +632,32 @@
     makerList.innerHTML = makerHtml;
   }
 
-  // 🆕 필터 및 정렬 통합 적용 함수
+  // 🆕 선택된 인덱스 탭에 따라 시리즈 버튼 다시 그리기
+  window.renderSeriesButtons = function(groupKey, btn) {
+    if (btn) {
+      document.querySelectorAll('.index-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    const targetList = document.getElementById('seriesList');
+    let html = `<button class="filter-btn ${activeFilter === 'all' ? 'active' : ''}" data-type="series" onclick="filterBy('series', 'all', this)">전체보기</button>`;
+    
+    let listToShow = [];
+    if (groupKey === 'ALL') {
+      Object.values(seriesGrouped).forEach(arr => listToShow.push(...arr));
+    } else {
+      listToShow = seriesGrouped[groupKey] || [];
+    }
+
+    listToShow.sort((a,b) => a.name.localeCompare(b.name));
+    listToShow.forEach(item => {
+       const isActive = activeFilter === item.name ? 'active' : '';
+       html += `<button class="filter-btn ${isActive}" data-type="series" onclick="filterBy('series', '${item.name}', this)">${item.name} <span class="filter-count">${item.count}</span></button>`;
+    });
+
+    targetList.innerHTML = html;
+  }
+
   window.applyFilters = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const sortVal = document.getElementById('sortOrder').value;
@@ -364,7 +672,6 @@
       return seriesMatch && makerMatch && textMatch;
     });
 
-    // 정렬 로직 적용
     if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[5]) || 0) - (parseInt(a[5]) || 0));
     else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[5]) || 0) - (parseInt(b[5]) || 0));
     else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
@@ -374,16 +681,15 @@
     updateDisplay();
   }
 
-  // 🆕 필터 클릭 이벤트
   window.filterBy = function(type, value, btn) {
     if (type === 'series') {
       activeFilter = value;
-      document.querySelectorAll('[data-type="series"]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#seriesList .filter-btn').forEach(b => b.classList.remove('active'));
     } else {
       activeMaker = value;
       document.querySelectorAll('[data-type="maker"]').forEach(b => b.classList.remove('active'));
     }
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
     applyFilters();
   }
 
@@ -423,7 +729,6 @@
     }).join('');
   }
 
-  // 🆕 [지능형 페이지네이션]
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     if (totalPages <= 1) { pagination.innerHTML = ''; return; }
@@ -454,7 +759,6 @@
     });
   }
 
-  // 명예의 전당 슬라이드
   function startFameSlide() {
     const portraits = allData.filter(item => {
         const img = item[8] ? item[8].split(',')[0].trim() : "";
@@ -495,20 +799,79 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
+  // 🚨 [핵심 업데이트] 다나와 시세 엔진 연동 openModal 함수
   window.openModal = function(idx) {
     saveRecentView(idx);
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     const name = getProductName(item);
+    
+    // 🏷️ P, Q, R, S열 데이터 읽기 (인덱스 주의: 0부터 시작하므로 P는 15번째)
+    const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
+    const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
+    const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
+    const maniaLink = item[17] || "#"; // R열: 링크
+
+    // 🎨 상태 라벨 색상 결정
+    let statusClass = "";
+    if(diffStatus.includes("▲")) statusClass = "price-status up"; // 빨강
+    else if(diffStatus.includes("▼")) statusClass = "price-status down"; // 초록
+
+    // 💰 가격 비교표 HTML 생성 logic
+    let priceHtml = "";
+    if (maniaPrice) {
+      // P열에 가격이 있을 때 (비교 모드)
+      priceHtml = `
+        <div class="price-compare-box">
+          <div class="price-row">
+            <span class="price-label">박물관 기록가</span>
+            <span class="price-val-old">${originalPrice}</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">현재 실시간 시세</span>
+            <div style="display:flex; align-items:center;">
+              <span class="price-val-new">${maniaPrice}</span>
+              <span class="${statusClass}" style="${statusClass.includes('up') ? 'color:#e03131' : 'color:#2f9e44'}">${diffStatus}</span>
+            </div>
+          </div>
+          <a href="${maniaLink}" target="_blank" class="mania-btn">
+            🛒 매니아하우스 실시간 최저가 확인
+          </a>
+        </div>
+      `;
+    } else {
+      // P열이 비었을 때 (조회 유도 모드)
+      priceHtml = `
+        <div class="price-compare-box">
+          <div class="price-row">
+            <span class="price-label">박물관 기록가</span>
+            <span class="price-val-old" style="text-decoration:none; color:#2d2926; font-weight:bold;">${originalPrice}</span>
+          </div>
+          <div class="price-row" style="justify-content:center; margin-top:10px;">
+            <span style="color:#888; font-size:0.9rem;">현재 실시간 시세 정보를 확인해보세요!</span>
+          </div>
+          <a href="${maniaLink}" target="_blank" class="mania-btn">
+            🔍 매니아하우스 실시간 시세 조회하기
+          </a>
+        </div>
+      `;
+    }
+
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
       <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
       <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
       <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 가격 ]</span><span class="info-value">${isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + ' KRW'}</span></div>
-      <div class="info-item" style="border:none;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
+      
+      ${priceHtml}
+
+      <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
+      
+      <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
+        🔗 이 피규어 링크 복사하기
+      </button>
     `;
     document.getElementById('detailModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -523,6 +886,40 @@
     const menu = document.getElementById('filterMenu'); 
     menu.classList.toggle('collapsed'); 
     document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
+  }
+
+  // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기
+  function checkUrlParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const figureId = urlParams.get('id'); // 주소 뒤에 ?id=번호 확인
+
+    if (figureId !== null && allData[figureId]) {
+      // 데이터가 로드된 후 조금 있다가 창을 띄움 (안정성)
+      setTimeout(() => {
+        window.openModal(parseInt(figureId));
+      }, 500); 
+    }
+  }
+
+  // 🔗 [추가] 링크 복사 기능
+  window.copyLink = function(idx) {
+    const url = `${window.location.origin}${window.location.pathname}?id=${idx}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert("링크가 복사되었습니다! 친구에게 붙여넣기(Ctrl+V) 하세요.");
+    }).catch(err => {
+      console.error('복사 실패:', err);
+      prompt("이 링크를 복사하세요:", url);
+    });
+  }
+  
+  // 🎁 기증 시스템용 함수 복구
+  window.openDonateModal = function() {
+    document.getElementById('donateModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  window.closeDonateModal = function() {
+    document.getElementById('donateModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
   }
   
   init();
