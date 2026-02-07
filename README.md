@@ -555,7 +555,8 @@
       updateDisplay(); 
       renderRecentView();
 
-      // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기
+      // 🔗 [핵심] 구글 검색(URL 파라미터) 연동 로직
+      // 이 함수가 있어야 ?id=번호를 읽어서 자동으로 창을 띄웁니다.
       checkUrlParam();
 
       setTimeout(() => {
@@ -888,12 +889,13 @@
     document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
   }
 
-  // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기
+  // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기 (구글 검색 연동)
   function checkUrlParam() {
     const urlParams = new URLSearchParams(window.location.search);
     const figureId = urlParams.get('id'); // 주소 뒤에 ?id=번호 확인
 
     if (figureId !== null && allData[figureId]) {
+      console.log("구글 검색 접속: " + figureId + "번 피규어 데이터를 로딩합니다.");
       // 데이터가 로드된 후 조금 있다가 창을 띄움 (안정성)
       setTimeout(() => {
         window.openModal(parseInt(figureId));
