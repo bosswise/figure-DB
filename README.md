@@ -800,7 +800,7 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
-  // 🚨 [핵심 업데이트] 다나와 시세 엔진 연동 및 기증자 기능 추가 openModal 함수
+  // 🚨 [핵심 업데이트] 다나와 시세 엔진 연동 openModal 함수
   window.openModal = function(idx) {
     saveRecentView(idx);
     const item = allData[idx]; 
@@ -813,7 +813,7 @@
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
     const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
     const maniaLink = item[17] || "#"; // R열: 링크
-    const donorName = (item.length > 20 && item[20]) ? item[20].trim() : ""; // U열 (20번) 데이터 가져오기
+    const donorName = item[20] ? item[20].trim() : ""; // 🎁 U열(20) 데이터 추가!
 
     // 🎨 상태 라벨 색상 결정
     let statusClass = "";
@@ -863,7 +863,7 @@
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       
-      ${donorName ? `<div class="info-item" style="border-bottom: 2px solid #ff4757;"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value" style="font-weight:bold;">${donorName}</span></div>` : ''} 
+      ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value" style="font-weight:bold;">${donorName}</span></div>` : ''} 
       
       <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
       <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
