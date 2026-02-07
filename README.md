@@ -253,148 +253,44 @@
       .toggle-bar { justify-content: center; }
     }
 
-    /* =========================================================================
-       🎨 [인테리어 추가] 배경 패턴 및 장식 효과
-       ========================================================================= */
-
-    /* 1. 배경 도트 패턴 (심심함 제거) */
+    /* 🎨 배경 패턴 및 장식 효과 */
     body {
       background-color: var(--bg);
       background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
-      background-size: 24px 24px; /* 점 간격 */
+      background-size: 24px 24px;
     }
-
-    /* 2. 타이틀 뒤 후광 효과 */
-    .center-group {
-      position: relative;
-      z-index: 2; /* 배경보다 앞에 나오게 */
-    }
+    .center-group { position: relative; z-index: 2; }
     .center-group::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(250, 176, 5, 0.2) 0%, rgba(255,255,255,0) 70%);
-      border-radius: 50%;
-      z-index: -1; /* 글자 뒤로 보내기 */
-      filter: blur(20px);
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 300px; height: 300px; background: radial-gradient(circle, rgba(250, 176, 5, 0.2) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%; z-index: -1; filter: blur(20px);
     }
-
-    /* 3. 둥둥 떠다니는 배경 오브젝트 (생동감) */
-    .floating-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: -1; /* 제일 뒤로 */
-      overflow: hidden;
-      pointer-events: none; /* 클릭 방해 금지 */
-    }
-
-    .float-shape {
-      position: absolute;
-      border-radius: 50%;
-      background: linear-gradient(45deg, var(--primary), #fff);
-      opacity: 0.15; /* 아주 은은하게 */
-      animation: floatMove 20s infinite ease-in-out;
-      filter: blur(5px);
-    }
-
-    /* 모양과 위치 랜덤 설정 */
+    .floating-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; pointer-events: none; }
+    .float-shape { position: absolute; border-radius: 50%; background: linear-gradient(45deg, var(--primary), #fff); opacity: 0.15; animation: floatMove 20s infinite ease-in-out; filter: blur(5px); }
     .shape-1 { width: 150px; height: 150px; top: 10%; left: 5%; animation-duration: 25s; }
-    .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-duration: 30s; animation-delay: -5s; background: #6c5ce7; }
-    .shape-3 { width: 80px; height: 80px; top: 30%; right: 20%; animation-duration: 18s; animation-delay: -10s; background: #ff7675; }
-    .shape-4 { width: 120px; height: 120px; bottom: 10%; left: 15%; animation-duration: 22s; animation-delay: -2s; }
+    .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-duration: 30s; background: #6c5ce7; }
+    .shape-3 { width: 80px; height: 80px; top: 30%; right: 20%; animation-duration: 18s; background: #ff7675; }
+    .shape-4 { width: 120px; height: 120px; bottom: 10%; left: 15%; animation-duration: 22s; }
+    @keyframes floatMove { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-40px) rotate(10deg); } }
+    .hall-of-fame { box-shadow: 0 30px 60px rgba(0,0,0,0.15); border: 4px solid white; }
+    .museum-footer { background: #2d2926; color: #888; padding: 60px 20px; margin-top: 80px; border-top: 4px solid var(--primary); text-align: center; font-size: 0.85rem; line-height: 1.6; width: 100%; }
+    .footer-content { max-width: 800px; margin: 0 auto; }
+    .copyright { color: white; font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
+    .disclaimer-box { margin-top: 30px; padding-top: 20px; border-top: 1px solid #444; font-size: 0.8rem; color: #666; }
+    .disclaimer-box strong { color: #aaa; }
+    .contact-email { margin-top: 15px; color: var(--primary); font-weight: bold; }
 
-    /* 둥둥 떠다니는 애니메이션 */
-    @keyframes floatMove {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-40px) rotate(10deg); }
-    }
-
-    /* 명예의 전당 카드에 그림자 강화 */
-    .hall-of-fame {
-      box-shadow: 0 30px 60px rgba(0,0,0,0.15); /* 그림자 더 진하게 */
-      border: 4px solid white; /* 흰색 테두리로 액자 느낌 */
-    }
-
-    /* =========================================================================
-       🛡️ [NEW] 푸터 디자인 업그레이드 (꽉 찬 디자인)
-       ========================================================================= */
-    .museum-footer {
-      background: #2d2926; /* 배경을 어둡게 */
-      color: #888;
-      padding: 60px 20px;
-      margin-top: 80px;
-      border-top: 4px solid var(--primary); /* 노란색 포인트 */
-      text-align: center;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      width: 100%; /* 화면 꽉 차게 */
-    }
-
-    .footer-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .copyright {
-      color: white;
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-
-    .disclaimer-box {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #444;
-      font-size: 0.8rem;
-      color: #666;
-    }
-
-    .disclaimer-box strong {
-      color: #aaa;
-    }
-
-    .contact-email {
-      margin-top: 15px;
-      color: var(--primary);
-      font-weight: bold;
-    }
-
-    /* 🎁 기증 시스템 전용 스타일 - 🚨 museum-wrapper 안에서 보이게 수정됨 */
     #donation-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 30px;
-      background: #ff4757;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 50px;
-      font-weight: 900;
-      cursor: pointer;
-      z-index: 99995; /* 🚨 최상위 wrapper보다 높게 설정 */
-      box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: none;
-      transition: 0.3s;
-      font-size: 1rem;
+      position: fixed; bottom: 20px; left: 30px; background: #ff4757; color: white; padding: 15px 25px; border-radius: 50px;
+      font-weight: 900; cursor: pointer; z-index: 99995; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+      display: flex; align-items: center; gap: 10px; border: none; transition: 0.3s; font-size: 1rem;
     }
     #donation-btn:hover { transform: scale(1.1) translateY(-5px); background: #ff6b81; }
-
     .donate-modal-body { text-align: left; padding: 20px; font-family: 'Noto Sans KR', sans-serif; }
     .donate-step { margin-bottom: 20px; padding: 15px; background: #fff5f6; border-radius: 15px; border-left: 5px solid #ff4757; }
     .donate-step h4 { margin: 0 0 10px; color: #ff4757; font-weight: 800; }
     .donate-step p { margin: 0; color: #555; font-size: 0.95rem; line-height: 1.6; }
-    .donate-link-btn { 
-      display: block; width: 100%; padding: 18px; background: #ff4757; color: white; 
-      text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; 
-      margin-top: 25px; transition: 0.3s; font-size: 1.1rem;
-      box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
-    }
+    .donate-link-btn { display: block; width: 100%; padding: 18px; background: #ff4757; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 25px; transition: 0.3s; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3); }
     .donate-link-btn:hover { background: #2d2926; transform: translateY(-3px); }
   </style>
 </head>
@@ -417,7 +313,6 @@
 </button>
 
 <div id="museum-wrapper">
-  
   <div id="quick-menu">
     <div class="quick-header">최근 본 상품</div>
     <div id="quick-items-container" class="quick-list"></div>
@@ -440,7 +335,6 @@
         <span class="search-icon">🔍</span>
         <input type="text" id="searchInput" class="search-input" placeholder="이름, 제조사 검색..." onkeyup="applyFilters()">
       </div>
-      
       <div style="display: flex; gap: 15px; align-items: center;">
         <select id="sortOrder" class="sort-select" onchange="applyFilters()">
           <option value="default">기본 순서</option>
@@ -451,7 +345,6 @@
         <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 필터 열기 ]</button>
       </div>
     </div>
-
     <div class="bookmark-container collapsed" id="filterMenu">
       <div id="seriesButtons"></div>
       <div class="maker-row" id="makerButtons">
@@ -464,22 +357,18 @@
   <div class="container">
     <div id="grid-top"></div> 
     <div id="figureGrid" class="grid"></div>
-    
     <div id="pagination" class="pagination"></div>
-  </div> <div class="museum-footer">
+  </div> 
+
+  <div class="museum-footer">
     <div class="footer-content">
       <p class="copyright">© 2026 Figure Museum Archive. All rights reserved.</p>
-      <p class="source-info">모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
-      
       <div class="disclaimer-box">
         <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
-        <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
-        <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
         <p class="contact-email">문의: iiopasd2003@gmail.com</p>
       </div>
     </div>
   </div>
-
 </div> 
 
 <div id="detailModal" class="modal" onclick="closeModal()">
@@ -503,11 +392,7 @@
     <div class="donate-modal-body">
       <div class="donate-step">
         <h4>1. 기증 대상</h4>
-        <p>박물관에 아직 등록되지 않은 소장용 피규어 정보를 제보해 주세요.</p>
-      </div>
-      <div class="donate-step">
-        <h4>2. 기증 보상</h4>
-        <p>기증해주신 정보는 사장님 검수 후 DB에 등록되며, 기증자님의 닉네임이 기록됩니다.</p>
+        <p>박물관에 아직 등록되지 않은 피규어 정보를 제보해 주세요.</p>
       </div>
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSdfyj75_8hnUXpRxQAeeDqFuDLhg_3WHNJYXz26VJR1in7aDQ/viewform?usp=header" target="_blank" class="donate-link-btn">명작 기증 폼 작성하러 가기 🚀</a>
     </div>
@@ -554,9 +439,6 @@
       renderFilters(); 
       updateDisplay(); 
       renderRecentView();
-
-      // 🔗 [핵심] 구글 검색(URL 파라미터) 연동 로직
-      // 이 함수가 있어야 ?id=번호를 읽어서 자동으로 창을 띄웁니다.
       checkUrlParam();
 
       setTimeout(() => {
@@ -570,7 +452,6 @@
     return item[3] ? item[3].trim() : ""; 
   }
 
-  // 🆕 한글 초성 추출 함수
   function getHangulInitial(str) {
     const initialChars = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
     const charCode = str.charCodeAt(0);
@@ -583,7 +464,6 @@
     return "ETC";
   }
 
-  // 🆕 필터 렌더링 (사이드바 버전)
   function renderFilters() {
     const seriesSet = new Set();
     const makerSet = new Set();
@@ -599,7 +479,6 @@
       makerCount[maker] = (makerCount[maker] || 0) + 1;
     });
 
-    // 1. 시리즈 버튼 그룹화
     seriesGrouped = {};
     Array.from(seriesSet).sort().forEach(s => {
       const initial = getHangulInitial(s);
@@ -607,7 +486,6 @@
       seriesGrouped[initial].push({ name: s, count: seriesCount[s] });
     });
 
-    // 인덱스 탭바 생성
     const seriesContainer = document.getElementById('seriesButtons');
     let tabHtml = `<div class="index-tab-bar">`;
     tabHtml += `<button class="index-tab active" onclick="renderSeriesButtons('ALL', this)">ALL</button>`;
@@ -617,14 +495,10 @@
       tabHtml += `<button class="index-tab" onclick="renderSeriesButtons('${key}', this)">${key}</button>`;
     });
     tabHtml += `</div>`;
-    
-    // 시리즈 버튼 들어갈 영역
     tabHtml += `<div class="sub-btns-scroll" id="seriesList"></div>`;
-    
     seriesContainer.innerHTML = tabHtml;
     renderSeriesButtons('ALL'); 
 
-    // 2. 제조사 버튼 생성
     const makerList = document.getElementById('makerList');
     let makerHtml = `<button class="filter-btn active" data-type="maker" onclick="filterBy('maker', 'all', this)">ALL</button>`;
     Array.from(makerSet).sort().forEach(m => {
@@ -633,36 +507,30 @@
     makerList.innerHTML = makerHtml;
   }
 
-  // 🆕 선택된 인덱스 탭에 따라 시리즈 버튼 다시 그리기
   window.renderSeriesButtons = function(groupKey, btn) {
     if (btn) {
       document.querySelectorAll('.index-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
-
     const targetList = document.getElementById('seriesList');
     let html = `<button class="filter-btn ${activeFilter === 'all' ? 'active' : ''}" data-type="series" onclick="filterBy('series', 'all', this)">전체보기</button>`;
-    
     let listToShow = [];
     if (groupKey === 'ALL') {
       Object.values(seriesGrouped).forEach(arr => listToShow.push(...arr));
     } else {
       listToShow = seriesGrouped[groupKey] || [];
     }
-
     listToShow.sort((a,b) => a.name.localeCompare(b.name));
     listToShow.forEach(item => {
        const isActive = activeFilter === item.name ? 'active' : '';
        html += `<button class="filter-btn ${isActive}" data-type="series" onclick="filterBy('series', '${item.name}', this)">${item.name} <span class="filter-count">${item.count}</span></button>`;
     });
-
     targetList.innerHTML = html;
   }
 
   window.applyFilters = function() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const sortVal = document.getElementById('sortOrder').value;
-
     let filtered = allData.filter(item => {
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
       const makerMatch = (activeMaker === 'all' || item[1] === activeMaker);
@@ -672,11 +540,9 @@
       const textMatch = name.includes(query) || maker.includes(query) || series.includes(query);
       return seriesMatch && makerMatch && textMatch;
     });
-
     if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[5]) || 0) - (parseInt(a[5]) || 0));
     else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[5]) || 0) - (parseInt(b[5]) || 0));
     else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
-
     currentDisplayData = filtered;
     currentPage = 1;
     updateDisplay();
@@ -699,7 +565,6 @@
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     const pagedData = currentDisplayData.slice(start, end);
-
     renderGrid(pagedData);
     renderPagination(totalPages);
   }
@@ -710,12 +575,10 @@
       grid.innerHTML = `<div class="no-result"><h3>😢 전시된 피규어가 없습니다.</h3><p>다른 필터나 검색어를 사용해 보세요.</p></div>`;
       return;
     }
-
     grid.innerHTML = data.map((item) => {
       const name = getProductName(item); 
       const img = item[8].split(',')[0].trim();
       const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
-
       return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
         ${badgeHtml}
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg" loading="lazy"></div>
@@ -733,19 +596,15 @@
   function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     if (totalPages <= 1) { pagination.innerHTML = ''; return; }
-
     let html = '';
     html += `<button class="page-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&lt;&lt;</button>`;
     html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>`;
-
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + 4);
     if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
-
     for (let i = startPage; i <= endPage; i++) {
       if(i > 0) html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
     }
-
     html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>`;
     html += `<button class="page-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;&gt;</button>`;
     pagination.innerHTML = html;
@@ -800,86 +659,38 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
-  // 🚨 [핵심 업데이트] 다나와 시세 엔진 연동 openModal 함수
+  // 🚨 [수정 완료] 기증자 포함 openModal 함수
   window.openModal = function(idx) {
-    saveRecentView(idx);
-    const item = allData[idx]; 
-    if(!item || !item[8]) return;
-    currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
-    const name = getProductName(item);
-    
-    // 🏷️ P, Q, R, S열 데이터 읽기 (인덱스 주의: 0부터 시작하므로 P는 15번째)
-    const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
-    const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
-    const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
-    const maniaLink = item[17] || "#"; // R열: 링크
-    const donorName = item[20] ? item[20].trim() : ""; // U열: 기증자 이름
+    try {
+      if (!allData[idx]) return;
+      saveRecentView(idx);
+      const item = allData[idx];
+      currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
+      
+      const name = getProductName(item);
+      const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
+      const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
+      const diffStatus = item[18] || "";
+      const maniaLink = item[17] || "#";
+      const donorName = (item.length > 20 && item[20]) ? item[20].trim() : ""; // U열 안전하게 체크
 
-    // 🎨 상태 라벨 색상 결정
-    let statusClass = "";
-    if(diffStatus.includes("▲")) statusClass = "price-status up"; // 빨강
-    else if(diffStatus.includes("▼")) statusClass = "price-status down"; // 초록
+      let statusClass = diffStatus.includes("▲") ? "price-status up" : (diffStatus.includes("▼") ? "price-status down" : "");
+      let priceHtml = maniaPrice ? `<div class="price-compare-box"><div class="price-row"><span class="price-label">박물관 기록가</span><span class="price-val-old">${originalPrice}</span></div><div class="price-row"><span class="price-label">현재 실시간 시세</span><div><span class="price-val-new">${maniaPrice}</span><span class="${statusClass}" style="color:${statusClass.includes('up') ? '#e03131' : '#2f9e44'}">${diffStatus}</span></div></div><a href="${maniaLink}" target="_blank" class="mania-btn">🛒 매니아하우스 실시간 최저가 확인</a></div>` : `<div class="price-compare-box"><div class="price-row"><span class="price-label">박물관 기록가</span><span class="price-val-old" style="text-decoration:none; color:#2d2926; font-weight:bold;">${originalPrice}</span></div><div class="price-row" style="justify-content:center; margin-top:10px;"><span style="color:#888; font-size:0.9rem;">현재 실시간 시세 정보를 확인해보세요!</span></div><a href="${maniaLink}" target="_blank" class="mania-btn">🔍 매니아하우스 실시간 시세 조회하기</a></div>`;
 
-    // 💰 가격 비교표 HTML 생성 logic
-    let priceHtml = "";
-    if (maniaPrice) {
-      // P열에 가격이 있을 때 (비교 모드)
-      priceHtml = `
-        <div class="price-compare-box">
-          <div class="price-row">
-            <span class="price-label">박물관 기록가</span>
-            <span class="price-val-old">${originalPrice}</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">현재 실시간 시세</span>
-            <div style="display:flex; align-items:center;">
-              <span class="price-val-new">${maniaPrice}</span>
-              <span class="${statusClass}" style="${statusClass.includes('up') ? 'color:#e03131' : 'color:#2f9e44'}">${diffStatus}</span>
-            </div>
-          </div>
-          <a href="${maniaLink}" target="_blank" class="mania-btn">
-            🛒 매니아하우스 실시간 최저가 확인
-          </a>
-        </div>
+      document.getElementById('modalInfo').innerHTML = `
+        <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
+        ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''}
+        <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
+        <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
+        <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
+        <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
+        ${priceHtml}
+        <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
+        <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">🔗 이 피규어 링크 복사하기</button>
       `;
-    } else {
-      // P열이 비었을 때 (조회 유도 모드)
-      priceHtml = `
-        <div class="price-compare-box">
-          <div class="price-row">
-            <span class="price-label">박물관 기록가</span>
-            <span class="price-val-old" style="text-decoration:none; color:#2d2926; font-weight:bold;">${originalPrice}</span>
-          </div>
-          <div class="price-row" style="justify-content:center; margin-top:10px;">
-            <span style="color:#888; font-size:0.9rem;">현재 실시간 시세 정보를 확인해보세요!</span>
-          </div>
-          <a href="${maniaLink}" target="_blank" class="mania-btn">
-            🔍 매니아하우스 실시간 시세 조회하기
-          </a>
-        </div>
-      `;
-    }
-
-    document.getElementById('modalInfo').innerHTML = `
-      <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
-      
-      ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''} 
-      
-      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
-      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
-      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
-      
-      ${priceHtml}
-
-      <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
-      
-      <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
-        🔗 이 피규어 링크 복사하기
-      </button>
-    `;
-    document.getElementById('detailModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+      document.getElementById('detailModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    } catch (err) { console.error("모달 에러:", err); }
   }
 
   window.toggleZoom = function(e) { isZoomed = !isZoomed; document.getElementById('modalImg').classList.toggle('zoomed'); if (!isZoomed) document.getElementById('modalImg').style.transform = 'scale(1)'; }
@@ -887,23 +698,14 @@
   window.updateModalImg = function() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
   window.changeImg = function(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   window.closeModal = function() { document.getElementById('detailModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-  window.toggleFilters = function() { 
-    const menu = document.getElementById('filterMenu'); 
-    menu.classList.toggle('collapsed'); 
-    document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
-  }
-
-  // 🔗 [추가] 링크 타고 들어왔을 때 자동으로 모달 띄우기 (구글 검색 연동)
+  window.toggleFilters = function() { const menu = document.getElementById('filterMenu'); menu.classList.toggle('collapsed'); document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; }
+  
+  // 🔗 [추가] 구글 검색 연동 로직
   function checkUrlParam() {
     const urlParams = new URLSearchParams(window.location.search);
-    const figureId = urlParams.get('id'); // 주소 뒤에 ?id=번호 확인
-
+    const figureId = urlParams.get('id'); 
     if (figureId !== null && allData[figureId]) {
-      console.log("구글 검색 접속: " + figureId + "번 피규어 데이터를 로딩합니다.");
-      // 데이터가 로드된 후 조금 있다가 창을 띄움 (안정성)
-      setTimeout(() => {
-        window.openModal(parseInt(figureId));
-      }, 500); 
+      setTimeout(() => { window.openModal(parseInt(figureId)); }, 500); 
     }
   }
 
