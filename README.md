@@ -813,7 +813,7 @@
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
     const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
     const maniaLink = item[17] || "#"; // R열: 링크
-    const donorName = (item.length > 20 && item[20]) ? item[20].trim() : ""; // 🎁 U열(20) 데이터 추가! (안전한 접근)
+    const donorName = item[20] ? item[20].trim() : ""; // 🎁 U열(20) 데이터 추가! (안전한 접근)
 
     // 🎨 상태 라벨 색상 결정
     let statusClass = "";
