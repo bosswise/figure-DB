@@ -141,7 +141,7 @@
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #fff; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .img-box img { width: 100%; height: 100%; object-fit: contain; }
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
     .tag-wrap { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
@@ -538,7 +538,7 @@
       if(document.body && modal) document.body.appendChild(modal);
       if(document.body && dModal) document.body.appendChild(dModal);
 
-      // 🚨 [수정 1] 구글 시트 307 에러 대비 redirect 옵션 추가
+      // 🚨 [추가 1] 307 에러가 나도 끝까지 데이터를 쫓아가는 옵션 추가
       const response = await fetch(csvURL, { redirect: "follow" });
       const text = await response.text();
       
@@ -815,8 +815,8 @@
     const diffStatus = item[18] || ""; // S열: 상태 라벨 (▲3,000 등)
     const maniaLink = item[17] || "#"; // R열: 링크
     
-    // 🚨 [수정 2] 기증자 이름 추출 로직 (U열 = 20번)
-    const donorName = item[20] ? item[20].trim() : ""; 
+    // 🚨 [추가 2] 기증자 이름 가져오기 (U열 = 20번)
+    const donorName = item[20] ? item[20].trim() : "";
 
     // 🎨 상태 라벨 색상 결정
     let statusClass = "";
