@@ -17,6 +17,7 @@
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     * { box-sizing: border-box; }
     
+    /* 🎨 [인테리어 유지] 배경 도트 패턴 */
     body {
       background-color: var(--bg);
       background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
@@ -33,12 +34,13 @@
     
     /* 레이아웃 */
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
-    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
+    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
     .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; }
     .fame-slide.active { opacity: 1; z-index: 2; }
     .fame-slide img { width: 100%; height: 100%; object-fit: cover; }
-    .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
     
+    /* 🎨 [인테리어 유지] 타이틀 뒤 후광 효과 */
+    .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
     .center-group::before {
       content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 300px; height: 300px; background: radial-gradient(circle, rgba(250, 176, 5, 0.2) 0%, rgba(255,255,255,0) 70%);
@@ -49,7 +51,7 @@
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
     .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
     
-    /* 🆕 검색창 및 필터 바 (헤더) */
+    /* 검색창 및 필터 바 (헤더) */
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; }
     
@@ -80,7 +82,7 @@
     .filter-btn { background: rgba(255,255,255,0.05); color: #a5a09c; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; text-align: left; display: flex; justify-content: space-between; width: 100%; }
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; border-color: var(--primary); }
     
-    /* 🆕 연도별 필터 섹션 스타일 */
+    /* 연도별 필터 섹션 스타일 */
     .filter-section { border-top: 1px solid #555; padding-top: 20px; display: flex; flex-direction: column; gap: 10px; }
     .filter-title { color: var(--primary); font-size: 0.9rem; font-weight: 800; margin-bottom: 5px; }
     .year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -147,7 +149,7 @@
     .mania-btn { display: block; width: 100%; padding: 18px; background: #008BCC; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 15px; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,139,204,0.3); }
     .mania-btn:hover { background: #0077b3; transform: translateY(-3px); }
 
-    /* 퀵 메뉴, 로딩, 푸터, 기증버튼 스타일 등은 기존 유지 */
+    /* 퀵 메뉴 */
     #quick-menu { position: fixed; right: 30px; top: 150px; width: 110px; background: white; border: 1px solid #ddd; z-index: 9900; text-align: center; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; }
     .quick-header { background: #2d2926; color: white; padding: 10px 0; font-size: 0.8rem; font-weight: 700; }
     .quick-list { display: flex; flex-direction: column; }
@@ -156,17 +158,23 @@
     .quick-item img { max-width: 90%; max-height: 90%; object-fit: contain; }
     .top-btn { width: 100%; border: none; background: var(--primary); color: #2d2926; font-weight: 900; padding: 10px 0; cursor: pointer; font-size: 0.9rem; }
     .top-btn:hover { background: #e09e05; }
+
+    /* 로딩 화면 */
     #loading-screen { position: fixed; inset: 0; background: var(--bg); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
     .loader { width: 60px; height: 60px; border: 5px solid var(--primary); border-bottom-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
     .loading-text { font-weight: 800; color: var(--dark); font-size: 1.2rem; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
+
+    /* 🛡️ 푸터 유지 */
     .museum-footer { background: #2d2926; color: #888; padding: 60px 20px; margin-top: 80px; border-top: 4px solid var(--primary); text-align: center; font-size: 0.85rem; line-height: 1.6; width: 100%; }
     .footer-content { max-width: 800px; margin: 0 auto; }
     .copyright { color: white; font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
     .disclaimer-box { margin-top: 30px; padding-top: 20px; border-top: 1px solid #444; font-size: 0.8rem; color: #666; }
     .contact-email { margin-top: 15px; color: var(--primary); font-weight: bold; }
+
+    /* 🎁 기증 버튼 및 둥둥 떠다니는 배경 유지 */
     #donation-btn { position: fixed; bottom: 20px; left: 30px; background: #ff4757; color: white; padding: 15px 25px; border-radius: 50px; font-weight: 900; cursor: pointer; z-index: 99995; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4); display: flex; align-items: center; gap: 10px; border: none; transition: 0.3s; font-size: 1rem; opacity: 1; }
     #donation-btn:hover { transform: scale(1.1) translateY(-5px); background: #ff6b81; opacity: 1 !important; }
     #donation-btn.faded { opacity: 0.5; transform: scale(0.9); pointer-events: none; }
@@ -175,6 +183,7 @@
     .donate-step h4 { margin: 0 0 10px; color: #ff4757; font-weight: 800; }
     .donate-link-btn { display: block; width: 100%; padding: 18px; background: #ff4757; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 25px; transition: 0.3s; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3); }
     .donate-link-btn:hover { background: #2d2926; transform: translateY(-3px); }
+    
     .floating-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; pointer-events: none; }
     .float-shape { position: absolute; border-radius: 50%; background: linear-gradient(45deg, var(--primary), #fff); opacity: 0.15; animation: floatMove 20s infinite ease-in-out; filter: blur(5px); }
     .shape-1 { width: 150px; height: 150px; top: 10%; left: 5%; animation-duration: 25s; }
@@ -182,6 +191,8 @@
     .shape-3 { width: 80px; height: 80px; top: 30%; right: 20%; animation-duration: 18s; animation-delay: -10s; background: #ff7675; }
     .shape-4 { width: 120px; height: 120px; bottom: 10%; left: 15%; animation-duration: 22s; animation-delay: -2s; }
     @keyframes floatMove { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-40px) rotate(10deg); } }
+    
+    /* 모바일 반응형 */
     @media (max-width: 1024px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 30px; } 
       .main-title-area { flex-direction: column; gap: 30px; padding-top: 30px; }
@@ -255,7 +266,8 @@
       <div style="display: flex; gap: 15px; align-items: center;">
         <select id="sortOrder" class="sort-select" onchange="applyFilters()">
           <option value="default">기본 순서</option>
-          <option value="dateDesc">🚀 출시 임박순</option> <option value="priceHigh">높은 가격순</option>
+          <option value="dateDesc">🚀 출시 임박순</option>
+          <option value="priceHigh">높은 가격순</option>
           <option value="priceLow">낮은 가격순</option>
           <option value="nameAsc">이름 (가나다)</option>
         </select>
@@ -294,7 +306,7 @@
         <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
         <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
         <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
-        <p class="contact-email">문의: iiopasd2003@gmail.com</p>
+        <p class="contact-email">문의: bosswise@example.com</p>
       </div>
     </div>
   </div>
@@ -340,7 +352,7 @@
   let currentImages = [], currentImgIdx = 0, isZoomed = false;
   let activeFilter = 'all'; 
   let activeMaker = 'all';
-  let activeYear = 'all'; // 🆕 연도 필터 변수
+  let activeYear = 'all'; 
 
   let seriesGrouped = {}; 
   let currentPage = 1;
@@ -375,6 +387,7 @@
       updateDisplay(); 
       renderRecentView();
 
+      // 🔗 주소창 파라미터 체크해서 모달 바로 띄우기
       checkUrlParam();
 
       setTimeout(() => {
@@ -429,7 +442,7 @@
   function renderFilters() {
     const seriesSet = new Set();
     const makerSet = new Set();
-    const yearSet = new Set(); // 🆕 연도 집합
+    const yearSet = new Set(); 
     const seriesCount = {};
     const makerCount = {};
 
@@ -437,8 +450,6 @@
       const series = item[2] || "ETC";
       const maker = item[1] || "정보없음";
       
-      // 🚨 구글 시트 22번째 열(Index 21)에 날짜가 있다고 가정 (기존 데이터 뒤에 붙였을 경우)
-      // 만약 데이터가 없으면 '미정'으로 처리
       const rawDate = item[21] ? item[21].trim() : ""; 
       let year = "미정";
       if(rawDate.match(/^\d{4}/)) {
@@ -452,7 +463,6 @@
       makerCount[maker] = (makerCount[maker] || 0) + 1;
     });
 
-    // 🆕 연도 버튼 생성 로직
     const yearContainer = document.getElementById('yearButtons');
     let yearHtml = `<button class="year-btn active" onclick="filterBy('year', 'all', this)">ALL</button>`;
     Array.from(yearSet).sort().reverse().forEach(y => {
@@ -470,12 +480,15 @@
     const seriesContainer = document.getElementById('seriesButtons');
     let tabHtml = `<div class="index-tab-bar">`;
     tabHtml += `<button class="index-tab active" onclick="renderSeriesButtons('ALL', this)">ALL</button>`;
+    
     const sortedKeys = Object.keys(seriesGrouped).sort();
     sortedKeys.forEach(key => {
       tabHtml += `<button class="index-tab" onclick="renderSeriesButtons('${key}', this)">${key}</button>`;
     });
     tabHtml += `</div>`;
+    
     tabHtml += `<div class="sub-btns-scroll" id="seriesList"></div>`;
+    
     seriesContainer.innerHTML = tabHtml;
     renderSeriesButtons('ALL'); 
 
@@ -495,17 +508,20 @@
 
     const targetList = document.getElementById('seriesList');
     let html = `<button class="filter-btn ${activeFilter === 'all' ? 'active' : ''}" data-type="series" onclick="filterBy('series', 'all', this)">전체보기</button>`;
+    
     let listToShow = [];
     if (groupKey === 'ALL') {
       Object.values(seriesGrouped).forEach(arr => listToShow.push(...arr));
     } else {
       listToShow = seriesGrouped[groupKey] || [];
     }
+
     listToShow.sort((a,b) => a.name.localeCompare(b.name));
     listToShow.forEach(item => {
        const isActive = activeFilter === item.name ? 'active' : '';
        html += `<button class="filter-btn ${isActive}" data-type="series" onclick="filterBy('series', '${item.name}', this)">${item.name} <span class="filter-count">${item.count}</span></button>`;
     });
+
     targetList.innerHTML = html;
   }
 
@@ -517,7 +533,6 @@
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
       const makerMatch = (activeMaker === 'all' || item[1] === activeMaker);
       
-      // 🆕 연도 필터 적용
       const rawDate = item[21] ? item[21].trim() : "";
       let itemYear = "미정";
       if(rawDate.match(/^\d{4}/)) itemYear = rawDate.substring(0, 4);
@@ -531,12 +546,10 @@
       return seriesMatch && makerMatch && yearMatch && textMatch;
     });
 
-    // 🆕 정렬 로직 추가 (출시 임박순)
     if (sortVal === 'priceHigh') filtered.sort((a, b) => (parseInt(b[5]) || 0) - (parseInt(a[5]) || 0));
     else if (sortVal === 'priceLow') filtered.sort((a, b) => (parseInt(a[5]) || 0) - (parseInt(b[5]) || 0));
     else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
     else if (sortVal === 'dateDesc') {
-       // 날짜가 있는 것끼리 비교 (내림차순: 최신순)
        filtered.sort((a, b) => {
          const dateA = a[21] || "0000-00-00";
          const dateB = b[21] || "0000-00-00";
@@ -556,9 +569,8 @@
     } else if (type === 'maker') {
       activeMaker = value;
       document.querySelectorAll('[data-type="maker"]').forEach(b => b.classList.remove('active'));
-    } else if (type === 'year') { // 🆕 연도 필터 처리
+    } else if (type === 'year') { 
       activeYear = value;
-      // 연도 버튼 활성화 처리
       const yearBtns = document.getElementById('yearButtons').children;
       for(let b of yearBtns) b.classList.remove('active');
     }
@@ -673,20 +685,31 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
+  // 🔗 [핵심] 브라우저 뒤로가기 버튼 감지 로직
   window.onpopstate = function(event) {
     if (document.getElementById('detailModal').style.display === 'flex') {
       closeModal(true); 
+    } else if (event.state && event.state.id !== undefined) {
+      window.openModal(event.state.id, true);
     }
   };
 
-  window.openModal = function(idx) {
+  window.openModal = function(idx, isPopState = false) {
     saveRecentView(idx);
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     
     const name = getProductName(item);
     document.title = `${name} - 피규어 박물관`;
-    history.pushState({modalOpen: true, id: idx}, null, `?id=${idx}`);
+    
+    // 🔗 [핵심] 주소창 동적 변경 (뒤로가기로 불린게 아니면)
+    if(!isPopState) {
+      const newURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + idx;
+      const currentId = new URLSearchParams(window.location.search).get('id');
+      if (currentId !== String(idx)) {
+          window.history.pushState({modalOpen: true, id: idx}, '', newURL);
+      }
+    }
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
@@ -695,7 +718,6 @@
     const diffStatus = item[18] || ""; 
     const maniaLink = item[17] || "#"; 
     const donorName = item[20] ? item[20].trim() : ""; 
-    // 🆕 발매일 정보 추가 (없으면 '정보확인중')
     const releaseDate = item[21] ? item[21] : "정보확인중";
 
     let statusClass = "";
@@ -768,17 +790,15 @@
   window.updateModalImg = function() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
   window.changeImg = function(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   
+  // 🔗 [핵심] 모달 닫을 때 주소창 원상복구
   window.closeModal = function(isBackButton = false) { 
     document.getElementById('detailModal').style.display = 'none'; 
     document.body.style.overflow = 'auto'; 
     document.title = '피규어 박물관'; 
 
     if (!isBackButton) {
-      if (history.state && history.state.modalOpen) {
-        history.back();
-      } else {
-        history.replaceState(null, null, window.location.pathname);
-      }
+      const cleanURL = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({}, '', cleanURL);
     }
   }
 
@@ -794,6 +814,7 @@
     document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
   }
 
+  // 🔗 [핵심] 주소창 파라미터 감지해서 모달 띄우기
   function checkUrlParam() {
     const urlParams = new URLSearchParams(window.location.search);
     const figureId = urlParams.get('id'); 
@@ -801,7 +822,7 @@
     if (figureId !== null && allData[figureId]) {
       console.log("구글 검색 접속: " + figureId + "번 피규어 데이터를 로딩합니다.");
       setTimeout(() => {
-        window.openModal(parseInt(figureId));
+        window.openModal(parseInt(figureId), true);
       }, 500); 
     }
   }
