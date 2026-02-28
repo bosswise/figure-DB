@@ -10,28 +10,25 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 [강력] 깃허브 테마(Jekyll)의 모든 흔적 암살 (파란색 글씨 제거) */
-    header, footer, .site-header, .site-footer-old, .title, b, .gh-header,
-    .page-header, .project-name, .project-tagline, .repository-name, 
-    .markdown-body header, #header, .header, [id*="header"], [class*="header"] { 
-      display: none !important; opacity: 0 !important; visibility: hidden !important; 
-      pointer-events: none !important; height: 0 !important; width: 0 !important; 
-      margin: 0 !important; padding: 0 !important; position: absolute !important; top: -9999px !important;
+    /* 🚨 깃허브 찌꺼기 가림막 (위험한 코드 제거) */
+    .page-header, .project-name, .project-tagline, .repository-name, .site-header, .site-footer { 
+      display: none !important; 
     }
     
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     * { box-sizing: border-box; }
     
     body {
+      margin: 0; padding: 0;
       background-color: var(--bg);
-      background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
-      background-size: 24px 24px;
-      margin: 0; 
     }
 
+    /* 🛡️ [수정됨] 배경을 투명하게 하지 않고 불투명하게 해서 깃허브 테마를 완전히 덮어버림! */
     #museum-wrapper { 
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-      background-color: transparent; 
+      background-color: var(--bg); 
+      background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
       z-index: 99990; overflow-y: auto; 
       font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; 
     }
@@ -40,10 +37,10 @@
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
     .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
     
-    /* 📸 1. 명예의 전당 이미지 중앙 정렬 (보강) */
-    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex !important; align-items: center !important; justify-content: center !important; }
+    /* 📸 명예의 전당 이미지 완벽 중앙 정렬 */
+    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex; align-items: center; justify-content: center; }
     .fame-slide.active { opacity: 1; z-index: 2; }
-    .fame-slide img { max-width: 100%; max-height: 100%; object-fit: cover; object-position: center; margin: auto !important; display: block; }
+    .fame-slide img { max-width: 100%; max-height: 100%; object-fit: cover; object-position: center; margin: 0 auto; display: block; }
     
     .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
     .center-group::before {
@@ -58,6 +55,7 @@
     
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; }
+    
     .search-box { position: relative; width: 300px; }
     .search-input { width: 100%; padding: 10px 20px 10px 40px; border-radius: 25px; border: 1px solid #555; background: #45403c; color: white; font-family: inherit; transition: 0.3s; }
     .search-input:focus { background: white; color: var(--dark); border-color: var(--primary); outline: none; }
@@ -106,9 +104,9 @@
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
-    /* 📸 2. 리스트 카드 이미지 중앙 정렬 (보강) */
-    .img-box { width: 100%; height: 450px; display: flex !important; align-items: center !important; justify-content: center !important; padding: 40px; background: #f9f9f9; text-align: center; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: auto !important; display: block; transition: opacity 0.3s; }
+    /* 📸 카드 이미지 완벽 중앙 정렬 */
+    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
@@ -127,11 +125,11 @@
     /* 모달 */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 99999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
-    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex !important; align-items: center !important; justify-content: center !important; }
+    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     
-    /* 📸 3. 모달 상세 이미지 중앙 정렬 (보강) */
-    .modal-img-wrapper { width: 100%; height: 100%; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden; cursor: zoom-in; text-align: center; }
-    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: auto !important; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
+    /* 📸 모달 이미지 완벽 중앙 정렬 */
+    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; text-align: center; }
+    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
     #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
     
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
