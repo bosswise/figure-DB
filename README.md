@@ -10,8 +10,8 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 깃허브 찌꺼기 가림막 (위험한 코드 제거) */
-    .page-header, .project-name, .project-tagline, .repository-name, .site-header, .site-footer { 
+    /* 🚨 1. 사이트 날아갔던 원인 수정 (안전하게 깃허브 테마만 가리기) */
+    .page-header, .project-name, .project-tagline, .repository-name, .site-footer { 
       display: none !important; 
     }
     
@@ -19,16 +19,16 @@
     * { box-sizing: border-box; }
     
     body {
-      margin: 0; padding: 0;
       background-color: var(--bg);
+      background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      margin: 0; 
     }
 
-    /* 🛡️ [수정됨] 배경을 투명하게 하지 않고 불투명하게 해서 깃허브 테마를 완전히 덮어버림! */
+    /* 🚨 2. 파란 글씨 완벽 차단: 배경을 다시 불투명하게 해서 뒤를 덮어버림 */
     #museum-wrapper { 
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
       background-color: var(--bg); 
-      background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
-      background-size: 24px 24px;
       z-index: 99990; overflow-y: auto; 
       font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; 
     }
@@ -37,10 +37,9 @@
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
     .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
     
-    /* 📸 명예의 전당 이미지 완벽 중앙 정렬 */
-    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex; align-items: center; justify-content: center; }
+    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex !important; align-items: center !important; justify-content: center !important; }
     .fame-slide.active { opacity: 1; z-index: 2; }
-    .fame-slide img { max-width: 100%; max-height: 100%; object-fit: cover; object-position: center; margin: 0 auto; display: block; }
+    .fame-slide img { max-width: 100%; max-height: 100%; object-fit: cover; object-position: center; margin: auto !important; display: block; }
     
     .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
     .center-group::before {
@@ -55,7 +54,6 @@
     
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; }
-    
     .search-box { position: relative; width: 300px; }
     .search-input { width: 100%; padding: 10px 20px 10px 40px; border-radius: 25px; border: 1px solid #555; background: #45403c; color: white; font-family: inherit; transition: 0.3s; }
     .search-input:focus { background: white; color: var(--dark); border-color: var(--primary); outline: none; }
@@ -95,18 +93,32 @@
     #filterMenu::-webkit-scrollbar { width: 6px; }
     #filterMenu::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
     
+    /* 🚨 3. 필터 열었을 때 남은 공간 안에서 정중앙 모이게 수정 */
     .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s; }
     @media (min-width: 1300px) {
-      .container.shifted { margin-left: 340px; max-width: calc(100% - 380px); } 
+      .container.shifted { 
+        margin-left: 320px; 
+        max-width: calc(100% - 320px); 
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 핵심: 남은 화면의 중앙에 정렬 */
+      } 
     }
 
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 60px; 
+      width: 100%; 
+      max-width: 1200px; /* 너무 넓게 퍼지지 않도록 폭 고정 */
+      margin: 0 auto; /* 핵심: 그리드 덩어리 자체를 중앙으로 */
+    }
+    
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
-    /* 📸 카드 이미지 완벽 중앙 정렬 */
-    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
+    .img-box { width: 100%; height: 450px; display: flex !important; align-items: center !important; justify-content: center !important; padding: 40px; background: #f9f9f9; text-align: center; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: auto !important; display: block; transition: opacity 0.3s; }
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
@@ -116,7 +128,7 @@
     .card-badge { position: absolute; top: 25px; left: 25px; background: var(--primary); color: #2d2926; padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; box-shadow: 0 5px 15px rgba(250, 176, 5, 0.4); z-index: 5; letter-spacing: 0.5px; }
 
     /* 페이지네이션 */
-    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 60px; padding-bottom: 40px; }
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 60px; padding-bottom: 40px; width: 100%; }
     .page-btn { min-width: 45px; height: 45px; border-radius: 22.5px; border: 1px solid #ddd; background: white; color: var(--dark); font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; padding: 0 15px; }
     .page-btn:hover { background: #f0f0f0; border-color: #bbb; }
     .page-btn.active { background: var(--dark); color: var(--primary); border-color: var(--dark); }
@@ -125,11 +137,10 @@
     /* 모달 */
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 99999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
-    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex !important; align-items: center !important; justify-content: center !important; }
     
-    /* 📸 모달 이미지 완벽 중앙 정렬 */
-    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; text-align: center; }
-    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
+    .modal-img-wrapper { width: 100%; height: 100%; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden; cursor: zoom-in; text-align: center; }
+    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: auto !important; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
     #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
     
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
