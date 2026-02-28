@@ -10,17 +10,17 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 깃허브 기본 테마(Jekyll) 찌꺼기 완벽 제거 (파란색 글씨 암살) */
-    header, footer, .site-header, .site-footer, .site-footer-old, .title, b, .gh-header,
-    .page-header, .project-name, .project-tagline, .repository-name { 
+    /* 🚨 1. 깃허브 기본 테마(Jekyll) 찌꺼기 완벽 제거 (파란색 글씨 암살) */
+    header, footer, .site-header, .site-footer-old, .title, b, .gh-header,
+    .page-header, .project-name, .project-tagline, .repository-name, .markdown-body header { 
       display: none !important; opacity: 0 !important; visibility: hidden !important; 
       pointer-events: none !important; height: 0 !important; overflow: hidden !important;
+      margin: 0 !important; padding: 0 !important; border: none !important;
     }
     
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     * { box-sizing: border-box; }
     
-    /* 🎨 [인테리어 유지] 배경 도트 패턴 */
     body {
       background-color: var(--bg);
       background-image: radial-gradient(#e5e5e5 1.5px, transparent 1.5px);
@@ -37,15 +37,15 @@
     
     /* 레이아웃 */
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
-    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
+    .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
     
-    /* 📸 명예의 전당 이미지 중앙 정렬 */
+    /* 🚨 2-1. 명예의 전당 이미지 중앙 정렬 */
     .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex; align-items: center; justify-content: center; }
     .fame-slide.active { opacity: 1; z-index: 2; }
     .fame-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; margin: 0 auto; display: block; }
     
-    /* 🎨 [인테리어 유지] 타이틀 뒤 후광 효과 */
     .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
+    
     .center-group::before {
       content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 300px; height: 300px; background: radial-gradient(circle, rgba(250, 176, 5, 0.2) 0%, rgba(255,255,255,0) 70%);
@@ -56,7 +56,7 @@
     .museum-title { font-weight: 900; font-size: 4rem; color: var(--dark); margin: 0; cursor: pointer; letter-spacing: -3px; }
     .total-stats-badge { display: inline-block; background: var(--dark); color: var(--primary); padding: 8px 22px; border-radius: 20px; font-size: 1rem; font-weight: 800; margin-top: 15px; }
     
-    /* 검색창 및 필터 바 (헤더) */
+    /* 🆕 검색창 및 필터 바 (헤더) */
     .sticky-header { background: #2d2926; padding: 20px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
     .control-bar { max-width: 1200px; margin: 0 auto; padding: 0 25px; display: flex; justify-content: space-between; align-items: center; }
     
@@ -87,7 +87,6 @@
     .filter-btn { background: rgba(255,255,255,0.05); color: #a5a09c; border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 0.85rem; transition: 0.2s; text-align: left; display: flex; justify-content: space-between; width: 100%; }
     .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #1a1a1a; font-weight: 800; border-color: var(--primary); }
     
-    /* 연도별 필터 섹션 스타일 */
     .filter-section { border-top: 1px solid #555; padding-top: 20px; display: flex; flex-direction: column; gap: 10px; }
     .filter-title { color: var(--primary); font-size: 0.9rem; font-weight: 800; margin-bottom: 5px; }
     .year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
@@ -111,7 +110,7 @@
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
-    /* 📸 카드 내 이미지 중앙 정렬 완벽 고정 */
+    /* 🚨 2-2. 리스트 카드 이미지 중앙 정렬 */
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
     .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
     
@@ -134,8 +133,8 @@
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
     .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     
-    /* 📸 모달창 상세 이미지 중앙 정렬 완벽 고정 */
-    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; }
+    /* 🚨 2-3. 모달창 큰 이미지 중앙 정렬 */
+    .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; text-align: center; }
     #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
     #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
     
@@ -176,14 +175,14 @@
     .no-result { text-align: center; padding: 100px 0; grid-column: 1 / -1; color: #999; }
     .no-result h3 { font-size: 2rem; margin-bottom: 10px; color: #ccc; }
 
-    /* 🛡️ 푸터 유지 */
+    /* 푸터 */
     .museum-footer { background: #2d2926; color: #888; padding: 60px 20px; margin-top: 80px; border-top: 4px solid var(--primary); text-align: center; font-size: 0.85rem; line-height: 1.6; width: 100%; }
     .footer-content { max-width: 800px; margin: 0 auto; }
     .copyright { color: white; font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
     .disclaimer-box { margin-top: 30px; padding-top: 20px; border-top: 1px solid #444; font-size: 0.8rem; color: #666; }
     .contact-email { margin-top: 15px; color: var(--primary); font-weight: bold; }
 
-    /* 🎁 기증 버튼 및 둥둥 떠다니는 배경 유지 */
+    /* 기증 버튼 */
     #donation-btn { position: fixed; bottom: 20px; left: 30px; background: #ff4757; color: white; padding: 15px 25px; border-radius: 50px; font-weight: 900; cursor: pointer; z-index: 99995; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4); display: flex; align-items: center; gap: 10px; border: none; transition: 0.3s; font-size: 1rem; opacity: 1; }
     #donation-btn:hover { transform: scale(1.1) translateY(-5px); background: #ff6b81; opacity: 1 !important; }
     #donation-btn.faded { opacity: 0.5; transform: scale(0.9); pointer-events: none; }
@@ -396,7 +395,6 @@
       updateDisplay(); 
       renderRecentView();
 
-      // 🔗 주소창 파라미터 체크해서 모달 바로 띄우기
       checkUrlParam();
 
       setTimeout(() => {
@@ -694,7 +692,6 @@
 
   function scrollToTop() { document.getElementById('museum-wrapper').scrollTo({ top: 0, behavior: 'smooth' }); }
 
-  // 🔗 [핵심] 브라우저 뒤로가기 버튼 감지 로직
   window.onpopstate = function(event) {
     if (document.getElementById('detailModal').style.display === 'flex') {
       closeModal(true); 
@@ -711,7 +708,6 @@
     const name = getProductName(item);
     document.title = `${name} - 피규어 박물관`;
     
-    // 🔗 [핵심] 주소창 동적 변경 (뒤로가기로 불린게 아니면)
     if(!isPopState) {
       const newURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + idx;
       const currentId = new URLSearchParams(window.location.search).get('id');
@@ -799,7 +795,6 @@
   window.updateModalImg = function() { const img = document.getElementById('modalImg'); img.src = `${imageBaseURL}${encodeURIComponent(currentImages[currentImgIdx])}.jpg`; isZoomed = false; img.classList.remove('zoomed'); img.style.transform = 'scale(1)'; }
   window.changeImg = function(dir) { currentImgIdx = (currentImgIdx + dir + currentImages.length) % currentImages.length; updateModalImg(); }
   
-  // 🔗 [핵심] 모달 닫을 때 주소창 원상복구
   window.closeModal = function(isBackButton = false) { 
     document.getElementById('detailModal').style.display = 'none'; 
     document.body.style.overflow = 'auto'; 
@@ -823,7 +818,6 @@
     document.getElementById('toggleBtn').innerText = menu.classList.contains('collapsed') ? '[ 필터 열기 ]' : '[ 필터 접기 ]'; 
   }
 
-  // 🔗 [핵심] 주소창 파라미터 감지해서 모달 띄우기
   function checkUrlParam() {
     const urlParams = new URLSearchParams(window.location.search);
     const figureId = urlParams.get('id'); 
