@@ -10,10 +10,13 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 기본 설정 (유지) */
-    header, footer, .site-header, .site-footer-old, .title, b, .gh-header { 
-      display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important;
+    /* 🚨 깃허브 기본 테마(Jekyll) 찌꺼기 완벽 제거 (파란색 글씨 암살) */
+    header, footer, .site-header, .site-footer, .site-footer-old, .title, b, .gh-header,
+    .page-header, .project-name, .project-tagline, .repository-name { 
+      display: none !important; opacity: 0 !important; visibility: hidden !important; 
+      pointer-events: none !important; height: 0 !important; overflow: hidden !important;
     }
+    
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
     * { box-sizing: border-box; }
     
@@ -35,9 +38,11 @@
     /* 레이아웃 */
     .main-title-area { padding: 60px 0 40px; display: flex; align-items: center; justify-content: center; max-width: 1500px; margin: 0 auto; gap: 50px; }
     .hall-of-fame { width: 300px; height: 400px; position: relative; cursor: pointer; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; background: #fff; flex-shrink: 0; border: 4px solid white; }
-    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; }
+    
+    /* 📸 명예의 전당 이미지 중앙 정렬 */
+    .fame-slide { position: absolute; inset: 0; background: white; opacity: 0; transition: opacity 1.5s ease; display: flex; align-items: center; justify-content: center; }
     .fame-slide.active { opacity: 1; z-index: 2; }
-    .fame-slide img { width: 100%; height: 100%; object-fit: cover; }
+    .fame-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; margin: 0 auto; display: block; }
     
     /* 🎨 [인테리어 유지] 타이틀 뒤 후광 효과 */
     .center-group { text-align: center; flex: 0 0 450px; position: relative; z-index: 2; }
@@ -106,8 +111,9 @@
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
-    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.3s; }
+    /* 📸 카드 내 이미지 중앙 정렬 완벽 고정 */
+    .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
@@ -127,9 +133,12 @@
     .modal { display: none; position: fixed; inset: 0; background: var(--modal-bg); z-index: 99999; justify-content: center; align-items: center; padding: 40px; backdrop-filter: blur(30px); }
     .modal-content { background: white; max-width: 1300px; width: 98%; height: 88vh; border-radius: 65px; display: flex; overflow: hidden; position: relative; }
     .modal-img-area { flex: 1.4; background: #fff; position: relative; border-right: 1px solid #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    
+    /* 📸 모달창 상세 이미지 중앙 정렬 완벽 고정 */
     .modal-img-wrapper { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: zoom-in; }
-    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center; }
+    #modalImg { max-width: 90%; max-height: 90%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: transform 0.1s ease-out; transform-origin: center; }
     #modalImg.zoomed { cursor: zoom-out; transform: scale(3.5); }
+    
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
     .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
     .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
@@ -306,7 +315,7 @@
         <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
         <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
         <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
-        <p class="contact-email">문의: iiopasd2003@gmail.com</p>
+        <p class="contact-email">문의: bosswise@example.com</p>
       </div>
     </div>
   </div>
