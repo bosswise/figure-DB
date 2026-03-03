@@ -808,7 +808,7 @@
     
     // 🌟 아미아미/만다라케 링크에 드디어 V열 데이터가 반영됩니다!
     const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedAmiamiQuery;
-    const mandarakeLink = "https://order.mandarake.co.kr/order/listPage/list.xhtml?keyword=" + encodedAmiamiQuery;
+    const mandarakeLink = "https://order.mandarake.co.jp/order/listPage/list.xhtml?keyword=" + encodedAmiamiQuery;
     
     const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
