@@ -158,15 +158,15 @@
     .price-val-old { text-decoration: line-through; color: #adb5bd; font-size: 1.1rem; }
     .price-val-new { font-weight: 900; font-size: 1.6rem; color: #2d2926; }
     .price-status { font-size: 0.9rem; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-left: 5px; }
-    .mania-btn { display: block; width: 100%; padding: 18px; background: #008BCC; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 15px; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,139,204,0.3); }
-    .mania-btn:hover { background: #0077b3; transform: translateY(-3px); }
+    /* 🚨 (최적화) 매니아하우스 단독 버튼 디자인(mania-btn)은 삭제됨! */
 
     /* 🆕 소장처 비교 가이드 버튼 스타일 추가 (기존 코드 훼손 X) */
     .shop-guide-title { font-size: 1.1rem; font-weight: 800; color: #333; margin-top: 25px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
     .shop-btn-wrap { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
     .shop-btn { display: block; width: 100%; padding: 15px; color: white; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 1rem; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
     .shop-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.05); }
-    /* 각 쇼핑몰 고유 브랜드 컬러 */
+    /* 🆕 (추가) 매니아하우스 배지 스타일 합류 */
+    .shop-btn.mania { background: #008BCC; } /* 매니아하우스 블루 */
     .shop-btn.comics { background: #E50914; } /* 코믹스아트 레드 */
     .shop-btn.presso { background: #FFD400; color: #111; } /* 피규어프레소 옐로우 */
     .shop-btn.aladin { background: #EB118A; } /* 알라딘 핑크 */
@@ -733,8 +733,8 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
-    // 🚀 [추가됨] 다양한 소장처 검색 링크 동적 생성 로직
-    const searchKeyword = item[14] ? item[14].trim() : name; // 매니아 검색어가 없으면 피규어 이름으로 대체
+    // 🚀 [추가/수정됨] 다양한 소장처 검색 링크 동적 생성 로직
+    const searchKeyword = item[14] ? item[14].trim() : name; 
     const encodedKeyword = encodeURIComponent(searchKeyword);
     
     const maniaLink = "https://maniahouse.co.kr/product/search.html?keyword=" + encodedKeyword;
@@ -752,6 +752,7 @@
     if(diffStatus.includes("▲")) statusClass = "price-status up"; 
     else if(diffStatus.includes("▼")) statusClass = "price-status down"; 
 
+    // 🚨 (수정됨) 여기서 파란색 mania-btn은 삭제하고 깔끔한 가격 정보만 남김
     let priceHtml = "";
     if (maniaPrice) {
       priceHtml = `
@@ -760,31 +761,22 @@
             <span class="price-label">박물관 기록가</span>
             <span class="price-val-old">${originalPrice}</span>
           </div>
-          <div class="price-row">
+          <div class="price-row" style="margin-bottom:0;">
             <span class="price-label">현재 실시간 시세</span>
             <div style="display:flex; align-items:center;">
               <span class="price-val-new">${maniaPrice}</span>
               <span class="${statusClass}" style="${statusClass.includes('up') ? 'color:#e03131' : 'color:#2f9e44'}">${diffStatus}</span>
             </div>
           </div>
-          <a href="${maniaLink}" target="_blank" class="mania-btn">
-            🛒 매니아하우스 실시간 최저가 확인
-          </a>
         </div>
       `;
     } else {
       priceHtml = `
         <div class="price-compare-box">
-          <div class="price-row">
+          <div class="price-row" style="margin-bottom:0;">
             <span class="price-label">박물관 기록가</span>
             <span class="price-val-old" style="text-decoration:none; color:#2d2926; font-weight:bold;">${originalPrice}</span>
           </div>
-          <div class="price-row" style="justify-content:center; margin-top:10px;">
-            <span style="color:#888; font-size:0.9rem;">현재 실시간 시세 정보를 확인해보세요!</span>
-          </div>
-          <a href="${maniaLink}" target="_blank" class="mania-btn">
-            🔍 매니아하우스 실시간 시세 조회하기
-          </a>
         </div>
       `;
     }
@@ -803,8 +795,9 @@
       
       ${priceHtml}
 
-      <div class="shop-guide-title">🔍 다른 쇼핑몰 실시간 재고/시세 확인</div>
+      <div class="shop-guide-title">🔍 쇼핑몰 실시간 재고/시세 확인</div>
       <div class="shop-btn-wrap">
+        <a href="${maniaLink}" target="_blank" class="shop-btn mania">매니아하우스에서 찾기</a>
         <a href="${comicsLink}" target="_blank" class="shop-btn comics">코믹스아트에서 찾기</a>
         <a href="${pressoLink}" target="_blank" class="shop-btn presso">피규어프레소 확인</a>
         <a href="${aladinLink}" target="_blank" class="shop-btn aladin">알라딘 재고 검색</a>
