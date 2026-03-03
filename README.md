@@ -737,7 +737,7 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
-    // 🌍 1. [추가됨] 한글 제조사를 영문으로 변환하는 사전 마법
+    // 🌍 [추가됨] 한글 제조사를 영문으로 변환하는 사전 마법
     const makerTranslate = {
       "굿스마일": "Good Smile Company",
       "알터": "Alter",
@@ -751,13 +751,39 @@
       "카도카와": "Kadokawa"
     };
 
+    // 🪄 [새로 추가됨] 한글 -> 로마자 간편 변환기 (해외 검색용)
+    function koreanToRoman(text) {
+      const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+      const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+      const jongsung = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+      
+      let result = "";
+      for (let i = 0; i < text.length; i++) {
+        let code = text.charCodeAt(i);
+        if (code >= 44032 && code <= 55203) {
+          let uni = code - 44032;
+          let cho = Math.floor(uni / 588);
+          let jung = Math.floor((uni - (cho * 588)) / 28);
+          let jong = uni % 28;
+          result += chosung[cho] + jungsung[jung] + jongsung[jong];
+        } else {
+          result += text[i];
+        }
+      }
+      return result;
+    }
+
     const rawMaker = item[1] || "";
     const englishMaker = makerTranslate[rawMaker] || rawMaker;
     const searchKeyword = item[14] ? item[14].trim() : name; 
     
-    // 🔗 2. [추가됨] 국내/해외 링크 생성 (영문 조합 활용)
+    // 특수문자 제거 및 로마자 변환 적용
+    const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
+    const romanKeyword = koreanToRoman(cleanKeyword);
+    
+    // 🔗 링크 생성
     const encodedKeyword = encodeURIComponent(searchKeyword);
-    const encodedEnglish = encodeURIComponent(englishMaker + " " + searchKeyword);
+    const encodedEnglish = encodeURIComponent(englishMaker + " " + romanKeyword);
     
     const maniaLink = "https://maniahouse.co.kr/product/search.html?keyword=" + encodedKeyword;
     const comicsLink = "https://comics-art.co.kr/product/search.html?keyword=" + encodedKeyword;
@@ -819,7 +845,7 @@
       
       ${priceHtml}
 
-      <div class="shop-guide-title">🔍 쇼핑몰 실시간 재고/시세 확인</div>
+      <div class="shop-guide-title">🔍 국내 소장처 실시간 검색</div>
       <div class="shop-btn-wrap">
         <a href="${maniaLink}" target="_blank" class="shop-btn mania">매니아하우스에서 찾기</a>
         <a href="${comicsLink}" target="_blank" class="shop-btn comics">코믹스아트에서 찾기</a>
@@ -833,6 +859,7 @@
         <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (레어템/중고)</a>
       </div>
       <div class="shop-notice">※ 해외 사이트는 제조사 영문명으로 자동 검색됩니다.</div>
+
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
