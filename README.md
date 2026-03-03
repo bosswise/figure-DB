@@ -10,9 +10,9 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;800;900&display=swap" rel="stylesheet">
   <style>
-    /* 🚨 깃허브 찌꺼기 가림막 (내 코드 절대 보호, 깃허브 테마만 땅속으로 묻기) */
+    /* 🚨 깃허브 찌꺼기 가림막 (위험한 코드 제거) */
     .page-header, .project-name, .project-tagline, .repository-name, .site-header, .site-footer { 
-      display: none !important; opacity: 0 !important; position: absolute !important; top: -9999px !important; z-index: -999 !important;
+      display: none !important; 
     }
     
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
@@ -95,29 +95,17 @@
     #filterMenu::-webkit-scrollbar { width: 6px; }
     #filterMenu::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
     
-    /* 🚀 3. 필터 열었을 때 중앙 쏠림 해결 */
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s, max-width 0.4s; }
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s; }
     @media (min-width: 1300px) {
-      .container.shifted { 
-        margin-left: 320px; /* 사이드바 크기(320px)만큼만 밀기 */
-        max-width: calc(100% - 320px); /* 남은 영역 꽉 채우기 */
-      } 
+      .container.shifted { margin-left: 340px; max-width: calc(100% - 380px); } 
     }
 
-    /* 🚨 4. 그리드를 남은 영역의 한가운데로 무조건 고정 */
-    .grid { 
-      display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
-      gap: 60px; 
-      max-width: 1200px; /* 사진들이 너무 양옆으로 퍼지지 않게 제한 */
-      margin: 0 auto; /* ★ 이게 핵심! 어떤 상황이든 중앙에 정렬됨 ★ */
-    }
-    
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.3s; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
@@ -722,10 +710,13 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
+    /* 🚀 [마법의 자바스크립트 추가 부분] 매니아하우스 실시간 검색 링크 자동 생성 */
+    const maniaKeyword = item[14] ? item[14].trim() : ""; 
+    const maniaLink = maniaKeyword ? "https://maniahouse.co.kr/product/search.html?keyword=" + encodeURIComponent(maniaKeyword) : "#";
+    
     const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
     const diffStatus = item[18] || ""; 
-    const maniaLink = item[17] || "#"; 
     const donorName = item[20] ? item[20].trim() : ""; 
     const releaseDate = item[21] ? item[21] : "정보확인중";
 
