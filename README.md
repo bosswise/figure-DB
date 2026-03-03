@@ -12,7 +12,7 @@
   <style>
     /* 🚨 깃허브 찌꺼기 가림막 (위험한 코드 제거) */
     .page-header, .project-name, .project-tagline, .repository-name, .site-header, .site-footer { 
-      display: none !important; 
+      display: none !important; opacity: 0 !important; position: absolute !important; top: -9999px !important; z-index: -999 !important;
     }
     
     :root { --primary: #fab005; --bg: #f7f3f0; --dark: #2d2926; --tag-gold: #ffeaa7; --modal-bg: rgba(0,0,0,0.98); }
@@ -95,17 +95,29 @@
     #filterMenu::-webkit-scrollbar { width: 6px; }
     #filterMenu::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
     
-    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s; }
+    /* 🚀 3. 필터 열었을 때 중앙 쏠림 해결 */
+    .container { max-width: 1550px; margin: 60px auto; padding: 0 45px 150px; min-height: 60vh; transition: margin-left 0.4s, max-width 0.4s; }
     @media (min-width: 1300px) {
-      .container.shifted { margin-left: 340px; max-width: calc(100% - 380px); } 
+      .container.shifted { 
+        margin-left: 320px; /* 사이드바 크기(320px)만큼만 밀기 */
+        max-width: calc(100% - 320px); /* 남은 영역 꽉 채우기 */
+      } 
     }
 
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; }
+    /* 🚨 4. 그리드를 남은 영역의 한가운데로 무조건 고정 */
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 60px; 
+      max-width: 1200px; /* 사진들이 너무 양옆으로 퍼지지 않게 제한 */
+      margin: 0 auto; /* ★ 이게 핵심! 어떤 상황이든 중앙에 정렬됨 ★ */
+    }
+    
     .card { background: white; border-radius: 45px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.05); cursor: pointer; transition: 0.4s; border: 1px solid #f2f2f2; position: relative; }
     .card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.15); }
     
     .img-box { width: 100%; height: 450px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #f9f9f9; text-align: center; }
-    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: center; margin: 0 auto; display: block; transition: opacity 0.3s; }
+    .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.3s; }
     
     .content { padding: 30px; text-align: center; border-top: 1px solid #f9f9f9; }
     .char-name { font-size: 1.7rem; font-weight: 800; color: var(--dark); margin-bottom: 15px; }
@@ -148,6 +160,17 @@
     .price-status { font-size: 0.9rem; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-left: 5px; }
     .mania-btn { display: block; width: 100%; padding: 18px; background: #008BCC; color: white; text-align: center; text-decoration: none; border-radius: 15px; font-weight: 900; margin-top: 15px; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,139,204,0.3); }
     .mania-btn:hover { background: #0077b3; transform: translateY(-3px); }
+
+    /* 🆕 소장처 비교 가이드 버튼 스타일 추가 (기존 코드 훼손 X) */
+    .shop-guide-title { font-size: 1.1rem; font-weight: 800; color: #333; margin-top: 25px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .shop-btn-wrap { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+    .shop-btn { display: block; width: 100%; padding: 15px; color: white; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 1rem; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
+    .shop-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.05); }
+    /* 각 쇼핑몰 고유 브랜드 컬러 */
+    .shop-btn.comics { background: #E50914; } /* 코믹스아트 레드 */
+    .shop-btn.presso { background: #FFD400; color: #111; } /* 피규어프레소 옐로우 */
+    .shop-btn.aladin { background: #EB118A; } /* 알라딘 핑크 */
+    .shop-notice { font-size: 0.8rem; color: #888; text-align: center; margin-top: 5px; }
 
     /* 퀵 메뉴 */
     #quick-menu { position: fixed; right: 30px; top: 150px; width: 110px; background: white; border: 1px solid #ddd; z-index: 9900; text-align: center; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; }
@@ -710,9 +733,14 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
-    /* 🚀 [마법의 자바스크립트 추가 부분] 매니아하우스 실시간 검색 링크 자동 생성 */
-    const maniaKeyword = item[14] ? item[14].trim() : ""; 
-    const maniaLink = maniaKeyword ? "https://maniahouse.co.kr/product/search.html?keyword=" + encodeURIComponent(maniaKeyword) : "#";
+    // 🚀 [추가됨] 다양한 소장처 검색 링크 동적 생성 로직
+    const searchKeyword = item[14] ? item[14].trim() : name; // 매니아 검색어가 없으면 피규어 이름으로 대체
+    const encodedKeyword = encodeURIComponent(searchKeyword);
+    
+    const maniaLink = "https://maniahouse.co.kr/product/search.html?keyword=" + encodedKeyword;
+    const comicsLink = "https://comics-art.co.kr/product/search.html?keyword=" + encodedKeyword;
+    const pressoLink = "https://figurepresso.com/product/search.html?keyword=" + encodedKeyword;
+    const aladinLink = "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" + encodedKeyword;
     
     const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
@@ -775,6 +803,13 @@
       
       ${priceHtml}
 
+      <div class="shop-guide-title">🔍 다른 쇼핑몰 실시간 재고/시세 확인</div>
+      <div class="shop-btn-wrap">
+        <a href="${comicsLink}" target="_blank" class="shop-btn comics">코믹스아트에서 찾기</a>
+        <a href="${pressoLink}" target="_blank" class="shop-btn presso">피규어프레소 확인</a>
+        <a href="${aladinLink}" target="_blank" class="shop-btn aladin">알라딘 재고 검색</a>
+      </div>
+      <div class="shop-notice">※ 각 사이트 사정에 따라 품절되었을 수 있습니다.</div>
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
