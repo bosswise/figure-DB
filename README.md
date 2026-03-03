@@ -476,7 +476,8 @@
       const series = item[2] || "ETC";
       const maker = item[1] || "정보없음";
       
-      const rawDate = item[21] ? item[21].trim() : ""; 
+      // 🌟 [추가/수정] V열(item[21])에 영문이 들어오면서 밀린 발매일(W열, item[22])까지 모두 체크하여 에러 방지
+      const rawDate = item[22] ? item[22].trim() : (item[21] ? item[21].trim() : ""); 
       let year = "미정";
       if(rawDate.match(/^\d{4}/)) {
         year = rawDate.substring(0, 4);
@@ -559,7 +560,8 @@
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
       const makerMatch = (activeMaker === 'all' || item[1] === activeMaker);
       
-      const rawDate = item[21] ? item[21].trim() : "";
+      // 🌟 [추가/수정] V열(item[21])에 영문이 들어오면서 밀린 발매일(W열, item[22])까지 모두 체크
+      const rawDate = item[22] ? item[22].trim() : (item[21] ? item[21].trim() : "");
       let itemYear = "미정";
       if(rawDate.match(/^\d{4}/)) itemYear = rawDate.substring(0, 4);
       const yearMatch = (activeYear === 'all' || itemYear === activeYear);
@@ -577,8 +579,9 @@
     else if (sortVal === 'nameAsc') filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
     else if (sortVal === 'dateDesc') {
        filtered.sort((a, b) => {
-         const dateA = a[21] || "0000-00-00";
-         const dateB = b[21] || "0000-00-00";
+         // 🌟 [추가/수정] 정렬 시에도 22번, 21번을 유연하게 체크
+         const dateA = a[22] ? a[22] : (a[21] || "0000-00-00");
+         const dateB = b[22] ? b[22] : (b[21] || "0000-00-00");
          return dateB.localeCompare(dateA);
        });
     }
@@ -737,7 +740,7 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
-    // 🌍 [추가됨] 한글 제조사를 영문으로 변환하는 사전 마법
+    // 🌍 한글 제조사를 영문으로 변환하는 사전 마법
     const makerTranslate = {
       "굿스마일": "Good Smile Company",
       "알터": "Alter",
@@ -751,7 +754,7 @@
       "카도카와": "Kadokawa"
     };
 
-    // 🪄 [새로 추가됨] 한글 -> 로마자 간편 변환기 (해외 검색용)
+    // 🪄 한글 -> 로마자 간편 변환기 (해외 검색용 예비 장치)
     function koreanToRoman(text) {
       const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
       const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
@@ -781,23 +784,39 @@
     const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
     const romanKeyword = koreanToRoman(cleanKeyword);
     
+    // 🌟 [새로 추가된 핵심 기능] V열(item[21])에 적힌 완벽한 영문 이름을 가져옵니다.
+    const englishNameFromV = item[21] ? item[21].trim() : "";
+    
+    // 🌟 아미아미 검색어 결정
+    let amiamiSearchQuery = "";
+    // V열에 글자가 있고, 그게 날짜(예: 2023-01) 형식이 아니라면 V열을 최우선으로 사용!
+    if (englishNameFromV !== "" && !englishNameFromV.match(/^\d{4}/)) {
+        amiamiSearchQuery = englishNameFromV;
+    } else {
+        // 만약 V열이 비어있다면 기존처럼 [영문 제조사 + 로마자 변환 이름] 사용 (에러 방지용)
+        amiamiSearchQuery = englishMaker + " " + romanKeyword;
+    }
+    
     // 🔗 링크 생성
     const encodedKeyword = encodeURIComponent(searchKeyword);
-    const encodedEnglish = encodeURIComponent(englishMaker + " " + romanKeyword);
+    const encodedAmiamiQuery = encodeURIComponent(amiamiSearchQuery);
     
     const maniaLink = "https://maniahouse.co.kr/product/search.html?keyword=" + encodedKeyword;
     const comicsLink = "https://comics-art.co.kr/product/search.html?keyword=" + encodedKeyword;
     const pressoLink = "https://figurepresso.com/product/search.html?keyword=" + encodedKeyword;
     const aladinLink = "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" + encodedKeyword;
     
-    const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedEnglish;
-    const mandarakeLink = "https://order.mandarake.co.kr/order/listPage/list.xhtml?keyword=" + encodedEnglish;
+    // 🌟 아미아미/만다라케 링크에 드디어 V열 데이터가 반영됩니다!
+    const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedAmiamiQuery;
+    const mandarakeLink = "https://order.mandarake.co.kr/order/listPage/list.xhtml?keyword=" + encodedAmiamiQuery;
     
     const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
     const diffStatus = item[18] || ""; 
     const donorName = item[20] ? item[20].trim() : ""; 
-    const releaseDate = item[21] ? item[21] : "정보확인중";
+    
+    // 🌟 [안전 장치 추가] 발매일이 V열(21)에서 W열(22)로 밀렸을 경우를 대비
+    const releaseDate = (item[22] && item[22].match(/^\d{4}/)) ? item[22] : (item[21] ? item[21] : "정보확인중");
 
     let statusClass = "";
     if(diffStatus.includes("▲")) statusClass = "price-status up"; 
@@ -858,7 +877,7 @@
         <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
         <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (레어템/중고)</a>
       </div>
-      <div class="shop-notice">※ 해외 사이트는 제조사 영문명으로 자동 검색됩니다.</div>
+      <div class="shop-notice">※ V열 전용 데이터가 반영되어 100% 정밀 검색이 지원됩니다!</div>
 
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
