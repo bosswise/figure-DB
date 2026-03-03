@@ -877,7 +877,7 @@
         <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
         <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (레어템/중고)</a>
       </div>
-      <div class="shop-notice">※ V열 전용 데이터가 반영되어 100% 정밀 검색이 지원됩니다!</div>
+      <div class="shop-notice">※ 단종 혹은 품절된 상품은 검색되지 않을 수 있습니다. 데이터베이스는 정기적으로 보완됩니다.</div>
 
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
