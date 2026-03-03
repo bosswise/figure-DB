@@ -158,18 +158,22 @@
     .price-val-old { text-decoration: line-through; color: #adb5bd; font-size: 1.1rem; }
     .price-val-new { font-weight: 900; font-size: 1.6rem; color: #2d2926; }
     .price-status { font-size: 0.9rem; font-weight: bold; padding: 4px 10px; border-radius: 10px; margin-left: 5px; }
-    /* 🚨 (최적화) 매니아하우스 단독 버튼 디자인(mania-btn)은 삭제됨! */
 
-    /* 🆕 소장처 비교 가이드 버튼 스타일 추가 (기존 코드 훼손 X) */
+    /* 🆕 소장처 비교 가이드 버튼 스타일 (유지 및 확장) */
     .shop-guide-title { font-size: 1.1rem; font-weight: 800; color: #333; margin-top: 25px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
     .shop-btn-wrap { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
     .shop-btn { display: block; width: 100%; padding: 15px; color: white; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 1rem; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
     .shop-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.05); }
-    /* 🆕 (추가) 매니아하우스 배지 스타일 합류 */
+    
     .shop-btn.mania { background: #008BCC; } /* 매니아하우스 블루 */
     .shop-btn.comics { background: #E50914; } /* 코믹스아트 레드 */
     .shop-btn.presso { background: #FFD400; color: #111; } /* 피규어프레소 옐로우 */
     .shop-btn.aladin { background: #EB118A; } /* 알라딘 핑크 */
+    
+    /* 🆕 해외 직구 버튼 전용 컬러 추가 */
+    .shop-btn.amiami { background: #FFCC00; color: #111; } /* 아미아미 옐로우 */
+    .shop-btn.mandarake { background: #333333; } /* 만다라케 블랙 */
+
     .shop-notice { font-size: 0.8rem; color: #888; text-align: center; margin-top: 5px; }
 
     /* 퀵 메뉴 */
@@ -733,14 +737,35 @@
 
     currentImages = item[8].split(',').map(s => s.trim()); currentImgIdx = 0; isZoomed = false; updateModalImg();
     
-    // 🚀 [추가/수정됨] 다양한 소장처 검색 링크 동적 생성 로직
+    // 🌍 1. [추가됨] 한글 제조사를 영문으로 변환하는 사전 마법
+    const makerTranslate = {
+      "굿스마일": "Good Smile Company",
+      "알터": "Alter",
+      "메가하우스": "MegaHouse",
+      "코토부키야": "Kotobukiya",
+      "맥스팩토리": "Max Factory",
+      "반다이": "Bandai",
+      "프링": "FREEing",
+      "펫": "Phat!",
+      "퓨처": "FuRyu",
+      "카도카와": "Kadokawa"
+    };
+
+    const rawMaker = item[1] || "";
+    const englishMaker = makerTranslate[rawMaker] || rawMaker;
     const searchKeyword = item[14] ? item[14].trim() : name; 
+    
+    // 🔗 2. [추가됨] 국내/해외 링크 생성 (영문 조합 활용)
     const encodedKeyword = encodeURIComponent(searchKeyword);
+    const encodedEnglish = encodeURIComponent(englishMaker + " " + searchKeyword);
     
     const maniaLink = "https://maniahouse.co.kr/product/search.html?keyword=" + encodedKeyword;
     const comicsLink = "https://comics-art.co.kr/product/search.html?keyword=" + encodedKeyword;
     const pressoLink = "https://figurepresso.com/product/search.html?keyword=" + encodedKeyword;
     const aladinLink = "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" + encodedKeyword;
+    
+    const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedEnglish;
+    const mandarakeLink = "https://order.mandarake.co.kr/order/listPage/list.xhtml?keyword=" + encodedEnglish;
     
     const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
@@ -752,7 +777,6 @@
     if(diffStatus.includes("▲")) statusClass = "price-status up"; 
     else if(diffStatus.includes("▼")) statusClass = "price-status down"; 
 
-    // 🚨 (수정됨) 여기서 파란색 mania-btn은 삭제하고 깔끔한 가격 정보만 남김
     let priceHtml = "";
     if (maniaPrice) {
       priceHtml = `
@@ -802,7 +826,13 @@
         <a href="${pressoLink}" target="_blank" class="shop-btn presso">피규어프레소 확인</a>
         <a href="${aladinLink}" target="_blank" class="shop-btn aladin">알라딘 재고 검색</a>
       </div>
-      <div class="shop-notice">※ 각 사이트 사정에 따라 품절되었을 수 있습니다.</div>
+
+      <div class="shop-guide-title">🌐 해외 직구/중고 시세 확인</div>
+      <div class="shop-btn-wrap">
+        <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
+        <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (레어템/중고)</a>
+      </div>
+      <div class="shop-notice">※ 해외 사이트는 제조사 영문명으로 자동 검색됩니다.</div>
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">
