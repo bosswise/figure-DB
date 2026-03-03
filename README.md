@@ -875,9 +875,9 @@
       <div class="shop-guide-title">🌐 해외 직구/중고 시세 확인</div>
       <div class="shop-btn-wrap">
         <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
-        <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (레어템/중고)</a>
+        <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (일본 본점/중고)</a>
       </div>
-      <div class="shop-notice">※ 단종 혹은 품절된 상품은 검색되지 않을 수 있습니다. 데이터베이스는 정기적으로 보완됩니다.</div>
+      <div class="shop-notice">※ 실시간 재고 상황에 따라 검색 결과가 없을 수 있으며, 미등록 명작은 계속 업데이트 중입니다.</div>
 
       <div class="info-item" style="border:none; margin-top:20px;"><span class="info-label">[ 특이사항 ]</span><p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p></div>
       
