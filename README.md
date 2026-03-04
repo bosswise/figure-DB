@@ -736,8 +736,8 @@
     if (recent.length === 0) { menu.style.display = 'none'; return; }
     menu.style.display = 'block';
     container.innerHTML = recent.map(idx => {
-      // 🌟 클로드 지적: recent에 저장된 idx가 allData의 실제 인덱스인지 확인
-      const item = allData.find(d => d._idx === idx); 
+      // 🌟 교정: 2,700개를 뒤지는 find 대신 배열 인덱스로 즉시 접근!
+      const item = allData[idx]; 
       if (!item) return '';
       return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg"></div>`;
     }).join('');
@@ -757,8 +757,8 @@
 
   window.openModal = function(idx, isPopState = false) {
     saveRecentView(idx);
-    // 🌟 클로드 지적: 전달받은 idx와 실제 데이터 객체 매칭 보장
-    const item = allData.find(d => d._idx === idx) || allData[idx]; 
+    // 🌟 교정: 불필요한 find 제거! 번호표대로 바로 찾아갑니다.
+    const item = allData[idx]; 
     if(!item || !item[8]) return;
     
     // 🌟 클로드 지적 반영: escapeHTML로 모든 출력 데이터를 감쌉니다.
@@ -948,8 +948,8 @@
     const figureId = urlParams.get('id'); 
     if (figureId !== null) { 
       const parsedId = parseInt(figureId);
-      // _idx를 기반으로 데이터를 찾아 엽니다.
-      if (allData.find(d => d._idx === parsedId)) {
+      // 🌟 교정: 2,700개를 뒤지는 find 대신 배열 인덱스로 즉시 접근!
+      if (allData[parsedId]) {
         setTimeout(() => { window.openModal(parsedId, true); }, 500); 
       }
     } 
