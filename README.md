@@ -476,7 +476,7 @@
       const series = item[2] || "ETC";
       const maker = item[1] || "정보없음";
       
-      // 🌟 [수정됨] 발매일은 확실하게 N열(item[13])만 바라봅니다.
+      // 🌟 [유지됨] 발매일 N열(13)
       const rawDate = item[13] ? item[13].trim() : ""; 
       let year = "미정";
       if(rawDate.match(/^\d{4}/)) {
@@ -555,7 +555,6 @@
       const seriesMatch = (activeFilter === 'all' || item[2] === activeFilter);
       const makerMatch = (activeMaker === 'all' || item[1] === activeMaker);
       
-      // 🌟 [수정됨] 연도 필터 적용 시 N열(item[13])만 확인
       const rawDate = item[13] ? item[13].trim() : "";
       let itemYear = "미정";
       if(rawDate.match(/^\d{4}/)) itemYear = rawDate.substring(0, 4);
@@ -577,7 +576,6 @@
       filtered.sort((a, b) => (getProductName(a)).localeCompare(getProductName(b)));
     } else if (sortVal === 'dateDesc') {
        filtered.sort((a, b) => {
-         // 🌟 [수정됨] 정렬 시 N열(item[13]) 기준으로 내림차순 정렬
          const dateA = a[13] ? a[13] : "0000-00-00";
          const dateB = b[13] ? b[13] : "0000-00-00";
          return dateB.localeCompare(dateA);
@@ -730,8 +728,29 @@
     if(!item || !item[8]) return;
     
     const name = getProductName(item); 
+    const series = item[2] || "기타";
+    const maker = item[1] || "정보없음";
+
+    // 🌟 [SEO 최적화 추가] 구글 검색을 위한 메타 태그 동적 변경 (기능 추가)
     document.title = `${name} - 피규어 박물관`;
     
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = `${series} 시리즈의 ${name} (${maker}). 피규어 박물관에서 상세 정보와 실시간 시세를 확인하세요.`;
+
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.name = "keywords";
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.content = `${name}, ${series}, ${maker}, 넨도로이드, 피규어 시세, 피규어 박물관`;
+
+    // 🌟 [유지됨] 링크 상태 변경
     if(!isPopState) {
       const newURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + idx;
       const currentId = new URLSearchParams(window.location.search).get('id');
@@ -769,7 +788,7 @@
     const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
     const romanKeyword = koreanToRoman(cleanKeyword);
     
-    // 🌟 [수정됨] 영문명은 V열(item[21])에서만 가져옵니다.
+    // 🌟 [유지됨] 영문명은 V열(item[21])
     const englishNameFromV = item[21] ? item[21].trim() : "";
     let amiamiSearchQuery = "";
     if (englishNameFromV !== "") {
@@ -792,7 +811,7 @@
     const diffStatus = item[18] || ""; 
     const donorName = item[20] ? item[20].trim() : ""; 
     
-    // 🌟 [수정됨] 발매일은 정확히 N열(item[13])만 확인하여 출력합니다! 빈칸이면 정보확인중.
+    // 🌟 [유지됨] 발매일은 정확히 N열(item[13])
     const releaseDate = (item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중";
 
     let statusClass = ""; 
