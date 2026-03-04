@@ -385,6 +385,33 @@
   let currentPage = 1;
   const rowsPerPage = 12;
 
+  // 🌟 전역 함수로 분리 (성능 최적화)
+  const makerTranslate = { "굿스마일": "Good Smile Company", "알터": "Alter", "메가하우스": "MegaHouse", "코토부키야": "Kotobukiya", "맥스팩토리": "Max Factory", "반다이": "Bandai", "프링": "FREEing", "펫": "Phat!", "퓨처": "FuRyu", "카도카와": "Kadokawa" };
+
+  function koreanToRoman(text) {
+    const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+    const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+    const jongsung = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+    let result = ""; 
+    for (let i = 0; i < text.length; i++) {
+      let code = text.charCodeAt(i);
+      if (code >= 44032 && code <= 55203) { 
+        let uni = code - 44032; let cho = Math.floor(uni / 588); let jung = Math.floor((uni - (cho * 588)) / 28); let jong = uni % 28; result += chosung[cho] + jungsung[jung] + jongsung[jong]; 
+      } else { 
+        result += text[i]; 
+      }
+    }
+    return result;
+  }
+
+  // 🌟 XSS 보안 함수 추가
+  function escapeHTML(str) {
+    if (!str) return "";
+    return str.replace(/[&<>"']/g, function(m) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+  }
+
   async function init() {
     try {
       const wrapper = document.getElementById('museum-wrapper');
@@ -405,7 +432,12 @@
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
       
-      allData = rows.slice(1).filter(r => r[8]);
+      // 🌟 데이터 인덱싱 최적화
+      allData = rows.slice(1).filter(r => r[8]).map((r, i) => {
+        r._idx = i;
+        return r;
+      });
+      
       currentDisplayData = [...allData];
       
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
@@ -617,17 +649,19 @@
       return; 
     }
     grid.innerHTML = data.map((item) => {
-      const name = getProductName(item); 
+      // 🌟 XSS 보안 추가
+      const name = escapeHTML(getProductName(item)); 
       const img = item[8].split(',')[0].trim();
       const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
-      return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
+      // 🌟 _idx 활용 및 엑박 방지 이미지 추가
+      return `<div class="card" onclick="window.openModal(${item._idx})">
         ${badgeHtml}
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg" loading="lazy" alt="${name}" onerror="this.src='https://bosswise.github.io/figure-DB/images/mascot.png'"></div>
         <div class="content">
           <div class="char-name">${name}</div>
           <div class="tag-wrap">
-            <span class="tag">#${item[10] || ''}</span>
-            <span class="tag sec">#${item[2] || ''}</span>
+            <span class="tag">#${escapeHTML(item[10] || '')}</span>
+            <span class="tag sec">#${escapeHTML(item[2] || '')}</span>
           </div>
         </div>
       </div>`;
@@ -673,7 +707,8 @@
       const target = document.getElementById(id); 
       const items = shuffle.slice(startIdx, startIdx + 3); 
       if(items.length === 0) return;
-      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
+      // 🌟 _idx 및 엑박 방지 이미지 추가
+      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${it._idx})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg" onerror="this.src='https://bosswise.github.io/figure-DB/images/mascot.png'"></div>`).join('');
       let cur = 0; 
       setInterval(() => { 
         const slides = target.querySelectorAll('.fame-slide'); 
@@ -703,9 +738,10 @@
     if (recent.length === 0) { menu.style.display = 'none'; return; }
     menu.style.display = 'block';
     container.innerHTML = recent.map(idx => {
+      // 🌟 빠른 인덱스 접근
       const item = allData[idx]; 
       if (!item) return '';
-      // 🌟 이미지 오류 방어 코드 추가
+      // 🌟 엑박 방지 이미지 추가
       return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg" onerror="this.src='https://bosswise.github.io/figure-DB/images/mascot.png'"></div>`;
     }).join('');
   }
@@ -722,7 +758,7 @@
     }
   };
 
-  // 🌟 키보드 단축키 이벤트 리스너 추가
+  // 🌟 키보드 단축키 기능
   window.addEventListener('keydown', function(e) {
     const modal = document.getElementById('detailModal');
     if (modal.style.display === 'flex') {
@@ -734,12 +770,14 @@
 
   window.openModal = function(idx, isPopState = false) {
     saveRecentView(idx);
+    // 🌟 빠른 인덱스 접근
     const item = allData[idx]; 
     if(!item || !item[8]) return;
     
-    const name = getProductName(item); 
-    const series = item[2] || "기타";
-    const maker = item[1] || "정보없음";
+    // 🌟 XSS 보안 추가
+    const name = escapeHTML(getProductName(item)); 
+    const series = escapeHTML(item[2] || "기타");
+    const maker = escapeHTML(item[1] || "정보없음");
 
     document.title = `${name} - 피규어 박물관`;
     
@@ -771,28 +809,10 @@
     currentImgIdx = 0; 
     isZoomed = false; 
     updateModalImg();
-    
-    const makerTranslate = { "굿스마일": "Good Smile Company", "알터": "Alter", "메가하우스": "MegaHouse", "코토부키야": "Kotobukiya", "맥스팩토리": "Max Factory", "반다이": "Bandai", "프링": "FREEing", "펫": "Phat!", "퓨처": "FuRyu", "카도카와": "Kadokawa" };
-
-    function koreanToRoman(text) {
-      const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
-      const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
-      const jongsung = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
-      let result = ""; 
-      for (let i = 0; i < text.length; i++) {
-        let code = text.charCodeAt(i);
-        if (code >= 44032 && code <= 55203) { 
-          let uni = code - 44032; let cho = Math.floor(uni / 588); let jung = Math.floor((uni - (cho * 588)) / 28); let jong = uni % 28; result += chosung[cho] + jungsung[jung] + jongsung[jong]; 
-        } else { 
-          result += text[i]; 
-        }
-      }
-      return result;
-    }
 
     const rawMaker = item[1] || ""; 
     const englishMaker = makerTranslate[rawMaker] || rawMaker;
-    const searchKeyword = item[14] ? item[14].trim() : name; 
+    const searchKeyword = item[14] ? item[14].trim() : getProductName(item); 
     const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
     const romanKeyword = koreanToRoman(cleanKeyword);
     
@@ -813,12 +833,13 @@
     const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedAmiamiQuery;
     const mandarakeLink = "https://order.mandarake.co.jp/order/listPage/list.xhtml?keyword=" + encodedAmiamiQuery;
     
-    const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
+    // 🌟 XSS 보안 추가
+    const originalPrice = isNaN(item[5]) ? escapeHTML(item[5]) : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
-    const diffStatus = item[18] || ""; 
-    const donorName = item[20] ? item[20].trim() : ""; 
+    const diffStatus = escapeHTML(item[18] || ""); 
+    const donorName = escapeHTML(item[20] ? item[20].trim() : ""); 
     
-    const releaseDate = (item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중";
+    const releaseDate = escapeHTML((item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중");
 
     let statusClass = ""; 
     if(diffStatus.includes("▲")) statusClass = "price-status up"; 
@@ -848,11 +869,11 @@
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''} 
-      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
+      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${maker || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${series}</span></div>
       <div class="info-item"><span class="info-label">[ 발매일 ]</span><span class="info-value">${releaseDate}</span></div>
-      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
-      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${escapeHTML(item[7]) || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
+      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${escapeHTML(item[4]) || '-'}</span></div>
       
       ${priceHtml}
       
@@ -872,7 +893,7 @@
       
       <div class="info-item" style="border:none; margin-top:20px;">
         <span class="info-label">[ 특이사항 ]</span>
-        <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p>
+        <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${escapeHTML(item[9]) || '내용이 없습니다.'}</p>
       </div>
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">🔗 이 피규어 링크 복사하기</button>
     `;
@@ -934,8 +955,12 @@
   function checkUrlParam() { 
     const urlParams = new URLSearchParams(window.location.search); 
     const figureId = urlParams.get('id'); 
-    if (figureId !== null && allData[figureId]) { 
-      setTimeout(() => { window.openModal(parseInt(figureId), true); }, 500); 
+    if (figureId !== null) { 
+      const parsedId = parseInt(figureId);
+      // 🌟 빠른 인덱스 접근
+      if (allData[parsedId]) {
+        setTimeout(() => { window.openModal(parsedId, true); }, 500); 
+      }
     } 
   }
   
