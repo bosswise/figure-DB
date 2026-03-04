@@ -330,7 +330,7 @@
       <p class="source-info">모든 데이터는 다양한 온라인 소스에서 수집되었습니다.</p>
       
       <div class="disclaimer-box">
-        <p>본 사이트는 수익을 창출하지 않는 <strong>비영리 개인 팬 사이트</strong>입니다.</p>
+        <p>본 사이트는 개인 소장품 기록 및 정보 공유를 목적으로 운영되는 <strong>개인 아카이브</strong>입니다.</p>
         <p>게시된 이미지와 정보의 저작권은 각 제조사 및 유통사에 있으며, 악의적인 저작권 침해 의도는 없습니다.</p>
         <p>관계자분의 삭제 요청이 있을 경우, 확인 즉시 해당 콘텐츠를 비공개 처리하겠습니다.</p>
         <p class="contact-email">문의: iiopasd2003@gmail.com</p>
@@ -385,6 +385,33 @@
   let currentPage = 1;
   const rowsPerPage = 12;
 
+  // 🌟 클로드 지적 반영: 모달이 열릴 때마다 생성되던 번역 객체와 함수를 전역(밖)으로 뺐습니다.
+  const makerTranslate = { "굿스마일": "Good Smile Company", "알터": "Alter", "메가하우스": "MegaHouse", "코토부키야": "Kotobukiya", "맥스팩토리": "Max Factory", "반다이": "Bandai", "프링": "FREEing", "펫": "Phat!", "퓨처": "FuRyu", "카도카와": "Kadokawa" };
+
+  function koreanToRoman(text) {
+    const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
+    const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
+    const jongsung = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
+    let result = ""; 
+    for (let i = 0; i < text.length; i++) {
+      let code = text.charCodeAt(i);
+      if (code >= 44032 && code <= 55203) { 
+        let uni = code - 44032; let cho = Math.floor(uni / 588); let jung = Math.floor((uni - (cho * 588)) / 28); let jong = uni % 28; result += chosung[cho] + jungsung[jung] + jongsung[jong]; 
+      } else { 
+        result += text[i]; 
+      }
+    }
+    return result;
+  }
+
+  // 🌟 클로드 지적 반영: XSS 방지를 위한 텍스트 이스케이프 함수 추가
+  function escapeHTML(str) {
+    if (!str) return "";
+    return str.replace(/[&<>"']/g, function(m) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+  }
+
   async function init() {
     try {
       const wrapper = document.getElementById('museum-wrapper');
@@ -405,7 +432,12 @@
         return cols.map(c => c ? c.trim().replace(/^"|"$/g, '').replace(/""/g, '"') : "");
       });
       
-      allData = rows.slice(1).filter(r => r[8]);
+      // 🌟 클로드 지적 반영: 데이터를 불러올 때 미리 고유 인덱스(_idx)를 부여합니다.
+      allData = rows.slice(1).filter(r => r[8]).map((r, i) => {
+        r._idx = i;
+        return r;
+      });
+      
       currentDisplayData = [...allData];
       
       document.getElementById('totalStats').innerText = `총 ${allData.length}점의 명작 전시 중`;
@@ -616,18 +648,19 @@
       grid.innerHTML = `<div class="no-result"><h3>😢 전시된 피규어가 없습니다.</h3><p>다른 필터나 검색어를 사용해 보세요.</p></div>`; 
       return; 
     }
+    // 🌟 클로드 지적 반영: indexOf를 빼고, 로딩 때 붙여둔 _idx를 사용해 광속으로 엽니다. (그리고 이름/시리즈에 escapeHTML 씌움)
     grid.innerHTML = data.map((item) => {
-      const name = getProductName(item); 
+      const name = escapeHTML(getProductName(item)); 
       const img = item[8].split(',')[0].trim();
       const badgeHtml = (item[6] && item[6].toUpperCase() === 'TRUE') ? `<div class="card-badge">LIMITED</div>` : '';
-      return `<div class="card" onclick="window.openModal(${allData.indexOf(item)})">
+      return `<div class="card" onclick="window.openModal(${item._idx})">
         ${badgeHtml}
         <div class="img-box"><img src="${imageBaseURL}${encodeURIComponent(img)}.jpg" loading="lazy" alt="${name}"></div>
         <div class="content">
           <div class="char-name">${name}</div>
           <div class="tag-wrap">
-            <span class="tag">#${item[10] || ''}</span>
-            <span class="tag sec">#${item[2] || ''}</span>
+            <span class="tag">#${escapeHTML(item[10] || '')}</span>
+            <span class="tag sec">#${escapeHTML(item[2] || '')}</span>
           </div>
         </div>
       </div>`;
@@ -673,7 +706,7 @@
       const target = document.getElementById(id); 
       const items = shuffle.slice(startIdx, startIdx + 3); 
       if(items.length === 0) return;
-      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${allData.indexOf(it)})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
+      target.innerHTML = items.map((it, idx) => `<div class="fame-slide ${idx === 0 ? 'active' : ''}" onclick="window.openModal(${it._idx})"><img src="${imageBaseURL}${encodeURIComponent(it[8].split(',')[0].trim())}.jpg"></div>`).join('');
       let cur = 0; 
       setInterval(() => { 
         const slides = target.querySelectorAll('.fame-slide'); 
@@ -703,7 +736,8 @@
     if (recent.length === 0) { menu.style.display = 'none'; return; }
     menu.style.display = 'block';
     container.innerHTML = recent.map(idx => {
-      const item = allData[idx]; 
+      // 🌟 클로드 지적: recent에 저장된 idx가 allData의 실제 인덱스인지 확인
+      const item = allData.find(d => d._idx === idx); 
       if (!item) return '';
       return `<div class="quick-item" onclick="window.openModal(${idx})"><img src="${imageBaseURL}${encodeURIComponent(item[8].split(',')[0].trim())}.jpg"></div>`;
     }).join('');
@@ -723,14 +757,16 @@
 
   window.openModal = function(idx, isPopState = false) {
     saveRecentView(idx);
-    const item = allData[idx]; 
+    // 🌟 클로드 지적: 전달받은 idx와 실제 데이터 객체 매칭 보장
+    const item = allData.find(d => d._idx === idx) || allData[idx]; 
     if(!item || !item[8]) return;
     
-    const name = getProductName(item); 
-    const series = item[2] || "기타";
-    const maker = item[1] || "정보없음";
+    // 🌟 클로드 지적 반영: escapeHTML로 모든 출력 데이터를 감쌉니다.
+    const name = escapeHTML(getProductName(item)); 
+    const series = escapeHTML(item[2] || "기타");
+    const maker = escapeHTML(item[1] || "정보없음");
 
-    // 🌟 [SEO 최적화 추가] 구글 로봇에게 피규어 정보를 강제로 인식시킵니다.
+    // 🌟 [SEO 최적화 유지]
     document.title = `${name} - 피규어 박물관`;
     
     let metaDesc = document.querySelector('meta[name="description"]');
@@ -762,32 +798,14 @@
     currentImgIdx = 0; 
     isZoomed = false; 
     updateModalImg();
-    
-    const makerTranslate = { "굿스마일": "Good Smile Company", "알터": "Alter", "메가하우스": "MegaHouse", "코토부키야": "Kotobukiya", "맥스팩토리": "Max Factory", "반다이": "Bandai", "프링": "FREEing", "펫": "Phat!", "퓨처": "FuRyu", "카도카와": "Kadokawa" };
-
-    function koreanToRoman(text) {
-      const chosung = ["g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s", "ss", "", "j", "jj", "ch", "k", "t", "p", "h"];
-      const jungsung = ["a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "oe", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"];
-      const jongsung = ["", "g", "kk", "gs", "n", "nj", "nh", "d", "l", "lg", "lm", "lb", "ls", "lt", "lp", "lh", "m", "b", "bs", "s", "ss", "ng", "j", "ch", "k", "t", "p", "h"];
-      let result = ""; 
-      for (let i = 0; i < text.length; i++) {
-        let code = text.charCodeAt(i);
-        if (code >= 44032 && code <= 55203) { 
-          let uni = code - 44032; let cho = Math.floor(uni / 588); let jung = Math.floor((uni - (cho * 588)) / 28); let jong = uni % 28; result += chosung[cho] + jungsung[jung] + jongsung[jong]; 
-        } else { 
-          result += text[i]; 
-        }
-      }
-      return result;
-    }
 
     const rawMaker = item[1] || ""; 
     const englishMaker = makerTranslate[rawMaker] || rawMaker;
-    const searchKeyword = item[14] ? item[14].trim() : name; 
+    const searchKeyword = item[14] ? item[14].trim() : getProductName(item); 
     const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
     const romanKeyword = koreanToRoman(cleanKeyword);
     
-    // 🌟 [유지됨] 
+    // 🌟 [유지됨] V열 로직
     const englishNameFromV = item[21] ? item[21].trim() : "";
     let amiamiSearchQuery = "";
     if (englishNameFromV !== "") {
@@ -805,18 +823,19 @@
     const amiamiLink = "https://www.amiami.com/eng/search/list/?s_keywords=" + encodedAmiamiQuery;
     const mandarakeLink = "https://order.mandarake.co.jp/order/listPage/list.xhtml?keyword=" + encodedAmiamiQuery;
     
-    const originalPrice = isNaN(item[5]) ? item[5] : Number(item[5]).toLocaleString() + '원';
+    const originalPrice = isNaN(item[5]) ? escapeHTML(item[5]) : Number(item[5]).toLocaleString() + '원';
     const maniaPrice = item[15] && !isNaN(item[15].replace(/,/g,'')) ? Number(item[15].replace(/,/g,'')).toLocaleString() + '원' : null;
-    const diffStatus = item[18] || ""; 
-    const donorName = item[20] ? item[20].trim() : ""; 
+    const diffStatus = escapeHTML(item[18] || ""); 
+    const donorName = escapeHTML(item[20] ? item[20].trim() : ""); 
     
-    // 🌟 [유지됨] 
-    const releaseDate = (item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중";
+    // 🌟 [유지됨] 발매일 N열(13)
+    const releaseDate = escapeHTML((item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중");
 
     let statusClass = ""; 
     if(diffStatus.includes("▲")) statusClass = "price-status up"; 
     else if(diffStatus.includes("▼")) statusClass = "price-status down"; 
     
+    // 🌟 클로드 지적 반영: XSS 방지를 위해 변수들을 escape 처리한 후 innerHTML로 넘깁니다.
     let priceHtml = maniaPrice ? `
         <div class="price-compare-box">
           <div class="price-row">
@@ -841,11 +860,11 @@
     document.getElementById('modalInfo').innerHTML = `
       <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
       ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''} 
-      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${item[1] || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${item[2]}</span></div>
+      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${maker || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${series}</span></div>
       <div class="info-item"><span class="info-label">[ 발매일 ]</span><span class="info-value">${releaseDate}</span></div>
-      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${item[7] || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
-      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${item[4] || '-'}</span></div>
+      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${escapeHTML(item[7]) || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
+      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${escapeHTML(item[4]) || '-'}</span></div>
       
       ${priceHtml}
       
@@ -865,7 +884,7 @@
       
       <div class="info-item" style="border:none; margin-top:20px;">
         <span class="info-label">[ 특이사항 ]</span>
-        <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${item[9] || '내용이 없습니다.'}</p>
+        <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${escapeHTML(item[9]) || '내용이 없습니다.'}</p>
       </div>
       <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">🔗 이 피규어 링크 복사하기</button>
     `;
@@ -927,8 +946,12 @@
   function checkUrlParam() { 
     const urlParams = new URLSearchParams(window.location.search); 
     const figureId = urlParams.get('id'); 
-    if (figureId !== null && allData[figureId]) { 
-      setTimeout(() => { window.openModal(parseInt(figureId), true); }, 500); 
+    if (figureId !== null) { 
+      const parsedId = parseInt(figureId);
+      // _idx를 기반으로 데이터를 찾아 엽니다.
+      if (allData.find(d => d._idx === parsedId)) {
+        setTimeout(() => { window.openModal(parsedId, true); }, 500); 
+      }
     } 
   }
   
