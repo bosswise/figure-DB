@@ -476,7 +476,6 @@
       const series = item[2] || "ETC";
       const maker = item[1] || "정보없음";
       
-      // 🌟 [유지됨] 발매일 N열(13)
       const rawDate = item[13] ? item[13].trim() : ""; 
       let year = "미정";
       if(rawDate.match(/^\d{4}/)) {
@@ -731,7 +730,7 @@
     const series = item[2] || "기타";
     const maker = item[1] || "정보없음";
 
-    // 🌟 [SEO 최적화 추가] 구글 검색을 위한 메타 태그 동적 변경 (기능 추가)
+    // 🌟 [SEO 최적화 추가] 구글 로봇에게 피규어 정보를 강제로 인식시킵니다.
     document.title = `${name} - 피규어 박물관`;
     
     let metaDesc = document.querySelector('meta[name="description"]');
@@ -750,7 +749,7 @@
     }
     metaKeywords.content = `${name}, ${series}, ${maker}, 넨도로이드, 피규어 시세, 피규어 박물관`;
 
-    // 🌟 [유지됨] 링크 상태 변경
+    // 🌟 [유지됨]
     if(!isPopState) {
       const newURL = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + idx;
       const currentId = new URLSearchParams(window.location.search).get('id');
@@ -788,7 +787,7 @@
     const cleanKeyword = searchKeyword.replace(/[\[\]\(\)]/g, '').trim(); 
     const romanKeyword = koreanToRoman(cleanKeyword);
     
-    // 🌟 [유지됨] 영문명은 V열(item[21])
+    // 🌟 [유지됨] 
     const englishNameFromV = item[21] ? item[21].trim() : "";
     let amiamiSearchQuery = "";
     if (englishNameFromV !== "") {
@@ -811,7 +810,7 @@
     const diffStatus = item[18] || ""; 
     const donorName = item[20] ? item[20].trim() : ""; 
     
-    // 🌟 [유지됨] 발매일은 정확히 N열(item[13])
+    // 🌟 [유지됨] 
     const releaseDate = (item[13] && item[13].trim() !== "") ? item[13].trim() : "정보확인중";
 
     let statusClass = ""; 
