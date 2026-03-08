@@ -144,7 +144,7 @@
     
     .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; background: rgba(255,255,255,0.98); border: none; border-radius: 50%; font-size: 2.5rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: 0.3s; }
     .nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
-    .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; }
+    .modal-info-area { flex: 0.6; padding: 80px; background: #fafafa; overflow-y: auto; text-align: left; position: relative; }
     .close-btn { position: absolute; top: 40px; right: 60px; font-size: 4.5rem; cursor: pointer; color: #ddd; z-index: 100; line-height: 0.7; }
     
     .info-item { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 12px; display: flex; flex-direction: column; }
@@ -175,6 +175,30 @@
     .shop-btn.mandarake { background: #333333; } /* 만다라케 블랙 */
 
     .shop-notice { font-size: 0.8rem; color: #888; text-align: center; margin-top: 5px; }
+
+    /* 🌟 7대 기능 전용 스타일 추가 */
+    .modal-top-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+    .nav-link { background: rgba(0,0,0,0.05); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 800; color: #555; transition: 0.2s; }
+    .nav-link:hover { background: var(--primary); color: var(--dark); }
+    .rarity-label { display: inline-block; background: #2d2926; color: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; margin-bottom: 15px; letter-spacing: 1px; }
+    .rarity-label.limited { background: #e03131; color: white; }
+    
+    .action-row { display: flex; gap: 10px; margin-top: 35px; }
+    .action-btn { flex: 1; padding: 15px 5px; border-radius: 12px; font-weight: 900; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.95rem; transition: 0.3s; }
+    .action-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .btn-like { background: #fff0f0; color: #ff6b6b; border: 1px solid #ffc9c9; }
+    .btn-like.active { background: #ff6b6b; color: white; }
+    .btn-share { background: #fae100; color: #3c1e1e; }
+    .btn-random { background: #2d2926; color: var(--primary); }
+    
+    .related-section { margin-top: 40px; border-top: 2px dashed #eee; padding-top: 25px; position: relative; z-index: 2; }
+    .related-title { font-size: 1.1rem; font-weight: 900; margin-bottom: 15px; color: #333; }
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .related-card { cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+    .related-card:hover { transform: translateY(-5px); }
+    .related-card img { width: 100%; height: 100px; object-fit: contain; background: white; border: 1px solid #eee; border-radius: 12px; margin-bottom: 8px; padding: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    
+    .seal-watermark { position: absolute; right: -20px; bottom: 20px; font-size: 10rem; opacity: 0.04; pointer-events: none; z-index: 1; font-weight: 900; transform: rotate(-15deg); line-height: 1; }
 
     /* 퀵 메뉴 */
     #quick-menu { position: fixed; right: 30px; top: 150px; width: 110px; background: white; border: 1px solid #ddd; z-index: 9900; text-align: center; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; }
@@ -244,6 +268,7 @@
       .search-box { width: 100%; }
       #donation-btn { bottom: 20px; left: 50%; transform: translateX(-50%); width: auto; white-space: nowrap; }
       #donation-btn:hover { transform: translateX(-50%) scale(1.1); }
+      .action-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -866,40 +891,120 @@
           </div>
         </div>`;
 
+    // 🌟 1. 좋아요(하트) 로컬스토리지 연동 및 초기 랜덤값 부여
+    const uid = 'like_' + idx;
+    const liked = localStorage.getItem(uid);
+    const pseudoRandom = (idx * 17) % 50 + 10; // 접속자마다 일관된 초기 추천수 보장
+    const initialLike = pseudoRandom + (liked ? 1 : 0);
+
+    // 🌟 2. 연관 피규어 추출 로직 (같은 시리즈 중 랜덤 3개)
+    const related = allData.filter(x => x[2] === item[2] && x._idx !== idx).sort(() => 0.5 - Math.random()).slice(0, 3);
+    let relatedHtml = '';
+    if (related.length > 0) {
+       relatedHtml = `<div class="related-section">
+         <div class="related-title">🔍 같은 시리즈의 다른 명작</div>
+         <div class="related-grid">`;
+       related.forEach(r => {
+           relatedHtml += `<div class="related-card" onclick="window.openModal(${r._idx})">
+             <img src="${imageBaseURL}${encodeURIComponent(r[8].split(',')[0].trim())}.jpg" onerror="this.src='https://bosswise.github.io/figure-DB/images/mascot.png'">
+             <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(getProductName(r))}</div>
+           </div>`;
+       });
+       relatedHtml += `</div></div>`;
+    }
+
+    // 🌟 3. 최종 HTML 템플릿 렌더링 (7대 기능 통합)
     document.getElementById('modalInfo').innerHTML = `
-      <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
-      ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''} 
-      <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${maker || '-'}</span></div>
-      <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${series}</span></div>
-      <div class="info-item"><span class="info-label">[ 발매일 ]</span><span class="info-value">${releaseDate}</span></div>
-      <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${escapeHTML(item[7]) || '-'} (${item[6] === 'TRUE' ? '한정판' : '일반판'})</span></div>
-      <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${escapeHTML(item[4]) || '-'}</span></div>
-      
-      ${priceHtml}
-      
-      <div class="shop-guide-title">🔍 국내 소장처 실시간 검색</div>
-      <div class="shop-btn-wrap">
-        <a href="${maniaLink}" target="_blank" class="shop-btn mania">매니아하우스에서 찾기</a>
-        <a href="${comicsLink}" target="_blank" class="shop-btn comics">코믹스아트에서 찾기</a>
-        <a href="${pressoLink}" target="_blank" class="shop-btn presso">피규어프레소 확인</a>
-        <a href="${aladinLink}" target="_blank" class="shop-btn aladin">알라딘 재고 검색</a>
+      <div style="position:relative; z-index:2;">
+        
+        <div class="modal-top-nav">
+          <span class="nav-link" onclick="closeModal()">🏠 박물관 메인으로</span>
+          <span class="nav-link" onclick="scrollToTop(); closeModal();">📋 전체 목록 보기</span>
+        </div>
+
+        <div class="rarity-label ${item[6] === 'TRUE' ? 'limited' : ''}">
+          ${item[6] === 'TRUE' ? '👑 MUSEUM GRADE (한정판)' : '🎖️ STANDARD GRADE'}
+        </div>
+
+        <div class="info-item"><h2 style="font-size:3.5rem; font-weight:900; color:#2d2926; margin:0; line-height:1.2;">${name}</h2></div>
+        ${donorName ? `<div class="info-item"><span class="info-label" style="color:#ff4757;">[ 🎁 기증자 ]</span><span class="info-value">${donorName}</span></div>` : ''} 
+        <div class="info-item"><span class="info-label">[ 제조사 ]</span><span class="info-value">${maker || '-'}</span></div>
+        <div class="info-item"><span class="info-label">[ 시리즈 ]</span><span class="info-value">${series}</span></div>
+        <div class="info-item"><span class="info-label">[ 발매일 ]</span><span class="info-value">${releaseDate}</span></div>
+        <div class="info-item"><span class="info-label">[ 유형 ]</span><span class="info-value">${escapeHTML(item[7]) || '-'}</span></div>
+        <div class="info-item"><span class="info-label">[ 크기(mm) ]</span><span class="info-value">${escapeHTML(item[4]) || '-'}</span></div>
+        
+        ${priceHtml}
+        
+        <div class="shop-guide-title">🔍 국내 소장처 실시간 검색</div>
+        <div class="shop-btn-wrap">
+          <a href="${maniaLink}" target="_blank" class="shop-btn mania">매니아하우스에서 찾기</a>
+          <a href="${comicsLink}" target="_blank" class="shop-btn comics">코믹스아트에서 찾기</a>
+          <a href="${pressoLink}" target="_blank" class="shop-btn presso">피규어프레소 확인</a>
+          <a href="${aladinLink}" target="_blank" class="shop-btn aladin">알라딘 재고 검색</a>
+        </div>
+        <div class="shop-guide-title">🌐 해외 직구/중고 시세 확인</div>
+        <div class="shop-btn-wrap">
+          <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
+          <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (일본 본점/중고)</a>
+        </div>
+        <div class="shop-notice">※ 실시간 재고 상황에 따라 검색 결과가 없을 수 있으며, 미등록 명작은 계속 업데이트 중입니다.</div>
+        
+        <div class="info-item" style="border:none; margin-top:20px;">
+          <span class="info-label">[ 특이사항 ]</span>
+          <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${escapeHTML(item[9]) || '내용이 없습니다.'}</p>
+        </div>
+
+        <div class="action-row">
+           <button class="action-btn btn-like ${liked ? 'active' : ''}" id="likeBtnModal" onclick="toggleLikeModal(${idx})">❤️ 추천 <span id="likeCountModal">${initialLike}</span></button>
+           <button class="action-btn btn-share" onclick="shareKakao(${idx}, '${name.replace(/'/g, "\\'")}')">💬 공유하기</button>
+           <button class="action-btn btn-random" onclick="openRandom()">🎲 다른 전시물 보기</button>
+        </div>
+
+        ${relatedHtml}
+
       </div>
-      <div class="shop-guide-title">🌐 해외 직구/중고 시세 확인</div>
-      <div class="shop-btn-wrap">
-        <a href="${amiamiLink}" target="_blank" class="shop-btn amiami">AmiAmi (신품/중고)</a>
-        <a href="${mandarakeLink}" target="_blank" class="shop-btn mandarake">Mandarake (일본 본점/중고)</a>
-      </div>
-      <div class="shop-notice">※ 실시간 재고 상황에 따라 검색 결과가 없을 수 있으며, 미등록 명작은 계속 업데이트 중입니다.</div>
       
-      <div class="info-item" style="border:none; margin-top:20px;">
-        <span class="info-label">[ 특이사항 ]</span>
-        <p style="line-height:1.8; color:#555; font-size:1.2rem; margin:0;">${escapeHTML(item[9]) || '내용이 없습니다.'}</p>
-      </div>
-      <button onclick="copyLink(${idx})" style="margin-top:20px; padding:10px 20px; background:#f0f0f0; border:1px solid #ccc; border-radius:8px; cursor:pointer; font-weight:bold; color:#555; width:100%;">🔗 이 피규어 링크 복사하기</button>
+      <div class="seal-watermark">🏛️</div>
     `;
     
     document.getElementById('detailModal').style.display = 'flex'; 
     document.body.style.overflow = 'hidden';
+  }
+
+  // 🌟 하트 버튼 동작 함수
+  window.toggleLikeModal = function(idx) {
+      const uid = 'like_' + idx;
+      const btn = document.getElementById('likeBtnModal');
+      const countSpan = document.getElementById('likeCountModal');
+      let count = parseInt(countSpan.innerText);
+      if(localStorage.getItem(uid)) {
+          localStorage.removeItem(uid);
+          btn.classList.remove('active');
+          countSpan.innerText = count - 1;
+      } else {
+          localStorage.setItem(uid, 'true');
+          btn.classList.add('active');
+          countSpan.innerText = count + 1;
+      }
+  }
+
+  // 🌟 랜덤 소환 동작 함수
+  window.openRandom = function() {
+      if(allData.length > 0) {
+          const randomIdx = allData[Math.floor(Math.random() * allData.length)]._idx;
+          window.openModal(randomIdx);
+      }
+  }
+
+  // 🌟 SNS(카카오톡/링크) 공유 함수
+  window.shareKakao = function(idx, title) {
+      const url = `${window.location.origin}${window.location.pathname}?id=${idx}`;
+      if(navigator.share) { // 모바일 네이티브 공유 우선 지원
+          navigator.share({ title: title, text: '피규어 박물관에서 이 명작을 확인해보세요!', url: url }).catch(console.error);
+      } else { // PC 환경 대비
+          window.copyLink(idx);
+      }
   }
 
   window.toggleZoom = function(e) { 
