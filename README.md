@@ -359,7 +359,19 @@
     }
     .filter-section, .maker-row { border-top: 1px dashed #eee !important; }
     .filter-title, .maker-label { color: var(--primary) !important; }
-    .index-tab-bar { background: transparent !important; border-bottom: 1px dashed #eee !important; }
+    
+    /* 🚨 [긴급 수정] 겹침(Overlap) 현상 해결: 투명도 제거 및 블러 처리 */
+    .index-tab-bar { 
+        background: rgba(253, 251, 249, 0.95) !important; /* 글자가 비치지 않게 불투명한 크림화이트 적용 */
+        backdrop-filter: blur(10px) !important; /* 아래 스크롤되는 글자 뭉개기 */
+        border-bottom: 1px dashed #eee !important; 
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        top: -25px !important; /* 스크롤 시 상단 위치 핏 맞춤 */
+        z-index: 100 !important; /* 스크롤되는 시리즈 글자들보다 무조건 위에 오도록 고정 */
+        border-radius: 15px; /* 양옆 모서리 둥글게 */
+        box-shadow: 0 10px 15px rgba(255,255,255,0.9) !important; /* 글자가 밑으로 사라지는 듯한 그라데이션 효과 */
+    }
     
     /* 필터 메뉴 내부 버튼 색상 화사하게 덮어쓰기 */
     .year-btn, .index-tab, .filter-btn { 
