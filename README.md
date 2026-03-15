@@ -274,124 +274,59 @@
     /* =========================================================
        ✨ [시즌 2 인테리어] Idea C: Dreamy White Studio 추가 스타일
        ========================================================= */
-    /* 모달 전체 배경을 어두운 색에서 화사하고 몽환적인 반투명 화이트/크림톤으로 덮어쓰기 */
-    .modal {
-        background: rgba(250, 248, 245, 0.85) !important; 
-        backdrop-filter: blur(25px) saturate(120%);
-    }
-
-    /* 모달 컨테이너에 부드러운 스튜디오 그림자 효과 추가 */
-    .modal-content {
-        box-shadow: 0 40px 100px rgba(100, 90, 80, 0.15) !important;
-        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-    }
-
-    /* 피규어 이미지 영역 (몽환적인 스튜디오 호리존 배경 효과) */
-    .modal-img-area {
-        background: radial-gradient(circle at center, #ffffff 0%, #f4f1eb 80%, #eae5dd 100%) !important;
-        position: relative;
-    }
-    
-    /* 피규어 뒤에 은은한 후광(Soft Light) 추가 */
-    .modal-img-wrapper::before {
-        content: '';
-        position: absolute;
-        width: 60%;
-        height: 60%;
-        background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 0;
-        pointer-events: none;
-    }
-    #modalImg {
-        position: relative;
-        z-index: 1;
-        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.08)); /* 피규어 자체에 부드러운 그림자 */
-    }
-
-    /* 네비게이션 버튼(좌/우 화살표) 화사하고 투명하게 변경 */
-    .nav-btn {
-        background: rgba(255, 255, 255, 0.6) !important;
-        color: #888 !important;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-        backdrop-filter: blur(5px);
-    }
-    .nav-btn:hover {
-        background: #ff9f87 !important; /* 따뜻한 코랄 핑크 포인트 */
-        color: white !important;
-    }
-
-    /* 텍스트 정보 영역 배경을 따뜻한 크림/베이지 톤으로 변경 */
-    .modal-info-area {
-        background: #fdfbf9 !important;
-    }
-
-    /* 닫기(X) 버튼 색상 연하게 */
-    .close-btn {
-        color: #bbb !important;
-        text-shadow: 0 2px 10px rgba(255,255,255,0.8);
-    }
-    .close-btn:hover {
-        color: #ff9f87 !important;
-    }
-
-    /* 라벨 및 타이틀 색상 (파스텔 코랄 & 부드러운 브라운 조합) */
-    .info-label {
-        color: #ff8fa3 !important; /* 소프트 코랄 핑크 */
-    }
-    .info-value {
-        color: #4a4440 !important; /* 너무 칙칙하지 않은 웜그레이/브라운 */
-    }
-    
-    /* 희귀도 라벨 톤다운 및 부드럽게 덮어쓰기 */
-    .rarity-label {
-        background: #fcf1f1 !important;
-        color: #ff6b81 !important;
-        border: 1px solid #ffccd5;
-        box-shadow: 0 5px 15px rgba(255, 107, 129, 0.1);
-    }
-    .rarity-label.limited {
-        background: #ff6b81 !important;
-        color: white !important;
-        border: none;
-        box-shadow: 0 8px 20px rgba(255, 107, 129, 0.3);
-    }
-
-    /* 상단 네비게이션 링크 화이트 톤 덮어쓰기 */
-    .nav-link {
-        background: white !important;
-        color: #888 !important;
-        border: 1px solid #eee;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-    }
-    .nav-link:hover {
-        background: #fff3f0 !important;
-        color: #ff9f87 !important;
-        border-color: #ffccd5;
-    }
-
-    /* 가격 비교 박스 화이트 & 크림 톤으로 변경 */
-    .price-compare-box {
-        background: white !important;
-        border: 1px solid #f0eaea !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-    }
-    
-    /* 7대 기능 액션 버튼 (몽환적 스튜디오 테마에 맞춰 파스텔 톤 덮어쓰기) */
+    .modal { background: rgba(250, 248, 245, 0.85) !important; backdrop-filter: blur(25px) saturate(120%); }
+    .modal-content { box-shadow: 0 40px 100px rgba(100, 90, 80, 0.15) !important; border: 1px solid rgba(255, 255, 255, 0.8) !important; }
+    .modal-img-area { background: radial-gradient(circle at center, #ffffff 0%, #f4f1eb 80%, #eae5dd 100%) !important; position: relative; }
+    .modal-img-wrapper::before { content: ''; position: absolute; width: 60%; height: 60%; background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
+    #modalImg { position: relative; z-index: 1; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.08)); }
+    .nav-btn { background: rgba(255, 255, 255, 0.6) !important; color: #888 !important; box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; backdrop-filter: blur(5px); }
+    .nav-btn:hover { background: #ff9f87 !important; color: white !important; }
+    .modal-info-area { background: #fdfbf9 !important; }
+    .close-btn { color: #bbb !important; text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+    .close-btn:hover { color: #ff9f87 !important; }
+    .info-label { color: #ff8fa3 !important; }
+    .info-value { color: #4a4440 !important; }
+    .rarity-label { background: #fcf1f1 !important; color: #ff6b81 !important; border: 1px solid #ffccd5; box-shadow: 0 5px 15px rgba(255, 107, 129, 0.1); }
+    .rarity-label.limited { background: #ff6b81 !important; color: white !important; border: none; box-shadow: 0 8px 20px rgba(255, 107, 129, 0.3); }
+    .nav-link { background: white !important; color: #888 !important; border: 1px solid #eee; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .nav-link:hover { background: #fff3f0 !important; color: #ff9f87 !important; border-color: #ffccd5; }
+    .price-compare-box { background: white !important; border: 1px solid #f0eaea !important; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
     .btn-like { background: #fff !important; color: #ff6b81 !important; border: 1px solid #ffe3e3 !important; box-shadow: 0 4px 15px rgba(255, 107, 129, 0.1); }
     .btn-like.active { background: #ff6b81 !important; color: white !important; border-color: #ff6b81 !important; box-shadow: 0 8px 20px rgba(255, 107, 129, 0.3); }
     .btn-share { background: #fffdeb !important; color: #d4a017 !important; border: 1px solid #fcecae !important; box-shadow: 0 4px 15px rgba(212, 160, 23, 0.1); }
     .btn-random { background: #fdfbf9 !important; color: #888 !important; border: 1px solid #eee !important; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .btn-random:hover { background: #f0f0f0 !important; color: #333 !important; }
+    .seal-watermark { opacity: 0.02 !important; color: #ff9f87 !important; }
 
-    /* 워터마크 부드럽게 덮어쓰기 */
-    .seal-watermark {
-        opacity: 0.02 !important;
-        color: #ff9f87 !important;
+    /* =========================================================
+       ✨ [시즌 2 인테리어 2탄] 그리드 부동(不動) & 플로팅 필터 수정안
+       ========================================================= */
+    /* 1. 컨테이너 절대 고정 (밀림 차단) */
+    @media (min-width: 1300px) {
+      .container.shifted { 
+        margin-left: auto !important; 
+        margin-right: auto !important;
+        max-width: 1550px !important; 
+      } 
     }
-    /* ========================================================= */
+
+    /* 2. 필터 메뉴를 유리 패널 느낌의 Floating 스타일로 강제 오버라이딩 */
+    @media (min-width: 601px) {
+        #filterMenu {
+            top: 100px !important; /* 헤더에서 살짝 띄움 */
+            left: 20px !important; /* 화면 왼쪽에서 살짝 띄움 */
+            height: calc(100vh - 140px) !important;
+            border-radius: 30px !important; /* 둥글고 세련된 모서리 */
+            background: rgba(253, 251, 249, 0.85) !important; /* 반투명 유리 */
+            backdrop-filter: blur(30px) !important; /* 블러 효과 */
+            border: 1px solid rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 30px 60px rgba(100, 90, 80, 0.15) !important;
+        }
+        /* 닫혔을 때 둥근 모서리까지 화면 밖으로 완벽하게 숨기기 */
+        #filterMenu.collapsed {
+            transform: translateX(-150%) !important;
+        }
+    }
   </style>
 </head>
 <body>
