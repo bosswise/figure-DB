@@ -301,7 +301,6 @@
     /* =========================================================
        ✨ [시즌 2 인테리어 2탄] 그리드 부동(不動) & 플로팅 필터 수정안
        ========================================================= */
-    /* 1. 컨테이너 절대 고정 (밀림 차단) */
     @media (min-width: 1300px) {
       .container.shifted { 
         margin-left: auto !important; 
@@ -309,24 +308,92 @@
         max-width: 1550px !important; 
       } 
     }
-
-    /* 2. 필터 메뉴를 유리 패널 느낌의 Floating 스타일로 강제 오버라이딩 */
     @media (min-width: 601px) {
         #filterMenu {
-            top: 100px !important; /* 헤더에서 살짝 띄움 */
-            left: 20px !important; /* 화면 왼쪽에서 살짝 띄움 */
+            top: 100px !important; 
+            left: 20px !important; 
             height: calc(100vh - 140px) !important;
-            border-radius: 30px !important; /* 둥글고 세련된 모서리 */
-            background: rgba(253, 251, 249, 0.85) !important; /* 반투명 유리 */
-            backdrop-filter: blur(30px) !important; /* 블러 효과 */
+            border-radius: 30px !important; 
+            background: rgba(253, 251, 249, 0.85) !important; 
+            backdrop-filter: blur(30px) !important; 
             border: 1px solid rgba(255, 255, 255, 0.9) !important;
             box-shadow: 0 30px 60px rgba(100, 90, 80, 0.15) !important;
         }
-        /* 닫혔을 때 둥근 모서리까지 화면 밖으로 완벽하게 숨기기 */
         #filterMenu.collapsed {
             transform: translateX(-150%) !important;
         }
     }
+
+    /* =========================================================
+       ✨ [시즌 2.5 화이트 글래스 대통합] 헤더 & 필터 UI 전면 리모델링
+       ========================================================= */
+    :root {
+        --primary: #ff8fa3 !important; /* 메인 테마: 소프트 코랄 핑크 */
+        --dark: #4a4440 !important; /* 칙칙한 검정 대신 따뜻한 웜 그레이/브라운 */
+    }
+
+    /* 1. 상단 헤더 투명화 & 화사하게 변경 */
+    .sticky-header {
+        background: rgba(253, 251, 249, 0.85) !important;
+        backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02) !important;
+    }
+    .museum-title { color: var(--dark) !important; }
+    .total-stats-badge { background: var(--primary) !important; color: white !important; }
+    
+    /* 검색창 & 버튼 화이트 테마 적용 */
+    .search-input { background: white !important; border: 1px solid #eee !important; color: var(--dark) !important; }
+    .search-input:focus { border-color: var(--primary) !important; box-shadow: 0 0 10px rgba(255,143,163,0.15) !important; }
+    .sort-select { background: white !important; border: 1px solid #eee !important; color: var(--dark) !important; }
+    .toggle-btn { background: white !important; color: var(--primary) !important; border: 1px solid #ffe3e3 !important; box-shadow: 0 4px 10px rgba(255,107,129,0.05) !important; }
+    .toggle-btn:hover { background: var(--primary) !important; color: white !important; }
+
+    /* 2. 필터 메뉴 (불투명 검정 탈피 -> 화이트 글래스) */
+    #filterMenu {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(25px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.9) !important;
+        box-shadow: 0 30px 60px rgba(100, 90, 80, 0.1) !important;
+        border-right: none !important;
+    }
+    .filter-section, .maker-row { border-top: 1px dashed #eee !important; }
+    .filter-title, .maker-label { color: var(--primary) !important; }
+    .index-tab-bar { background: transparent !important; border-bottom: 1px dashed #eee !important; }
+    
+    /* 필터 메뉴 내부 버튼 색상 화사하게 덮어쓰기 */
+    .year-btn, .index-tab, .filter-btn { 
+        background: white !important; 
+        color: #777 !important; 
+        border: 1px solid #f0f0f0 !important; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
+    }
+    .year-btn:hover, .index-tab:hover, .filter-btn:hover { 
+        background: #fff3f0 !important; 
+        color: var(--primary) !important; 
+        border-color: #ffccd5 !important; 
+    }
+    .year-btn.active, .index-tab.active, .filter-btn.active { 
+        background: var(--primary) !important; 
+        color: white !important; 
+        border-color: var(--primary) !important; 
+        box-shadow: 0 5px 15px rgba(255,143,163,0.3) !important;
+    }
+    
+    /* 카운트 숫자 뱃지 컬러 변경 */
+    .filter-count { background: #fff3f0 !important; color: var(--primary) !important; }
+    .filter-btn.active .filter-count { background: rgba(255,255,255,0.3) !important; color: white !important; }
+
+    /* 3. 퀵메뉴 화사하게 덮어쓰기 */
+    #quick-menu { border: 1px solid white !important; box-shadow: 0 10px 30px rgba(100,90,80,0.1) !important; }
+    .quick-header { background: var(--primary) !important; color: white !important; }
+    .top-btn { background: #fdfbf9 !important; color: var(--primary) !important; border-top: 1px solid #eee !important; }
+    .top-btn:hover { background: var(--primary) !important; color: white !important; }
+    
+    /* 4. 하단 푸터 화이트 스튜디오 느낌으로 덮어쓰기 */
+    .museum-footer { background: white !important; border-top: 1px solid #eee !important; color: #888 !important; box-shadow: 0 -10px 30px rgba(0,0,0,0.02) !important; }
+    .copyright { color: var(--dark) !important; }
+    .disclaimer-box { border-top: 1px dashed #eee !important; }
   </style>
 </head>
 <body>
