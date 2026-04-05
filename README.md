@@ -406,6 +406,83 @@
     .museum-footer { background: white !important; border-top: 1px solid #eee !important; color: #888 !important; box-shadow: 0 -10px 30px rgba(0,0,0,0.02) !important; }
     .copyright { color: var(--dark) !important; }
     .disclaimer-box { border-top: 1px dashed #eee !important; }
+
+    /* =========================================================
+       ✨ [NEW] 방명록 스타일 (SEO 최적화)
+       ========================================================= */
+    .guestbook-section { max-width: 1200px; margin: 0 auto 60px; padding: 40px; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #eee; }
+    .guestbook-section h2 { color: var(--dark); font-weight: 900; margin-top: 0; margin-bottom: 20px; font-size: 1.8rem; }
+    .guestbook-input-area { display: flex; gap: 10px; margin-bottom: 30px; }
+    .gb-input { padding: 15px 20px; border-radius: 15px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
+    .gb-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255, 143, 163, 0.2); }
+    #gbName { width: 150px; }
+    #gbMsg { flex: 1; }
+    .gb-submit { background: var(--primary); color: white; font-weight: 900; border: none; border-radius: 15px; padding: 0 30px; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+    .gb-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 143, 163, 0.3); background: #ff768e; }
+    .guestbook-list { display: flex; flex-direction: column; gap: 15px; max-height: 400px; overflow-y: auto; padding-right: 10px; }
+    .guestbook-list::-webkit-scrollbar { width: 6px; }
+    .guestbook-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    .gb-item { background: #fdfbf9; padding: 20px; border-radius: 15px; border: 1px solid #f0eaea; display: flex; gap: 15px; align-items: baseline; transition: 0.2s; }
+    .gb-item:hover { transform: translateX(5px); border-color: #ffccd5; }
+    .gb-name { font-weight: 900; color: var(--primary); white-space: nowrap; font-size: 1rem; }
+    .gb-msg { color: #555; line-height: 1.5; word-break: break-word; font-weight: 500; }
+    
+    @media (max-width: 600px) {
+        .guestbook-input-area { flex-direction: column; }
+        #gbName { width: 100%; }
+        .gb-submit { padding: 15px; }
+    }
+
+    /* =========================================================
+       ✨ [NEW] 다크 모드 전역 오버라이딩 (Dark Mode)
+       ========================================================= */
+    body.dark-mode {
+        --bg: #121212 !important;
+        --dark: #f0f0f0 !important;
+        background-color: var(--bg) !important;
+    }
+    body.dark-mode #museum-wrapper { background-color: var(--bg) !important; background-image: radial-gradient(#222 1.5px, transparent 1.5px) !important; }
+    
+    /* 뼈대 어둡게 */
+    body.dark-mode .card, body.dark-mode .hall-of-fame { background: #1e1e1e !important; border-color: #333 !important; }
+    body.dark-mode .content, body.dark-mode .img-box { background: #1e1e1e !important; border-top-color: #333 !important; }
+    body.dark-mode .sticky-header { background: rgba(30, 30, 30, 0.85) !important; border-bottom-color: #333 !important; }
+    body.dark-mode #filterMenu { background: rgba(30, 30, 30, 0.95) !important; border-color: #444 !important; }
+    
+    /* 입력창 및 버튼 */
+    body.dark-mode .search-input, body.dark-mode .sort-select { background: #2a2a2a !important; border-color: #444 !important; color: #fff !important; }
+    body.dark-mode .toggle-btn { background: #333 !important; color: #ccc !important; border-color: #555 !important; }
+    
+    /* 필터 사이드바 내부 */
+    body.dark-mode .index-tab-bar { background: rgba(30, 30, 30, 0.95) !important; border-bottom-color: #444 !important; }
+    body.dark-mode .year-btn, body.dark-mode .index-tab, body.dark-mode .filter-btn { background: #2a2a2a !important; color: #aaa !important; border-color: #444 !important; }
+    body.dark-mode .year-btn.active, body.dark-mode .index-tab.active, body.dark-mode .filter-btn.active { background: var(--primary) !important; color: white !important; border-color: var(--primary) !important; }
+    body.dark-mode .filter-section, body.dark-mode .maker-row { border-top-color: #444 !important; }
+    body.dark-mode .filter-count { background: #111 !important; color: #aaa !important; }
+    
+    /* 모달창 */
+    body.dark-mode .modal-content { background: #1e1e1e !important; border-color: #444 !important; box-shadow: 0 40px 100px rgba(0,0,0,0.8) !important; }
+    body.dark-mode .modal-info-area { background: #1e1e1e !important; }
+    body.dark-mode .modal-img-area { background: radial-gradient(circle at center, #2a2a2a 0%, #111 80%, #000 100%) !important; border-right-color: #333 !important; }
+    body.dark-mode .info-value, body.dark-mode .char-name, body.dark-mode .museum-title { color: #fdfbf9 !important; }
+    body.dark-mode .price-compare-box { background: #2a2a2a !important; border-color: #444 !important; }
+    body.dark-mode .price-val-new { color: #fff !important; }
+    body.dark-mode .price-val-old { color: #777 !important; }
+    body.dark-mode .nav-link { background: #333 !important; color: #aaa !important; border-color: #444 !important; }
+    body.dark-mode .nav-btn { background: rgba(0,0,0,0.6) !important; color: #fff !important; }
+    body.dark-mode .related-card img { background: #2a2a2a !important; border-color: #444 !important; }
+    body.dark-mode .related-section { border-top-color: #444 !important; }
+    
+    /* 방명록 & 푸터 */
+    body.dark-mode .guestbook-section { background: #1e1e1e !important; border-color: #333 !important; }
+    body.dark-mode .gb-item { background: #2a2a2a !important; border-color: #444 !important; }
+    body.dark-mode .gb-input { background: #2a2a2a !important; color: white !important; border-color: #444 !important; }
+    body.dark-mode .gb-msg { color: #ccc !important; }
+    body.dark-mode .museum-footer { background: #111 !important; border-top-color: #222 !important; }
+    body.dark-mode .quick-item { border-bottom-color: #333 !important; }
+    body.dark-mode #quick-menu { background: #1e1e1e !important; border-color: #444 !important; }
+    body.dark-mode .top-btn { background: #2a2a2a !important; border-top-color: #444 !important; }
+    body.dark-mode .page-btn { background: #2a2a2a !important; border-color: #444 !important; color: #ccc !important; }
   </style>
 </head>
 <body>
@@ -460,6 +537,7 @@
           <option value="nameAsc">이름 (가나다)</option>
         </select>
         <button class="toggle-btn" onclick="toggleFilters()" id="toggleBtn">[ 필터 열기 ]</button>
+        <button class="toggle-btn" onclick="toggleDarkMode()" id="darkModeBtn" style="background:#2d2926; color:white; border:none;">🌙 다크 모드</button>
       </div>
     </div>
 
@@ -484,6 +562,17 @@
     
     <div id="pagination" class="pagination"></div>
   </div> 
+
+  <div class="guestbook-section" id="guestbookSection">
+      <h2>🖋️ 박물관 관람 방명록</h2>
+      <div class="guestbook-input-area">
+          <input type="text" id="gbName" class="gb-input" placeholder="닉네임 (최대 10자)" maxlength="10">
+          <input type="text" id="gbMsg" class="gb-input" placeholder="박물관 관람 소감이나 명작 제보를 한 줄로 남겨주세요!" maxlength="80" onkeypress="if(event.keyCode==13) addGuestbook()">
+          <button class="gb-submit" onclick="addGuestbook()">남기기</button>
+      </div>
+      <div class="guestbook-list" id="guestbookList">
+          </div>
+  </div>
 
   <div class="museum-footer">
     <div class="footer-content">
@@ -584,6 +673,10 @@
 
       checkScreenSize();
       window.addEventListener('resize', checkScreenSize);
+
+      // 🌟 [NEW] 초기화 시 다크모드 및 방명록 로드
+      checkDarkMode();
+      initGuestbook();
 
       const response = await fetch(csvURL, { redirect: "follow" });
       const text = await response.text();
@@ -1222,6 +1315,82 @@
   window.closeDonateModal = function() { 
     document.getElementById('donateModal').style.display = 'none'; 
     document.body.style.overflow = 'auto'; 
+  }
+
+  /* =========================================================
+     ✨ [NEW 기능] 다크 모드 (Dark Mode) 로직
+     ========================================================= */
+  function checkDarkMode() {
+      const isDark = localStorage.getItem('museum_dark_mode') === 'true';
+      if (isDark) {
+          document.body.classList.add('dark-mode');
+          document.getElementById('darkModeBtn').innerText = '☀️ 라이트 모드';
+      }
+  }
+
+  window.toggleDarkMode = function() {
+      const body = document.body;
+      const btn = document.getElementById('darkModeBtn');
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+          localStorage.setItem('museum_dark_mode', 'true');
+          btn.innerText = '☀️ 라이트 모드';
+      } else {
+          localStorage.setItem('museum_dark_mode', 'false');
+          btn.innerText = '🌙 다크 모드';
+      }
+  }
+
+  /* =========================================================
+     ✨ [NEW 기능] 한 줄 방명록 (Guestbook) 로직
+     ========================================================= */
+  function initGuestbook() {
+      let gb = JSON.parse(localStorage.getItem('museum_guestbook') || '[]');
+      // 처음 접속 시 허전하지 않도록 가상의 샘플 데이터 추가 (SEO 텍스트 확보)
+      if(gb.length === 0) {
+          gb = [
+              {name: "관람객A", msg: "정리가 너무 잘 되어있네요! 피규어 시세 볼 때 자주 올게요. 👍"},
+              {name: "피규어매니아", msg: "제가 찾던 정보가 다 있습니다. 명작들 퀄리티 최고!"}
+          ];
+          localStorage.setItem('museum_guestbook', JSON.stringify(gb));
+      }
+      renderGuestbook();
+  }
+
+  window.addGuestbook = function() {
+      const nameInput = document.getElementById('gbName');
+      const msgInput = document.getElementById('gbMsg');
+      
+      const name = nameInput.value.trim() || '익명 관람객';
+      const msg = msgInput.value.trim();
+      
+      if(!msg) {
+          alert('방명록 내용을 입력해주세요!');
+          msgInput.focus();
+          return;
+      }
+      
+      let gb = JSON.parse(localStorage.getItem('museum_guestbook') || '[]');
+      gb.unshift({name: escapeHTML(name), msg: escapeHTML(msg)});
+      
+      if(gb.length > 50) gb.pop(); // 최대 50개까지만 저장
+      
+      localStorage.setItem('museum_guestbook', JSON.stringify(gb));
+      msgInput.value = ''; // 입력창 초기화
+      
+      renderGuestbook();
+  }
+
+  function renderGuestbook() {
+      let gb = JSON.parse(localStorage.getItem('museum_guestbook') || '[]');
+      const html = gb.map(item => `
+          <div class="gb-item">
+              <span class="gb-name">${item.name}</span>
+              <span class="gb-msg">${item.msg}</span>
+          </div>
+      `).join('');
+      document.getElementById('guestbookList').innerHTML = html;
   }
   
   init();
